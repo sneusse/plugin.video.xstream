@@ -83,6 +83,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
+        params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params)
 
     pattern = '<ul[^>]*class="pagination[^>]*>.*?'
@@ -105,12 +106,16 @@ def showHosters():
         oGui = cGui()
         sTempName = params.getValue('sName')
         iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sTempName.lower())[0])
+        sThumbnail = params.getValue('sThumbnail')
         oGui.setView('episodes')
         for iEpisode, sUrl in aResult[1]:
             sName = 'Folge ' + str(iEpisode)
             oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
             oGuiElement.setSeason(iSeason)
             oGuiElement.setEpisode(iEpisode)
+            logger.info(params.getValue('sThumbnail'))
+            if sThumbnail:
+                oGuiElement.setThumbnail(sThumbnail)
             params.setParam('sUrl', sUrl)
             params.setParam('sName', sName)
             oGui.addFolder(oGuiElement, params)
