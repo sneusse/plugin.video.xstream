@@ -37,7 +37,6 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     iPage = int(params.getValue('page'))
-    logger.info(iPage)
     if iPage > 0:
         oRequest = cRequestHandler(entryUrl + '?per_page=' + str(iPage * 50))
     else:
@@ -113,7 +112,6 @@ def showHosters():
             oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
             oGuiElement.setSeason(iSeason)
             oGuiElement.setEpisode(iEpisode)
-            logger.info(params.getValue('sThumbnail'))
             if sThumbnail:
                 oGuiElement.setThumbnail(sThumbnail)
             params.setParam('sUrl', sUrl)
@@ -147,7 +145,6 @@ def play(sUrl = False):
     if not sUrl: sUrl = oParams.getValue('url')
     results = []
     result = {}
-    logger.info(sUrl)
     result['streamUrl'] = sUrl
     result['resolved'] = True
     results.append(result)
