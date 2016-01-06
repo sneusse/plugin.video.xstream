@@ -104,9 +104,13 @@ def showHosters():
     if aResult[0] and len(aResult[1]) > 1:
         oGui = cGui()
         sTempName = params.getValue('sName')
-        for sEpisode, sUrl in aResult[1]:
-            sName = sTempName + ' - ' + 'Folge ' + sEpisode
+        iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sTempName.lower())[0])
+        oGui.setView('episodes')
+        for iEpisode, sUrl in aResult[1]:
+            sName = 'Folge ' + str(iEpisode)
             oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
+            oGuiElement.setSeason(iSeason)
+            oGuiElement.setEpisode(iEpisode)
             params.setParam('sUrl', sUrl)
             params.setParam('sName', sName)
             oGui.addFolder(oGuiElement, params)
