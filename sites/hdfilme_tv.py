@@ -38,6 +38,13 @@ def showEntries(entryUrl = False, sGui = False):
     oRequest = cRequestHandler(entryUrl)
     oGui.setView('movie')
     sHtmlContent = oRequest.request()
+
+    # Filter out the main section
+    pattern = '<ul class="products row">(.*?)</ul>'
+    aResult = cParser().parse(sHtmlContent, pattern)
+    if not aResult[0] or not aResult[1][0]: return
+    sHtmlContent = aResult[1][0]
+
     # Grab the link
     pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*'
     pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?'
@@ -53,14 +60,14 @@ def showEntries(entryUrl = False, sGui = False):
     if not aResult[0]:
         return
     for sUrl, sThumbnail, sName, sDesc in aResult[1]:
+        # Grab the year (for movies)
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
-        iYear = 0
+        iYear = False
         for name, year in aYear:
             sName = name
             iYear = year
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if iYear:
-            logger.info(iYear)
             oGuiElement.setYear(iYear)
         oGuiElement.setMediaType('movie')
         oGuiElement.setThumbnail(sThumbnail)
