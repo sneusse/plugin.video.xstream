@@ -17,6 +17,7 @@ URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies'
 URL_CINEMA_MOVIES = URL_MAIN + 'movie-cinemas'
 URL_SHOWS = URL_MAIN + 'movie-series'
+URL_SEARCH = URL_MAIN + 'movie/search?key='
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -72,6 +73,7 @@ def showEntries(entryUrl = False, sGui = False):
         for name, year in aYear:
             sName = name
             iYear = year
+            break;
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if iYear:
             oGuiElement.setYear(iYear)
@@ -87,4 +89,17 @@ def showEntries(entryUrl = False, sGui = False):
     if aResult[0] and aResult[1][0]:
         params.setParam('page', int(aResult[1][0]))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+    oGui.setEndOfDirectory()
+
+# Show the search dialog, return/abort on empty input
+def showSearch():
+    oGui = cGui()
+    sSearchText = oGui.showKeyBoard()
+    if not sSearchText: return
+    _search(oGui, sSearchText)
+
+# Search using the requested string sSearchText
+def _search(oGui, sSearchText):
+    if not sSearchText: return
+    showEntries(URL_SEARCH + sSearchText, oGui)
     oGui.setEndOfDirectory()
