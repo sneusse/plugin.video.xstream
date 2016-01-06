@@ -79,8 +79,10 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement.setYear(iYear)
         oGuiElement.setMediaType('movie')
         oGuiElement.setThumbnail(sThumbnail)
-        oGuiElement.setDescription(cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8'))
+        sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+        oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
+        params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params)
 
     pattern = '<ul[^>]*class="pagination[^>]*>.*?'
@@ -92,18 +94,41 @@ def showEntries(entryUrl = False, sGui = False):
     oGui.setEndOfDirectory()
 
 def showHosters():
+    params = ParameterHandler()
+    entryUrl = params.getValue('entryUrl').replace("-info","-stream")
+    oRequest = cRequestHandler(entryUrl)
+    sHtmlContent = oRequest.request()
+    # Check if the page contains episodes
+    pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
+    aResult = cParser().parse(sHtmlContent, pattern)
+    if aResult[0] and len(aResult[1]) > 1:
+        oGui = cGui()
+        sTempName = params.getValue('sName')
+        for sEpisode, sUrl in aResult[1]:
+            sName = sTempName + ' - ' + 'Folge ' + sEpisode
+            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
+            params.setParam('sUrl', sUrl)
+            params.setParam('sName', sName)
+            oGui.addFolder(oGuiElement, params)
+        oGui.setEndOfDirectory()
+    else:
+        showLinks(entryUrl, params.getValue('sName'))
+
+def showLinks(sUrl = False, sName = False):
     oGui = cGui()
     params = ParameterHandler()
-    oRequest = cRequestHandler(params.getValue('entryUrl').replace("-info","-stream"))
+    sUrl = sUrl if sUrl else params.getValue('sUrl')
+    sName = sName if sName else params.getValue('sName')
+    oRequest = cRequestHandler(sUrl)
     sHtmlContent = oRequest.request()
     pattern = 'var newlink = (.*?);'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0] or not aResult[1][0]: return
 
-    hosters = []
     for aEntry in json.loads(aResult[1][0]):
         if 'file' not in aEntry or 'label' not in aEntry: continue
-        oGuiElement = cGuiElement(aEntry['label'], SITE_IDENTIFIER, 'play')
+        sLabel = sName + ' - ' + aEntry['label']
+        oGuiElement = cGuiElement(sLabel, SITE_IDENTIFIER, 'play')
         params.setParam('url', aEntry['file'])
         oGui.addFolder(oGuiElement, params, False)
     oGui.setEndOfDirectory()
