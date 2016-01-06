@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import re
+import re, json
 
 SITE_IDENTIFIER = 'hdfilme_tv'
 SITE_NAME = 'HDfilme.tV'
@@ -81,7 +81,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8'))
         params.setParam('entryUrl', sUrl)
-        oGui.addFolder(oGuiElement, params, bIsFolder = False)
+        oGui.addFolder(oGuiElement, params)
 
     pattern = '<ul[^>]*class="pagination[^>]*>.*?'
     pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*?</ul>'
@@ -90,6 +90,34 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('page', int(aResult[1][0]))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
     oGui.setEndOfDirectory()
+
+def showHosters():
+    oGui = cGui()
+    params = ParameterHandler()
+    oRequest = cRequestHandler(params.getValue('entryUrl').replace("-info","-stream"))
+    sHtmlContent = oRequest.request()
+    pattern = 'var newlink = (.*?);'
+    aResult = cParser().parse(sHtmlContent, pattern)
+    if not aResult[0] or not aResult[1][0]: return
+
+    hosters = []
+    for aEntry in json.loads(aResult[1][0]):
+        if 'file' not in aEntry or 'label' not in aEntry: continue
+        oGuiElement = cGuiElement(aEntry['label'], SITE_IDENTIFIER, 'play')
+        params.setParam('url', aEntry['file'])
+        oGui.addFolder(oGuiElement, params, False)
+    oGui.setEndOfDirectory()
+
+def play(sUrl = False):
+    oParams = ParameterHandler()
+    if not sUrl: sUrl = oParams.getValue('url')
+    results = []
+    result = {}
+    logger.info(sUrl)
+    result['streamUrl'] = sUrl
+    result['resolved'] = True
+    results.append(result)
+    return results
 
 # Show the search dialog, return/abort on empty input
 def showSearch():
