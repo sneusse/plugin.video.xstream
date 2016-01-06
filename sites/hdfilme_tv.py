@@ -35,15 +35,21 @@ def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    oRequest = cRequestHandler(entryUrl)
-    oGui.setView('movie')
+    iPage = int(params.getValue('page'))
+    logger.info(iPage)
+    if iPage > 0:
+        oRequest = cRequestHandler(entryUrl + '?per_page=' + str(iPage * 50))
+    else:
+        oRequest = cRequestHandler(entryUrl)
+
     sHtmlContent = oRequest.request()
+    oGui.setView('movie')
 
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0] or not aResult[1][0]: return
-    sHtmlContent = aResult[1][0]
+    sMainContent = aResult[1][0]
 
     # Grab the link
     pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*'
@@ -56,7 +62,7 @@ def showEntries(entryUrl = False, sGui = False):
     # Grab the description
     pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
 
-    aResult = cParser().parse(sHtmlContent, pattern)
+    aResult = cParser().parse(sMainContent, pattern)
     if not aResult[0]:
         return
     for sUrl, sThumbnail, sName, sDesc in aResult[1]:
@@ -74,4 +80,11 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setDescription(cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8'))
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, bIsFolder = False)
+
+    pattern = '<ul[^>]*class="pagination[^>]*>.*?'
+    pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*?</ul>'
+    aResult = cParser().parse(sHtmlContent, pattern)
+    if aResult[0] and aResult[1][0]:
+        params.setParam('page', int(aResult[1][0]))
+        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
     oGui.setEndOfDirectory()
