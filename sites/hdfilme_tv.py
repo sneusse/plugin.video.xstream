@@ -79,6 +79,7 @@ def showEntries(entryUrl = False, sGui = False):
         if iYear:
             oGuiElement.setYear(iYear)
         oGuiElement.setMediaType('movie')
+        sThumbnail = sThumbnail.replace('_thumb', '')
         oGuiElement.setThumbnail(sThumbnail)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
         oGuiElement.setDescription(sDesc)
