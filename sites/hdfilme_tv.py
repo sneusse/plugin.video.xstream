@@ -63,8 +63,7 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
 
     aResult = cParser().parse(sMainContent, pattern)
-    if not aResult[0]:
-        return
+    if not aResult[0]: return
     for sUrl, sThumbnail, sName, sDesc in aResult[1]:
         # Grab the year (for movies)
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
@@ -102,24 +101,27 @@ def showHosters():
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and len(aResult[1]) > 1:
-        oGui = cGui()
-        sTempName = params.getValue('sName')
-        iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sTempName.lower())[0])
-        sThumbnail = params.getValue('sThumbnail')
-        oGui.setView('episodes')
-        for iEpisode, sUrl in aResult[1]:
-            sName = 'Folge ' + str(iEpisode)
-            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
-            oGuiElement.setSeason(iSeason)
-            oGuiElement.setEpisode(iEpisode)
-            if sThumbnail:
-                oGuiElement.setThumbnail(sThumbnail)
-            params.setParam('sUrl', sUrl)
-            params.setParam('sName', sName)
-            oGui.addFolder(oGuiElement, params)
-        oGui.setEndOfDirectory()
+        showEpisodes(aResult[1], params)
     else:
         showLinks(entryUrl, params.getValue('sName'))
+
+def showEpisodes(aResult, params):
+    oGui = cGui()
+    sName = params.getValue('sName')
+    iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sName.lower())[0])
+    sThumbnail = params.getValue('sThumbnail')
+    oGui.setView('episodes')
+    for iEpisode, sUrl in aResult:
+        sName = 'Folge ' + str(iEpisode)
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
+        oGuiElement.setSeason(iSeason)
+        oGuiElement.setEpisode(iEpisode)
+        if sThumbnail:
+            oGuiElement.setThumbnail(sThumbnail)
+        params.setParam('sUrl', sUrl)
+        params.setParam('sName', sName)
+        oGui.addFolder(oGuiElement, params)
+    oGui.setEndOfDirectory()
 
 def showLinks(sUrl = False, sName = False):
     oGui = cGui()
