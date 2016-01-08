@@ -134,7 +134,7 @@ def showLinks(sUrl = False, sName = False):
 
     for aEntry in json.loads(aResult[1][0]):
         if 'file' not in aEntry or 'label' not in aEntry: continue
-        sLabel = sName + ' - ' + aEntry['label']
+        sLabel = sName + ' - ' + aEntry['label'].encode('utf-8')
         oGuiElement = cGuiElement(sLabel, SITE_IDENTIFIER, 'play')
         params.setParam('url', aEntry['file'])
         oGui.addFolder(oGuiElement, params, False)
