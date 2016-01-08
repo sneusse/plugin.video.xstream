@@ -43,7 +43,10 @@ def showEntries(entryUrl = False, sGui = False):
         oRequest = cRequestHandler(entryUrl)
 
     sHtmlContent = oRequest.request()
-    oGui.setView('movie')
+    if URL_SHOWS in entryUrl:
+        oGui.setView('tvshows')
+    else:
+        oGui.setView('movies')
 
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
