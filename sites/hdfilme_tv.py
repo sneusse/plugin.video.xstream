@@ -164,7 +164,7 @@ def showHosters():
     oRequest = cRequestHandler(entryUrl)
     sHtmlContent = oRequest.request()
     # Check if the page contains episodes
-    pattern = '<a[^>]*episoden="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
+    pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and len(aResult[1]) > 1:
         showEpisodes(aResult[1], params)
@@ -174,7 +174,7 @@ def showHosters():
 def showEpisodes(aResult, params):
     oGui = cGui()
     sName = params.getValue('sName')
-    iSeason = int(re.compile('.*?episode\s*(\d+)').findall(sName.lower())[0])
+    iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sName.lower())[0])
     sThumbnail = params.getValue('sThumbnail')
     oGui.setView('episodes')
     for iEpisode, sUrl in aResult:
