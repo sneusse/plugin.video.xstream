@@ -48,10 +48,28 @@ def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('sUrl', URL_MOVIES)
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Filme',SITE_IDENTIFIER,'showMovieMenu'))
+    
+    params.setParam('sUrl', URL_SHOWS)
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+    oGui.setEndOfDirectory()
+
+def showMovieMenu():
+    oGui = cGui()
+    params = ParameterHandler()
+
     params.setParam('sUrl', URL_CINEMA_MOVIES)
     oGui.addFolder(cGuiElement('Kinofilme', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_MOVIES)
+    oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showMovieGenre'))   
+    
+    oGui.setEndOfDirectory()     
+
+def showMovieGenre():
+    oGui = cGui()
+    params = ParameterHandler()
     
     params.setParam('sUrl', URL_ABENTEUER)
     oGui.addFolder(cGuiElement('Abenteuer', SITE_IDENTIFIER, 'showEntries'), params)
@@ -88,11 +106,7 @@ def load():
     params.setParam('sUrl', URL_WESTERN)
     oGui.addFolder(cGuiElement('Western', SITE_IDENTIFIER, 'showEntries'), params)
 
-    params.setParam('sUrl', URL_SHOWS)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
-	
 
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
