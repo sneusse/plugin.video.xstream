@@ -81,7 +81,7 @@ class cHosterGui:
         '''
         return False
 
-    def _addUserAgent(sef, link):
+    def _addUserAgent(self, link):
         if 'User-Agent' in link:
             return link
         if '|' in link:
@@ -95,7 +95,7 @@ class cHosterGui:
         data = self._getInfoAndResolve(siteResult)
         if not data: return False
         logger.info('play file link: ' + str(data['link']))	
-        listItem = xbmcgui.ListItem(path=self.addUserAgent(data['link']))
+        listItem = xbmcgui.ListItem(path=self._addUserAgent(data['link']))
         info = {}
         info['Title'] = data['title']
         if data['thumb']:
