@@ -12,7 +12,7 @@ import re, json
 
 
 SITE_IDENTIFIER = 'hdfilme_tv'
-SITE_NAME = 'HDfilme.Tv'
+SITE_NAME = 'HDfilme.TV'
 SITE_ICON = 'hdfilme.png'
 
 URL_MAIN = 'http://hdfilme.tv/'
