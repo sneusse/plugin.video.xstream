@@ -2,6 +2,7 @@
 <addon id="plugin.video.xstream"
 	name="xStream"
 	version="2.1.15"
+	updateTag="1"
 	provider-name="Lynx187 (originator: murphy, MaxMustermann)">
   <requires>
     <import addon="xbmc.python"                 version="2.1.0"/>
