@@ -74,7 +74,7 @@ class cGui:
 
         sItemUrl = self.__createItemUrl(oGuiElement, bIsFolder, oOutputParameterHandler)
         oListItem = self.createListItem(oGuiElement) 
-        if not bIsFolder and cConfig().getSetting('hosterListFolder') == 'true':
+        if not bIsFolder and cConfig().getSetting('hosterSelect') == 'list':
             bIsFolder = True
         if isHoster:
             bIsFolder = False
@@ -187,7 +187,7 @@ class cGui:
             if cConfig().getSetting('pyload_enabled') == 'true':
                 oContextItem.setTitle("send to PyLoad")     
                 aContextMenus+= [ ( oContextItem.getTitle(), "XBMC.RunPlugin(%s&playMode=pyload)" % (sItemUrl,),)]
-            if cConfig().getSetting('autoPlay')=='true':
+            if cConfig().getSetting('hosterSelect')=='auto':
                 oContextItem.setTitle("select hoster")     
                 aContextMenus+= [ ( oContextItem.getTitle(), "XBMC.RunPlugin(%s&playMode=play&manual=1)" % (sItemUrl,),)]
         oListItem.addContextMenuItems(aContextMenus)

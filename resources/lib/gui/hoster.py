@@ -12,222 +12,160 @@ import xbmcplugin
 
 class cHosterGui:
 
-    
     SITE_NAME = 'cHosterGui'
     
-    
     def __init__(self):
-        # if cConfig().getSetting('autoplay')=='true':
-            # self.autoPlay = True
-        # else:
-            # self.autoPlay = False
         self.userAgent = "|User-Agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3"
         self.maxHoster = int(cConfig().getSetting('maxHoster'))
         self.dialog = False
 
     # TODO: unify parts of play, download etc.
-    def play(self, siteResult=False):
+    def _getInfoAndResolve(self, siteResult):
         import urlresolver
         oGui = cGui()
         params = ParameterHandler()
-        sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('MovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('Title')
-        if not sFileName: #nur vorrübergehend
-            sFileName = params.getValue('sMovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('title')
+        # get data
+        data = {}
+        mediaUrl = params.getValue('sMediaUrl')
+        fileName = params.getValue('MovieTitle')
+        if not fileName:
+            fileName = params.getValue('Title')
+        if not fileName: #only temporary
+            fileName = params.getValue('sMovieTitle')
+        if not fileName:
+            fileName = params.getValue('title')
 
-        sSeason = params.getValue('season')
-        sEpisode = params.getValue('episode')
-        sShowTitle = params.getValue('TVShowTitle')
-        sThumbnail = params.getValue('thumb')
-              
+        data['title'] = fileName
+        data['season'] = params.getValue('season')
+        data['episode'] = params.getValue('episode')
+        data['showTitle'] = params.getValue('TVShowTitle')
+        data['thumb'] = params.getValue('thumb')
+        # resolve
         if siteResult:
-            sMediaUrl = siteResult['streamUrl']
-            logger.info('call play: ' + sMediaUrl)
+            mediaUrl = siteResult['streamUrl']
+            logger.info('resolve: ' + mediaUrl)
             if siteResult['resolved']:
-                sLink = sMediaUrl
+                link = mediaUrl
             else:
-                sLink = urlresolver.resolve(sMediaUrl)
-
-        elif sMediaUrl:
-            logger.info('call play: ' + sMediaUrl)
-            sLink = urlresolver.resolve(sMediaUrl)
+                link = urlresolver.resolve(mediaUrl)
+        elif mediaUrl:
+            logger.info('resolve: ' + mediaUrl)
+            link = urlresolver.resolve(mediaUrl)
         else:
             oGui.showError('xStream', 'kein Hosterlink übergeben', 5)
             return False
-        if hasattr(sLink, 'msg'):
-            msg = sLink.msg
-        else:
-            msg = False
-        if sLink != False and not msg:
-            logger.info('file link: ' + str(sLink))
-            if "User-Agent=" not in sLink:
-                listItem = xbmcgui.ListItem(path=sLink + self.userAgent)
-            else:
-                listItem = xbmcgui.ListItem(path=sLink)
-            info = {}
-            info['Title'] = sFileName
-            if sThumbnail:
-                listItem.setThumbnailImage(sThumbnail)
-            if sShowTitle:
-                info['Episode'] = sEpisode
-                info['Season'] = sSeason
-                info['TvShowTitle'] = sShowTitle
-            oPlayer = cPlayer()
-            if self.dialog:
-               try:
-                   self.dialog.close()
-               except:
-                   pass      
-            listItem.setInfo(type="Video", infoLabels=info)
-            listItem.setProperty('IsPlayable', 'true')
-
-            pluginHandle = oGui.pluginHandle
-            xbmcplugin.setResolvedUrl(pluginHandle, True, listItem)
-            res = oPlayer.startPlayer() #Necessary for autoStream
-            return res
-        else:
-            if not msg:
-               msg = 'Stream nicht mehr verfügbar oder Link fehlerhaft'
+        #resolver response
+        if hasattr(link, 'msg'):
+            msg = link.msg
+        else: msg = False
+        if link != False and not msg:
+            data['link'] = link
+            return data
+        # error during resolving
+        if not msg:
+            msg = 'Stream nicht mehr verfügbar oder Link fehlerhaft'
             oGui.showError('xStream',str(msg),7)
-            if hasattr(sLink, 'code'):
-                logger.info(str(msg) +' UnresolveableCode: '+ str(sLink.code))
-            else:
-                logger.info(str(msg) +' UnresolveableCode: - ')
-            '''
-                UnresolveableCode
-                0: Unknown Error
-                1: The url was resolved, but the file has been permanantly
-                    removed
-                2: The file is temporarily unavailable for example due to
-                    planned site maintenance
-                3. There was an error contacting the site for example a
-                    connection attempt timed out
-            '''
-            return False
+        if hasattr(sLink, 'code'):
+            logger.info(str(msg) +' UnresolveableCode: '+ str(sLink.code))
+        else:
+            logger.info(str(msg) +' UnresolveableCode: - ')
+        '''
+            UnresolveableCode
+            0: Unknown Error
+            1: The url was resolved, but the file has been permanantly
+                removed
+            2: The file is temporarily unavailable for example due to
+                planned site maintenance
+            3. There was an error contacting the site for example a
+                connection attempt timed out
+        '''
+        return False
 
+    def _addUserAgent(sef, link):
+        if 'User-Agent' in link:
+            return link
+        if '|' in link:
+            return link + '&' + self.userAgent
+        else:
+            return link	+ '|' + self.userAgent
+
+    def play(self, siteResult=False):      
+        oGui = cGui()
+        logger.info('attempt to play file')
+        data = self._getInfoAndResolve(siteResult)
+        if not data: return False
+        logger.info('play file link: ' + str(data['link']))	
+        listItem = xbmcgui.ListItem(path=self.addUserAgent(data['link']))
+        info = {}
+        info['Title'] = data['title']
+        if data['thumb']:
+            listItem.setThumbnailImage(data['thumb'])
+        if data['showTitle']:
+            info['Episode'] = data['episode']
+            info['Season'] = data['season']
+            info['TvShowTitle'] = data['showTitle']
+        oPlayer = cPlayer()
+        if self.dialog:
+            try:
+                self.dialog.close()
+            except:
+                pass      
+        listItem.setInfo(type="Video", infoLabels=info)
+        listItem.setProperty('IsPlayable', 'true')
+
+        pluginHandle = oGui.pluginHandle
+        xbmcplugin.setResolvedUrl(pluginHandle, True, listItem)
+        res = oPlayer.startPlayer() #Necessary for autoStream
+        return res
         
     def addToPlaylist(self, siteResult = False):
-        import urlresolver
         oGui = cGui()
-        params = ParameterHandler()
+        logger.info('attempt addToPlaylist')
+        data = self._getInfoAndResolve(siteResult)
+        if not data: return False
 
-        sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('MovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('title')
-        if not sFileName:
-            sFileName = params.getValue('Title')
-        if not sFileName: #nur vorrübergehend
-            sFileName = params.getValue('sMovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('title')
-        sSeason = params.getValue('season')
-        sEpisode = params.getValue('episode')
-        sShowTitle = params.getValue('TvShowTitle')
-        sThumbnail = params.getValue('thumb')
-        if siteResult:
-            sMediaUrl = siteResult['streamUrl']
-            if siteResult['resolved']:
-                sLink = sMediaUrl
-            else:
-                sLink = urlresolver.resolve(sMediaUrl)
-        else:
-            sLink = urlresolver.resolve(sMediaUrl)
-        logger.info('call addToPlaylist: ' + sMediaUrl)
-        logger.info('file link: ' + str(sLink))
-        if (sLink != False):
-            oGuiElement = cGuiElement()
-            oGuiElement.setSiteName(self.SITE_NAME)
-            oGuiElement.setMediaUrl(sLink)
-            oGuiElement.setTitle(sFileName)
-            if sThumbnail:
-                oGuiElement.setThumbnail(sThumbnail)
-            if sShowTitle:
-                oGuiElement.addItemProperties('Episode',sEpisode)
-                oGuiElement.addItemProperties('Season',sSeason)
-                oGuiElement.addItemProperties('TvShowTitle',sShowTitle)
-            if self.dialog:
-                self.dialog.close()
-            oPlayer = cPlayer()
-            oPlayer.addItemToPlaylist(oGuiElement)
-            oGui.showInfo('Playlist', 'Stream wurde hinzugefügt', 5);
-        else:
-            #oGui.showError('Playlist', 'File deleted or Link could not be resolved', 5);
-            return False
-        return True
-        
-        
-    def download(self, siteResult = False):
-        from resources.lib.download import cDownload
-        import urlresolver
-        #oGui = cGui()
-        params = ParameterHandler()
-
-        sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('sFileName')
-        sFileName = params.getValue('sMovieTitle')
-        if siteResult:
-            sMediaUrl = siteResult['streamUrl']
-            if siteResult['resolved']:
-                sLink = sMediaUrl
-            else:
-                sLink = urlresolver.resolve(sMediaUrl)
-        else:
-            sLink = urlresolver.resolve(sMediaUrl)
-        logger.info('call download: ' + sMediaUrl)
-        logger.info('file link: ' + str(sLink))
+        logger.info('addToPlaylist file link: ' + str(data['link']))
+        oGuiElement = cGuiElement()
+        oGuiElement.setSiteName(self.SITE_NAME)
+        oGuiElement.setMediaUrl(data['link'])
+        oGuiElement.setTitle(data['title'])
+        if data['thumb']:
+            oGuiElement.setThumbnail(data['thumb'])
+        if data['showTitle']:
+            oGuiElement.setEpisode(data['episode'])
+            oGuiElement.setSeason(data['season'])
+            oGuiElement.setTVShowTitle(data['showTitle'])
         if self.dialog:
             self.dialog.close()
-        if (sLink != False):
-            oDownload = cDownload()
-            oDownload.download(sLink, 'Stream')
-        else:
-            #cGui().showError('Download', 'File deleted or Link could not be resolved', 5);
-            return False
+        oPlayer = cPlayer()
+        oPlayer.addItemToPlaylist(oGuiElement)
+        oGui.showInfo('Playlist', 'Stream wurde hinzugefügt', 5);
         return True
-        
+
+    def download(self, siteResult = False):
+        from resources.lib.download import cDownload
+        logger.info('attempt download')
+        data = self._getInfoAndResolve(siteResult)
+        if not data: return False
+
+        logger.info('download file link: ' + str(sLink))
+        if self.dialog:
+            self.dialog.close()
+        oDownload = cDownload()
+        oDownload.download(data['link'], data['title'])
+        return True
+
     def sendToPyLoad(self, siteResult = False):
         from resources.lib.handler.pyLoadHandler import cPyLoadHandler
-        import urlresolver
-        params = ParameterHandler()
+        logger.info('attempt download with pyLoad')
+        data = self._getInfoAndResolve(siteResult)
+        if not data: return False
+        cPyLoadHandler().sendToPyLoad(data['title'],data['link'])
+        return True
 
-        sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('MovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('Title')
-        if not sFileName: #nur vorrübergehend
-            sFileName = params.getValue('sMovieTitle')
-        if not sFileName:
-            sFileName = params.getValue('title')
-
-        if siteResult:
-            sMediaUrl = siteResult['streamUrl']
-            if siteResult['resolved']:
-                sLink = sMediaUrl
-            else:
-                sLink = urlresolver.resolve(sMediaUrl)
-        else:
-            sLink = urlresolver.resolve(sMediaUrl)   
-        try:
-            msg = sLink.msg
-        except:
-            msg = False
-        if sLink != False and not msg:
-            logger.info('download with pyLoad: ' + sMediaUrl)
-            cPyLoadHandler().sendToPyLoad(sFileName,sLink)
-            return True
-        else:
-            cGui().showError('xStream', str(msg), 5)
-            return False
-        
     def sendToJDownloader(self, sMediaUrl = False):
         from resources.lib.handler.jdownloaderHandler import cJDownloaderHandler
         params = ParameterHandler()
-        sHosterIdentifier = params.getValue('sHosterIdentifier')
         if not sMediaUrl:            
             sMediaUrl = params.getValue('sMediaUrl')            
         sFileName = params.getValue('sFileName')
@@ -235,7 +173,6 @@ class cHosterGui:
             self.dialog.close()
         logger.info('call send to JDownloader: ' + sMediaUrl)       
         cJDownloaderHandler().sendToJDownloader(sMediaUrl)
-        
 
     def __getPriorities(self, hosterList, filter = True):
         '''
@@ -282,7 +219,6 @@ class cHosterGui:
             hosterQueue.append(hoster)
         return hosterQueue
 
-        
     def stream(self, playMode, siteName, function, url):
         self.dialog = xbmcgui.DialogProgress()
         self.dialog.create('xStream',"get stream/hoster")
@@ -305,7 +241,6 @@ class cHosterGui:
             temp = []
             temp.append(siteResult)
             siteResult = temp
-        
         # field "name" marks hosters
         if 'name' in siteResult[0]:
             functionName = siteResult[-1]
@@ -330,19 +265,19 @@ class cHosterGui:
                 siteResult = siteResult[:self.maxHoster-1]
             if len(siteResult)>1:
                 #choose hoster
-                if cConfig().getSetting('hosterListFolder')=='true':
+                if cConfig().getSetting('hosterSelect')=='list':
                     self.showHosterFolder(siteResult, siteName, functionName)
                     return
                 siteResult = self._chooseHoster(siteResult)
                 if not siteResult:
                     return
-            else:                
+            else:
                 siteResult = siteResult[0]
             # get stream links
             logger.info(siteResult['link'])
             function = getattr(plugin, functionName)
             siteResult = function(siteResult['link'])
-	          
+
             # if result is not a list, make in one
             if not type(siteResult) is list:
                 temp = []
@@ -379,7 +314,7 @@ class cHosterGui:
         for result in siteResult:
             if 'displayedName' in result:
                 titles.append(result['displayedName'])
-            else:                
+            else:
                 titles.append(result['name'])
         index = dialog.select('Hoster wählen', titles)
         if index > -1:
@@ -388,7 +323,6 @@ class cHosterGui:
         else:
             return False
 
-            
     def showHosterFolder(self, siteResult, siteName, functionName):
         oGui = cGui()
         total = len(siteResult)
