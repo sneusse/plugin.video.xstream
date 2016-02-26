@@ -5,12 +5,14 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.config import cConfig
 from resources.lib import logger
+from resources import updateManager
 import xbmc
 import xbmcgui
 import sys
 
 # Main starting function
 def run():
+    updateManager.checkforupdates()
     parseUrl()
 
 
@@ -154,7 +156,7 @@ def parseUrl():
         url = params.getValue('url')
         manual = params.exist('manual')  
            
-        if cConfig().getSetting('hosterSelect')=='auto' and playMode != 'jd' and playMode != 'pyload' and not manual:
+        if cConfig().getSetting('autoPlay')=='true' and playMode != 'jd' and playMode != 'pyload' and not manual:
             cHosterGui().streamAuto(playMode, sSiteName, sFunction)
         else:        
             cHosterGui().stream(playMode, sSiteName, sFunction, url)

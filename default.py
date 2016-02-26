@@ -6,6 +6,10 @@ from sys import path
 import xbmc
 from xbmc import log
 from resources.lib import common
+import pydevd
+
+# Pycharm debugger Config
+pydevd.settrace('localhost', port=5678, stdoutToServer=True, stderrToServer=True)
 
 __settings__ = common.addon
 __cwd__ = common.addonPath
