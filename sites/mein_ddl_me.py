@@ -6,7 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
 SITE_IDENTIFIER = 'mein_ddl_me'
-SITE_NAME = 'Mein_ddl.me'
+SITE_NAME = 'ddl.me'
 URL_MAIN = 'http://de.ddl.me'
 
 def load():
