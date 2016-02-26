@@ -9,6 +9,7 @@ from resources.lib import common
 ROOT_DIR = common.addonPath
 TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
 ADDON_DIR = "\\".join(ROOT_DIR.split("\\")[:-1])
+XSTREAM_DIRNAME = ROOT_DIR.split("\\")[-1]
 
 ## Remote path to download plugin.zip and version file.
 REMOTE_PATH = "https://github.com/sraedler/plugin.video.xstream/archive/master.zip"
@@ -40,7 +41,7 @@ def checkforupdates():
 
         for n in updateFile.namelist():
             if n[-1] != "/":
-                dest = os.path.join(ADDON_DIR, n)
+                dest = os.path.join(ADDON_DIR, XSTREAM_DIRNAME + "/" + "/".join(n.split("/")[1:]))
                 destdir = os.path.dirname(dest)
                 if not os.path.isdir(destdir):
                     os.makedirs(destdir)
