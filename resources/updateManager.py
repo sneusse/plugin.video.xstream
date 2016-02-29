@@ -8,8 +8,8 @@ from resources.lib import common
 ## Installation path.
 ROOT_DIR = common.addonPath
 TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
-ADDON_DIR = "\\".join(ROOT_DIR.split("\\")[:-1])
-XSTREAM_DIRNAME = os.path.abspath(os.path.join(ROOT_DIR, os.pardir))
+ADDON_DIR = os.path.abspath(os.path.join(ROOT_DIR, os.pardir))
+XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
 REMOTE_PATH = "https://github.com/sraedler/plugin.video.xstream/archive/master.zip"
@@ -41,7 +41,7 @@ def checkforupdates():
 
         for n in updateFile.namelist():
             if n[-1] != "/":
-                dest = os.path.join(ADDON_DIR, XSTREAM_DIRNAME + "/" + "/".join(n.split("/")[1:]))
+                dest = os.path.join(ADDON_DIR, XSTREAM_DIRNAME, "/".join(n.split("/")[1:]))
                 destdir = os.path.dirname(dest)
                 if not os.path.isdir(destdir):
                     os.makedirs(destdir)
