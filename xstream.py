@@ -12,7 +12,8 @@ import sys
 
 # Main starting function
 def run():
-    updateManager.checkforupdates()
+    if cConfig().getSetting('autoUpdate')=='false':
+        updateManager.checkforupdates()
     parseUrl()
 
 
