@@ -21,7 +21,7 @@ REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/sraedler/plugin.video.x
 LOCAL_VERSION_FILE = os.path.join(ROOT_DIR, "addon.xml")
 
 ## Full path to the local .zip file. It includes the file name.
-LOCAL_FILE = os.path.join(TEMP_DIR, "xstream_update.zip")
+LOCAL_FILE = os.path.join(TEMP_DIR, "xStream_update.zip")
 
 
 def checkforupdates():
@@ -35,6 +35,7 @@ def checkforupdates():
 
     if (int(remoteTag) > int(localTag)):
         logger.info("New Version Available")
+
         urllib.urlretrieve(REMOTE_PATH, LOCAL_FILE)
 
         updateFile = zipfile.ZipFile(LOCAL_FILE)
@@ -46,6 +47,7 @@ def checkforupdates():
                 if not os.path.isdir(destdir):
                     os.makedirs(destdir)
                 data = updateFile.read(n)
+                os.remove(dest)
                 f = open(dest, 'w')
                 f.write(data)
                 f.close()
