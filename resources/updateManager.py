@@ -36,6 +36,9 @@ def checkforupdates():
     if (int(remoteTag) > int(localTag)):
         logger.info("New Version Available")
 
+        if not os.path.exists(LOCAL_FILE):
+            os.mkdir(TEMP_DIR)
+
         urllib.urlretrieve(REMOTE_PATH, LOCAL_FILE)
 
         updateFile = zipfile.ZipFile(LOCAL_FILE)
