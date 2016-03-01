@@ -41,19 +41,26 @@ URL_THRILLER = URL_MOVIES + 'cat=88'
 URL_WESTERN = URL_MOVIES + 'cat=92'
 
 def load():
-
     oGui = cGui()
-	
    
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
-    oGui.addFolder(cGuiElement('Filme',SITE_IDENTIFIER,'showMovieMenu'))
-    
-    params.setParam('sUrl', URL_SHOWS)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMovieMenu'))
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
+
+def showSeriesMenu():
+    oGui = cGui()
+    params = ParameterHandler()
+
+    params.setParam('sUrl', URL_SHOWS + 'order_f=id&order_d=desc')
+    oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_SHOWS + 'order_f=name&order_d=desc')
+    oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
+
+    oGui.setEndOfDirectory() 
 
 def showMovieMenu():
     oGui = cGui()
