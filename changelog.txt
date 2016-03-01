@@ -1,4 +1,26 @@
-﻿- Version 2.1.15 - 13.09.2015
+﻿- Version 2.1.16
+================================================================================
+    - fix:
+       - M4K fix hoster detection for a few cases [thx viper2k4]
+       - BS fix for serveral platforms        
+       - Seriesever & Moviesever [thx Seberoth]
+       - handle non ASCII chars in WIN username (can still fail due dependencies)
+       - keep trying other hosters if Kodi player times out on valid link
+        
+    - add:
+       - BS add movies [thx versable]
+       - Filmplalast [thx versable]
+       - Szene-streams [thx versable]
+       - Kinox split episodes in seasons [thx versable]
+       - context option to search the selected item in other site-plugins
+       - dynamic settings for site-plugins
+       - mutli threaded global search
+       - new icons and fanart [thx StoneOfStones]
+       - one setting for hoster selection mode, so modes exclude each other
+        
+            
+
+- Version 2.1.15 - 13.09.2015
 ================================================================================
     - fix: BS
     - fix: M4K encoding problems
