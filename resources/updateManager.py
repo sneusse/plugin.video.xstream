@@ -10,7 +10,6 @@ from resources.lib import common
 ## Installation path.
 ROOT_DIR = common.addonPath
 TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
-ADDON_DIR = os.path.abspath(os.path.join(ROOT_DIR, os.pardir))
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
