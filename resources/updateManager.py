@@ -1,8 +1,10 @@
 import urllib
 import os
+import xml.etree.ElementTree as ET
 import zipfile
 import logger
 import xbmc
+from distutils.version import LooseVersion as V
 from resources.lib import common
 
 ## Installation path.
@@ -28,12 +30,12 @@ def checkforupdates():
     logger.info("xStream checkforupdates")
 
     remoteVersionXML = urllib.urlopen(REMOTE_VERSION_FILE).read()
-    remoteTag = remoteVersionXML.split("name=\"xStream\"\n\tversion=\"")[1].split("\"\n\tprovider")[0].translate(None, '.')
+    remoteVersion = ET.fromstring(remoteVersionXML).attrib['version']
 
     localVersionXML = open(LOCAL_VERSION_FILE).read()
-    localTag = localVersionXML.split("name=\"xStream\"\n\tversion=\"")[1].split("\"\n\tprovider")[0].translate(None, '.')
+    localVersion = ET.fromstring(localVersionXML).attrib['version']
 
-    if (int(remoteTag) > int(localTag)):
+    if (V(remoteVersion) > V(localVersion)):
         logger.info("New Version Available")
 
         if not os.path.exists(LOCAL_FILE):
@@ -45,7 +47,7 @@ def checkforupdates():
 
         for n in updateFile.namelist():
             if n[-1] != "/":
-                dest = os.path.join(ADDON_DIR, XSTREAM_DIRNAME, "/".join(n.split("/")[1:]))
+                dest = os.path.join(ROOT_DIR, "/".join(n.split("/")[1:]))
                 destdir = os.path.dirname(dest)
                 if not os.path.isdir(destdir):
                     os.makedirs(destdir)
