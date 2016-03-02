@@ -19,9 +19,6 @@ REMOTE_PATH = "https://github.com/sraedler/plugin.video.xstream/archive/master.z
 ## Full path of the remote file version.
 REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/sraedler/plugin.video.xstream/master/addon.xml"
 
-## Full path of the local file version.
-LOCAL_VERSION_FILE = os.path.join(ROOT_DIR, "addon.xml")
-
 ## Full path to the local .zip file. It includes the file name.
 LOCAL_FILE = os.path.join(TEMP_DIR, "xStream_update.zip")
 
@@ -32,10 +29,7 @@ def checkforupdates():
     remoteVersionXML = urllib.urlopen(REMOTE_VERSION_FILE).read()
     remoteVersion = ET.fromstring(remoteVersionXML).attrib['version']
 
-    localVersionXML = open(LOCAL_VERSION_FILE).read()
-    localVersion = ET.fromstring(localVersionXML).attrib['version']
-
-    if (V(remoteVersion) > V(localVersion)):
+    if (V(remoteVersion)>V(common.addon.getAddonInfo('version'))):
         logger.info("New Version Available")
 
         if not os.path.exists(LOCAL_FILE):
