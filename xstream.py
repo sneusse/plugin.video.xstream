@@ -85,7 +85,7 @@ def updateMeta(params):
             if mediaType == 'movie':
                 items.append(str(item['title'].encode('utf-8'))+' ('+str(item['year'])+')')                   
             elif mediaType == 'tvshow':
-                if len(item)>2:items.append(str(item[1])+' ('+str(item[3])+')')
+                if len(item)>2:items.append(str(item[1]))
                 else: items.append(str(item[1]))
             else:
                 return
@@ -154,7 +154,7 @@ def parseUrl():
         url = params.getValue('url')
         manual = params.exist('manual')  
            
-        if cConfig().getSetting('autoPlay')=='true' and playMode != 'jd' and playMode != 'pyload' and not manual:
+        if cConfig().getSetting('hosterSelect')=='auto' and playMode != 'jd' and playMode != 'pyload' and not manual:
             cHosterGui().streamAuto(playMode, sSiteName, sFunction)
         else:        
             cHosterGui().stream(playMode, sSiteName, sFunction, url)
