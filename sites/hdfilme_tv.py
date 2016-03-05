@@ -18,7 +18,6 @@ SITE_ICON = 'hdfilme.png'
 URL_MAIN = 'http://hdfilme.tv/'
 URL_LOGIN = URL_MAIN + 'login.html?'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
-URL_CINEMA_MOVIES = URL_MAIN + 'movie-cinemas?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie/search?key='
 
@@ -66,8 +65,6 @@ def showMovieMenu():
     oGui = cGui()
     params = ParameterHandler()
 
-    params.setParam('sUrl', URL_CINEMA_MOVIES)
-    oGui.addFolder(cGuiElement('Kinofilme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MOVIES)
     oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showMovieGenre'))   
