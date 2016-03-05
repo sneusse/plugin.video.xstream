@@ -218,7 +218,7 @@ def showLinks(sUrl =False, sName = False):
     oRequest = cRequestHandler(sUrl)
     sHtmlContent = oRequest.request()
 
-    pattern = 'var config = .*?(\[.*?\])'            
+    pattern = 'var hdfilme_vip = .*?(\[.*?\])'            
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if ((not 'http' in str(aResult)) or (not 'https' in str(aResult))):
