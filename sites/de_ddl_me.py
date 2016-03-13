@@ -5,8 +5,10 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
-SITE_IDENTIFIER = 'mein_ddl_me'
-SITE_NAME = 'ddl.me'
+SITE_IDENTIFIER = 'de_ddl_me'
+SITE_NAME = 'de.ddl.me'
+SITE_ICON = 'ddl.png'
+
 URL_MAIN = 'http://de.ddl.me'
 
 def load():
