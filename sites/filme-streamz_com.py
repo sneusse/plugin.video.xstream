@@ -5,10 +5,9 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
-
-
 SITE_IDENTIFIER = 'filme-streamz_com'
 SITE_NAME = 'Filme-Streamz.com'
+SITE_ICON = 'filmestreamz.png'
 
 URL_MAIN = 'http://filme-streamz.com'
 
