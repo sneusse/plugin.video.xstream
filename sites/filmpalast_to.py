@@ -14,7 +14,7 @@ SITE_IDENTIFIER = 'filmpalast_to'
 SITE_NAME = 'FilmPalast.to'
 SITE_ICON = 'filmpalast.png'
 
-URL_MAIN = 'http://www.filmpalast.to/'
+URL_MAIN = 'http://filmpalast.to/'
 URL_STREAM = URL_MAIN + 'stream/%d/1'
 URL_MOVIES_NEW = URL_MAIN + 'movies/new/'
 URL_MOVIES_TOP = URL_MAIN + 'movies/top/'
@@ -51,6 +51,7 @@ def showGenre():
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEntries')
         params.setParam('sUrl', sUrl)
         oGui.addFolder(oGuiElement, params)
+    oGui.setView('movies')
     oGui.setEndOfDirectory()
 
 def showAlphaNumeric():
@@ -68,6 +69,7 @@ def showAlphaNumeric():
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEntries')
         params.setParam('sUrl', sUrl)
         oGui.addFolder(oGuiElement, params)
+    oGui.setView('movies')
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
@@ -97,6 +99,7 @@ def showEntries(entryUrl = False, sGui = False):
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', aResult[1][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+    oGui.setView('movies')
     oGui.setEndOfDirectory()
 
 # Show the hosters dialog
@@ -105,7 +108,7 @@ def showHosters():
     oRequest = cRequestHandler(params.getValue('entryUrl'))
     sHtmlContent = oRequest.request()
     pattern = '<p[^>]*class="hostName"[^>]*>([^<>]+)</p>.*?'
-    pattern += '<a[^>]*class="[^"]*stream-src[^"]*"[^>]*data-id="([^"]+)"[^>]*>'
+    pattern += '<a[^>]*class="[^"]*stream-src[^"]*"[^>]*data-id="([^"]+)"[^>].*?>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0]:
         return

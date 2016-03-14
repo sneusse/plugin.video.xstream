@@ -88,7 +88,7 @@ def updateMeta(params):
             if mediaType == 'movie':
                 items.append(str(item['title'].encode('utf-8'))+' ('+str(item['year'])+')')                   
             elif mediaType == 'tvshow':
-                if len(item)>2:items.append(str(item[1])+' ('+str(item[3])+')')
+                if len(item)>2:items.append(str(item[1])+' (IMDb-ID: '+str(item[2])+')')
                 else: items.append(str(item[1]))
             else:
                 return
