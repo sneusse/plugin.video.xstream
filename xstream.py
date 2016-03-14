@@ -5,12 +5,15 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.config import cConfig
 from resources.lib import logger
+from resources import updateManager
 import xbmc
 import xbmcgui
 import sys
 
 # Main starting function
 def run():
+    if cConfig().getSetting('autoUpdate')=='true':
+        updateManager.checkforupdates()
     parseUrl()
 
 
