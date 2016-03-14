@@ -13,10 +13,10 @@ TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
-REMOTE_PATH = "https://github.com/sraedler/plugin.video.xstream/archive/master.zip"
+REMOTE_PATH = "https://github.com/StoneOffStones/plugin.video.xstream/archive/beta.zip"
 
 ## Full path of the remote file version.
-REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/sraedler/plugin.video.xstream/master/addon.xml"
+REMOTE_VERSION_FILE = "https://raw.githubusercontent.com/StoneOffStones/plugin.video.xstream/beta/addon.xml"
 
 ## Full path to the local .zip file. It includes the file name.
 LOCAL_FILE = os.path.join(TEMP_DIR, "xStream_update.zip")
