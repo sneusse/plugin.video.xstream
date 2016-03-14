@@ -8,7 +8,7 @@ from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib import blazingfast
 import sys
 
-SITE_IDENTIFIER = 'kinoleak'
+SITE_IDENTIFIER = 'kinoleak_tv'
 SITE_NAME = 'KinoLeak.Tv'
 SITE_ICON = 'kinoleak.png'
 
