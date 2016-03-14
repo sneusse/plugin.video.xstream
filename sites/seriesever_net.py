@@ -151,14 +151,13 @@ def showSeries(sUrl=False):
     pages = 1
 
     if aResult[0]:
-        if RepresentsInt(aResult[1][-1][0]):
+        if representsInt(aResult[1][-1][0]):
             pages = aResult[1][-1][0]
 
     oGui = cGui()
 
     # because sometimes 2 pages have the same content
     dupeCheck = []
-
     for x in range(1, int(pages) + 1):
         dupeCheck = showSeriesPage(oGui, sUrl, x, dupeCheck)
 
@@ -186,7 +185,7 @@ def showFrontPage():
             # Special fix for non-int episode numbers (like Attack on Titan 13.5)
             # Can't even check this on thetvdb.com, because AOT 13.5 for example is Season 0 Episode 1
             # May I can use "<airsbefore_episode>" and "<airsbefore_season>" for metadata
-            if RepresentsInt(episode):
+            if representsInt(episode):
                 guiElement.setEpisode(episode)
 
             guiElement.setTVShowTitle(title)
@@ -299,7 +298,7 @@ def showEpisodes():
             # Special fix for non-int episode numbers (like Attack on Titan 13.5)
             # Can't even check this on thetvdb.com, because AOT 13.5 for example is Season 0 Episode 1
             # May I can use "<airsbefore_episode>" and "<airsbefore_season>" for metadata
-            if RepresentsInt(eNr):
+            if representsInt(eNr):
                 guiElement.setEpisode(eNr)
 
             guiElement.setTVShowTitle(sTitle)
@@ -311,7 +310,7 @@ def showEpisodes():
     oGui.setEndOfDirectory()
 
 
-def RepresentsInt(s):
+def representsInt(s):
     try:
         int(s)
         return True

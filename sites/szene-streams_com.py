@@ -69,7 +69,6 @@ def showGenre():
 
 def showEntries(sContent = False, sGui = False):
     oGui = sGui if sGui else cGui()
-    oGui.setView('movie')
     params = ParameterHandler()
     if sContent:
         sHtmlContent = sContent
@@ -106,6 +105,7 @@ def showEntries(sContent = False, sGui = False):
             params.setParam('mediaTypePageId', page)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
             break
+    oGui.setView('movies')
     if not sGui:
         oGui.setEndOfDirectory()
 
@@ -139,7 +139,7 @@ def showHosters():
         hname = "Part %d - %s" % (idx, hname)
         idx += 1
 
-        hoster['name'] = hname
+        hoster['name'] = previousName
         hoster['displayedName'] = hname
         hosters.append(hoster)
     if hosters:
@@ -182,7 +182,7 @@ def getHosterUrl(sUrl = False):
     return results
 
 def getHosterName(name):
-    return re.compile('^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n]+)', flags=re.I | re.M).findall(name)[0]
+    return re.compile('^(?:https?:\/\/)?(?:www\.)?(?:[^@\n]+@)?([^:\/\n]+)', flags=re.I | re.M).findall(name)[0]
 
 # Search using the requested string sSearchText
 def _search(oGui, sSearchText):
@@ -190,7 +190,6 @@ def _search(oGui, sSearchText):
     data = getSearchResult(sSearchText, URL_MOVIES)
     data += getSearchResult(sSearchText, URL_SHOWS)
     showEntries(data, oGui)
-    oGui.setEndOfDirectory()
 
 def getSearchResult(sSearchText, url):
     oRequest = cRequestHandler(url)
