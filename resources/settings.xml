@@ -11,7 +11,7 @@
         <setting default="600" id="cacheTime" label="30006" type="number" />
         <setting default="false" id="showAdult" label="30003" type="bool" />
         <setting default="false" id="autoUpdate" label="30010" type="bool" />
-        <setting default="false" id="autoUpdate" label="30010" type="bool" />
+        <setting default="false" id="useBeta" label="30011" type="bool" />
         <setting type="sep" />
     </category> 
     <category label="30022">       
