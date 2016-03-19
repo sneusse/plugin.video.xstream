@@ -11,8 +11,7 @@
         <string id="30007">show hosterlist as folder</string>
         <string id="30008">metahandler replaces infos from site</string>
         <string id="30009">Pre-validate and sort hosterlist (slow on weak systems)</string>
-        <string id="30010">xStream Auto-Update</string>
-        <string id="30011">Use Beta for Auto-Update</string>
+        <string id="30010">xStream Auto-Update-Branch</string>
 
         <!-- settingtabs begin by 30021 - 30030 -->
         <string id="30021">General</string>

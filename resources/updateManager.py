@@ -29,8 +29,8 @@ LOCAL_FILE = os.path.join(TEMP_DIR, "xStream_update.zip")
 def checkforupdates():
     logger.info("xStream checkforupdates")
 
-    REMOTE_PATH = REMOTE_PATH_BETA if (cConfig().getSetting('useBeta') == "true") else REMOTE_PATH_MASTER
-    REMOTE_VERSION_FILE = REMOTE_VERSION_FILE_BETA if (cConfig().getSetting('useBeta') == "true") else REMOTE_VERSION_FILE_MASTER
+    REMOTE_PATH = REMOTE_PATH_BETA if (cConfig().getSetting('UpdateSetting') == "BETA") else REMOTE_PATH_MASTER
+    REMOTE_VERSION_FILE = REMOTE_VERSION_FILE_BETA if (cConfig().getSetting('UpdateSetting') == "BETA") else REMOTE_VERSION_FILE_MASTER
 
     logger.info("Remote Path: " + REMOTE_PATH)
 
