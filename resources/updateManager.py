@@ -8,6 +8,7 @@ import xbmcgui
 from resources.lib.config import cConfig
 from distutils.version import LooseVersion as V
 from resources.lib import common
+from resources.lib import download
 
 ## Installation path.
 ROOT_DIR = common.addonPath
@@ -22,8 +23,8 @@ REMOTE_PATH_MASTER = "https://github.com/Lynx187/plugin.video.xstream/archive/ma
 REMOTE_VERSION_FILE_BETA = "https://raw.githubusercontent.com/StoneOffStones/plugin.video.xstream/beta/addon.xml"
 REMOTE_VERSION_FILE_MASTER = "https://raw.githubusercontent.com/Lynx187/plugin.video.xstream/master/addon.xml"
 
-## Full path to the local .zip file. It includes the file name.
-LOCAL_FILE = os.path.join(TEMP_DIR, "xStream_update.zip")
+## Filename of the update File.
+LOCAL_FILE_NAME = "xStream_update.zip"
 
 
 def checkforupdates():
@@ -43,19 +44,11 @@ def checkforupdates():
     if (V(remoteVersion)>V(common.addon.getAddonInfo('version'))):
         logger.info("New Version Available")
 
-        progressDialog = "Update xStream auf Version: " + ("Beta" if (cConfig().getSetting('useBeta') == "true") else "Master")
-        progress = xbmcgui.DialogProgressBG()
-        progress.create(progressDialog)
+        download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
 
-        if not os.path.exists(LOCAL_FILE):
-            os.mkdir(TEMP_DIR)
-
-        urllib.urlretrieve(REMOTE_PATH, LOCAL_FILE)
-
-        updateFile = zipfile.ZipFile(LOCAL_FILE)
+        updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
 
         for index, n in enumerate(updateFile.namelist()):
-            percentage = index * 100 / len(updateFile.namelist())
             if n[-1] != "/":
                 dest = os.path.join(ROOT_DIR, "/".join(n.split("/")[1:]))
                 destdir = os.path.dirname(dest)
@@ -67,7 +60,5 @@ def checkforupdates():
                 f = open(dest, 'w')
                 f.write(data)
                 f.close()
-            progress.update(percentage, progressDialog)
         updateFile.close()
         logger.info("Update Successful")
-        progress.close()

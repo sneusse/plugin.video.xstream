@@ -1,11 +1,13 @@
 from resources.lib.gui.gui import cGui
 from resources.lib.config import cConfig
+from resources.lib import common
 import urllib2
 import xbmc
 import xbmcgui
 import string
 import logger
 import time
+import os
 
 class cDownload:
 
@@ -20,7 +22,7 @@ class cDownload:
         filename = filename.replace(' ','_')
         return filename
 
-    def download(self,url, sTitle):
+    def download(self, url, sTitle, showDialog = True):
         self.__processIsCanceled = False
         # extract header
         try: header = dict([item.split('=') for item in (url.split('|')[1]).split('&')])
@@ -30,27 +32,41 @@ class cDownload:
         url = url.split('|')[0]    
         sTitle = self.__createTitle(url, sTitle)
         self.__sTitle = self.__createDownloadFilename(sTitle)
-        
-        oGui = cGui()
-        self.__sTitle = oGui.showKeyBoard(self.__sTitle)
-        if (self.__sTitle != False and len(self.__sTitle) > 0):
-            sPath = cConfig().getSetting('download-folder')
 
-            if sPath == '':
-                dialog = xbmcgui.Dialog()
-                sPath = dialog.browse(3, 'Downloadfolder', 'files', '')
+        if showDialog:
+            oGui = cGui()
+            self.__sTitle = oGui.showKeyBoard(self.__sTitle)
 
-            if (sPath != ''):                
-                sDownloadPath = xbmc.translatePath(sPath +  '%s' % (self.__sTitle, )).decode('utf-8')
-                try:
-                    logger.info('download file: ' + str(url) + ' to ' + str(sDownloadPath))
-                    self.__createProcessDialog()
-                    request = urllib2.Request(url, headers=header)
-                    self.__download(urllib2.urlopen(request), sDownloadPath)   
-                except Exception as e:
-                    logger.error(e)
+            if (self.__sTitle != False and len(self.__sTitle) > 0):
+                sPath = cConfig().getSetting('download-folder')
 
-                self.__oDialog.close()
+                if sPath == '':
+                    dialog = xbmcgui.Dialog()
+                    sPath = dialog.browse(3, 'Downloadfolder', 'files', '')
+
+                if (sPath != ''):
+                    sDownloadPath = xbmc.translatePath(sPath +  '%s' % (self.__sTitle, )).decode('utf-8')
+                    self.__prepareDownload(url, header, sDownloadPath)
+
+        elif self.__sTitle != False:
+            temp_dir = os.path.join(common.addonPath, "TEMP")
+
+            if not os.path.isdir(temp_dir):
+                os.makedirs(os.path.join(temp_dir))
+
+            self.__prepareDownload(url, header, os.path.join(temp_dir, sTitle))
+
+
+    def __prepareDownload(self, url, header, sDownloadPath):
+        try:
+            logger.info('download file: ' + str(url) + ' to ' + str(sDownloadPath))
+            self.__createProcessDialog()
+            request = urllib2.Request(url, headers=header)
+            self.__download(urllib2.urlopen(request), sDownloadPath)
+        except Exception as e:
+            logger.error(e)
+
+        self.__oDialog.close()
 
     def __download(self, oUrlHandler, fpath):
         headers = oUrlHandler.info()
