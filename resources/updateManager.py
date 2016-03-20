@@ -38,10 +38,13 @@ def checkforupdates():
     remoteVersionXML = urllib.urlopen(REMOTE_VERSION_FILE).read()
     remoteVersion = ET.fromstring(remoteVersionXML).attrib['version']
 
+    localVersionXML = open(os.path.join(ROOT_DIR, "addon.xml")).read()
+    localVersion = ET.fromstring(localVersionXML).attrib['version']
+
     logger.info("Old Version: " + common.addon.getAddonInfo('version'))
     logger.info("New Version: " + remoteVersion)
 
-    if (V(remoteVersion)>V(common.addon.getAddonInfo('version'))):
+    if (V(remoteVersion)>V(localVersion)):
         logger.info("New Version Available")
 
         download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
