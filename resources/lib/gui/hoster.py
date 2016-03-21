@@ -65,8 +65,8 @@ class cHosterGui:
         if not msg:
             msg = 'Stream nicht mehr verfügbar oder Link fehlerhaft'
             oGui.showError('xStream',str(msg),7)
-        if hasattr(sLink, 'code'):
-            logger.info(str(msg) +' UnresolveableCode: '+ str(sLink.code))
+        if hasattr(link, 'code'):
+            logger.info(str(msg) +' UnresolveableCode: '+ str(link.code))
         else:
             logger.info(str(msg) +' UnresolveableCode: - ')
         '''
@@ -199,6 +199,10 @@ class cHosterGui:
 
         #handles multihosters but is about 10 times slower
         for hoster in hosterList:
+            # accept hoster which is marked as resolveable by sitePlugin
+            if hoster.get('resolveable',False):
+                ranking.append([0,hoster])
+                continue
             source = urlresolver.HostedMediaFile(host=hoster['name'].lower(), media_id='dummy')
             if source:
                 priority = False

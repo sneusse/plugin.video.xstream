@@ -3,13 +3,17 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
+<<<<<<< HEAD
 from resources.lib.config import cConfig
+=======
+>>>>>>> Lynx187/master
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
 import re, json
 
+<<<<<<< HEAD
 
 SITE_IDENTIFIER = 'hdfilme_tv'
 SITE_NAME = 'HDfilme.TV'
@@ -90,6 +94,29 @@ def showMovieGenre():
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     
     # Liste abschließen
+=======
+SITE_IDENTIFIER = 'hdfilme_tv'
+SITE_NAME = 'HDfilme.tV'
+SITE_ICON = 'hdfilme.png'
+
+URL_MAIN = 'http://hdfilme.tv/'
+URL_MOVIES = URL_MAIN + 'movie-movies'
+URL_CINEMA_MOVIES = URL_MAIN + 'movie-cinemas'
+URL_SHOWS = URL_MAIN + 'movie-series'
+URL_SEARCH = URL_MAIN + 'movie/search?key='
+
+def load():
+    logger.info("Load %s" % SITE_NAME)
+    oGui = cGui()
+    params = ParameterHandler()
+    params.setParam('sUrl', URL_MOVIES)
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_CINEMA_MOVIES)
+    oGui.addFolder(cGuiElement('Kinofilme', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_SHOWS)
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+>>>>>>> Lynx187/master
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
@@ -98,7 +125,11 @@ def showEntries(entryUrl = False, sGui = False):
     if not entryUrl: entryUrl = params.getValue('sUrl')
     iPage = int(params.getValue('page'))
     if iPage > 0:
+<<<<<<< HEAD
         oRequest = cRequestHandler(entryUrl + '&per_page=' + str(iPage * 50))
+=======
+        oRequest = cRequestHandler(entryUrl + '?per_page=' + str(iPage * 50))
+>>>>>>> Lynx187/master
     else:
         oRequest = cRequestHandler(entryUrl)
 
@@ -109,13 +140,21 @@ def showEntries(entryUrl = False, sGui = False):
         oGui.setView('movies')
 
     # Filter out the main section
+<<<<<<< HEAD
     pattern = '<ul class="products row">.*?</ul>'
+=======
+    pattern = '<ul class="products row">(.*?)</ul>'
+>>>>>>> Lynx187/master
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0] or not aResult[1][0]: return
     sMainContent = aResult[1][0]
 
     # Grab the link
+<<<<<<< HEAD
     pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*?'
+=======
+    pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*'
+>>>>>>> Lynx187/master
     pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?'
     # Grab the thumbnail
     pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?'
@@ -148,8 +187,13 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params)
 
+<<<<<<< HEAD
     pattern = '<ul[^>]*class="pagination[^>]*>.*'
     pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
+=======
+    pattern = '<ul[^>]*class="pagination[^>]*>.*?'
+    pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*?</ul>'
+>>>>>>> Lynx187/master
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
         params.setParam('page', int(aResult[1][0]))
@@ -187,13 +231,18 @@ def showEpisodes(aResult, params):
         oGui.addFolder(oGuiElement, params)
     oGui.setEndOfDirectory()
 
+<<<<<<< HEAD
 def showLinks(sUrl =False, sName = False):
+=======
+def showLinks(sUrl = False, sName = False):
+>>>>>>> Lynx187/master
     oGui = cGui()
     params = ParameterHandler()
     sUrl = sUrl if sUrl else params.getValue('sUrl')
     sName = sName if sName else params.getValue('sName')
     oRequest = cRequestHandler(sUrl)
     sHtmlContent = oRequest.request()
+<<<<<<< HEAD
 
     pattern = 'var hdfilme_vip = .*?(\[.*?\])'            
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -204,6 +253,12 @@ def showLinks(sUrl =False, sName = False):
 
     if not aResult[0] or not aResult[1][0]: return 
         
+=======
+    pattern = 'var newlink = (.*?);'
+    aResult = cParser().parse(sHtmlContent, pattern)
+    if not aResult[0] or not aResult[1][0]: return
+
+>>>>>>> Lynx187/master
     for aEntry in json.loads(aResult[1][0]):
         if 'file' not in aEntry or 'label' not in aEntry: continue
         sLabel = sName + ' - ' + aEntry['label'].encode('utf-8')

@@ -77,7 +77,7 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     oRequest = cRequestHandler(entryUrl)
-    oGui.setView('tvshows' if 'serien/' in entryUrl else 'movie')
+    oGui.setView('tvshows' if 'serien/' in entryUrl else 'movies')
     sHtmlContent = oRequest.request()
     # Grab the link and title
     pattern = '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>[^<]*'
@@ -99,8 +99,13 @@ def showEntries(entryUrl = False, sGui = False):
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', aResult[1][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+<<<<<<< HEAD
     oGui.setView('movies')
     oGui.setEndOfDirectory()
+=======
+    if not sGui:	
+        oGui.setEndOfDirectory()
+>>>>>>> Lynx187/master
 
 # Show the hosters dialog
 def showHosters():
@@ -141,12 +146,12 @@ def showSearch():
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
     _search(oGui, sSearchText)
+    oGui.setEndOfDirectory()
 
 # Search using the requested string sSearchText
 def _search(oGui, sSearchText):
     if not sSearchText: return
     showEntries(URL_SEARCH + sSearchText, oGui)
-    oGui.setEndOfDirectory()
 
 def __checkUrl(url):
     return url if 'http:' in url else URL_MAIN + url
