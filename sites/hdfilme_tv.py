@@ -93,25 +93,41 @@ def showMovieGenre():
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
+    # GUI-Element erzeugen wenn nötig
     oGui = sGui if sGui else cGui()
+
+    # ParameterHandler erzeugen
     params = ParameterHandler()
+
+    # URL ermitteln falls nicht übergeben
     if not entryUrl: entryUrl = params.getValue('sUrl')
+
+    # Aktuelle Seite ermitteln und ggf. URL anpassen
     iPage = int(params.getValue('page'))
     if iPage > 0:
         oRequest = cRequestHandler(entryUrl + '&per_page=' + str(iPage * 50))
     else:
         oRequest = cRequestHandler(entryUrl)
 
+    # Daten ermitteln
     sHtmlContent = oRequest.request()
-    if URL_SHOWS in entryUrl:
-        oGui.setView('tvshows')
-    else:
-        oGui.setView('movies')
+    
+    # Prüfen ob es sich um einen Film oder um eine Serie handelt
+    isTvshow = True if URL_SHOWS in entryUrl else False
+
+    # View ensprechent der URL anpassen
+    oGui.setView('tvshows' if isTvshow else 'movies')
 
     # Filter out the main section
     pattern = '<ul class="products row">.*?</ul>'
     aResult = cParser().parse(sHtmlContent, pattern)
-    if not aResult[0] or not aResult[1][0]: return
+
+    # Funktion verlassen falls keine Daten ermittelt werden konnten
+    if not aResult[0] or not aResult[1][0]: 
+        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        return
+
+    # Content festlegen der geparst werden soll
     sMainContent = aResult[1][0]
 
     # Grab the link
@@ -125,45 +141,73 @@ def showEntries(entryUrl = False, sGui = False):
     # Grab the description
     pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
 
+    # HTML parsen
     aResult = cParser().parse(sMainContent, pattern)
+
+    # Kein Einträge gefunden? => Raus hier
     if not aResult[0]: return
+
+    # Alle Ergebnisse durchlaufen
     for sUrl, sThumbnail, sName, sDesc in aResult[1]:
-        # Grab the year (for movies)
+        # Bei Filmen das Jahr vom Title trennen
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
         iYear = False
         for name, year in aYear:
             sName = name
             iYear = year
             break;
+
+        # Listen-Eintrag erzeugen
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+
+        # Thumbnail und Beschreibung für Anzeige anpassen
+        sThumbnail = sThumbnail.replace('_thumb', '')
+        sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+
+        # Falls vorhanden Jahr ergänzen
         if iYear:
             oGuiElement.setYear(iYear)
-        oGuiElement.setMediaType('movie')
-        sThumbnail = sThumbnail.replace('_thumb', '')
+
+        # Eigenschaften setzen und Listeneintrag hinzufügen
         oGuiElement.setThumbnail(sThumbnail)
-        sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params)
 
+    # Pattern um die Aktuelle Seite zu ermitteln
     pattern = '<ul[^>]*class="pagination[^>]*>.*'
     pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
+
+    # Seite parsen
     aResult = cParser().parse(sHtmlContent, pattern)
+
+    # Falls ein Ergebniss gefunden wurden "Next-Page" ergänzen
     if aResult[0] and aResult[1][0]:
         params.setParam('page', int(aResult[1][0]))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
+    # Liste abschließen
     oGui.setEndOfDirectory()
 
 def showHosters():
+    # ParameterHandler erzeugen
     params = ParameterHandler()
+    
+    # URL Anpassen um die Stream und nicht die Infos zu bekommen
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
+
+    # Seite abrufen
     oRequest = cRequestHandler(entryUrl)
     sHtmlContent = oRequest.request()
-    # Check if the page contains episodes
+
+    # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
+
+    # Falls Episoden gefunden worden => Episodenauswahl vorschalten
     if aResult[0] and len(aResult[1]) > 1:
         showEpisodes(aResult[1], params)
     else:
@@ -178,6 +222,7 @@ def showEpisodes(aResult, params):
     for iEpisode, sUrl in aResult:
         sName = 'Folge ' + str(iEpisode)
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showLinks')
+        oGuiElement.setMediaType('episode')
         oGuiElement.setSeason(iSeason)
         oGuiElement.setEpisode(iEpisode)
         if sThumbnail:
