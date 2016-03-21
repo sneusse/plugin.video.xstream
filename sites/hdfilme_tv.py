@@ -21,47 +21,72 @@ URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie/search?key='
 
+URL_PARMS_ORDER_ID = 'order_f=id&order_d=desc'
+URL_PARMS_ORDER_NAME = 'order_f=name&order_d=desc'
+
 def load():
-    oGui = cGui()
-   
+    # Logger-Eintrag
     logger.info("Load %s" % SITE_NAME)
-    oGui = cGui()
-    params = ParameterHandler()
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMovieMenu'))
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'))
-    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
-    oGui.setEndOfDirectory()
-
-def showSeriesMenu():
-    oGui = cGui()
-    params = ParameterHandler()
-
-    params.setParam('sUrl', URL_SHOWS + 'order_f=id&order_d=desc')
-    oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + 'order_f=name&order_d=desc')
-    oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
-
-    oGui.setEndOfDirectory() 
-
-def showMovieMenu():
-    oGui = cGui()
-    params = ParameterHandler()
-
-    params.setParam('sUrl', URL_MOVIES)
-    oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showMovieGenre'))   
-    
-    oGui.setEndOfDirectory()     
-
-def showMovieGenre():
+	
     # GUI-Element erzeugen
     oGui = cGui()
 
     # ParameterHandler erzeugen
     params = ParameterHandler()
 
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMovieMenu'))
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'))
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+    oGui.setEndOfDirectory()
+
+def showSeriesMenu():
+   # GUI-Element erzeugen
+    oGui = cGui()
+
+    # ParameterHandler erzeugen
+    params = ParameterHandler()
+
+    # Einträge anlegen
+    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_ID)
+    oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME)
+    oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME)
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
+
+    # Liste abschließen
+    oGui.setEndOfDirectory() 
+
+def showMovieMenu():
+    # GUI-Element erzeugen
+    oGui = cGui()
+
+    # ParameterHandler erzeugen
+    params = ParameterHandler()
+
+    # Einträge anlegen
+    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_ID)
+    oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME)
+    oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME)
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
+    
+    # Liste abschließen
+    oGui.setEndOfDirectory()     
+
+def showGenreList():
+    # GUI-Element erzeugen
+    oGui = cGui()
+
+    # ParameterHandler erzeugen
+    params = ParameterHandler()
+
+    # URL vom ParameterHandler ermitteln
+    entryUrl = params.getValue('sUrl')
+
     # Movie-Seite laden
-    oRequestHandler = cRequestHandler(URL_MOVIES)
+    oRequestHandler = cRequestHandler(entryUrl)
     sHtmlContent = oRequestHandler.request()
 
     # Select für Generes Laden
@@ -86,7 +111,7 @@ def showMovieGenre():
 
     # Alle Genres durchlaufen und Liste erzeugen
     for sID,sGenre in aResult[1]:
-        params.setParam('sUrl',URL_MOVIES + 'cat=' + sID)
+        params.setParam('sUrl',entryUrl + 'cat=' + sID)
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     
     # Liste abschließen
@@ -267,15 +292,28 @@ def play(sUrl = False):
     results.append(result)
     return results
 
-# Show the search dialog, return/abort on empty input
+# Sucher über UI
 def showSearch():
+    # Gui-Elemet erzeugen
     oGui = cGui()
+
+    # Tastatur anzeigen und Eingabe ermitteln
     sSearchText = oGui.showKeyBoard()
+
+    # Keine Eingabe? => raus hier
     if not sSearchText: return
+    
+    # Suche durchführen
     _search(oGui, sSearchText)
 
-# Search using the requested string sSearchText
+# Such-Funktion (z.b auch für Globale-Suche)
 def _search(oGui, sSearchText):
+    # Keine Eingabe? => raus hier
     if not sSearchText: return
-    showEntries(URL_SEARCH + sSearchText, oGui)
-    oGui.setEndOfDirectory()
+    
+    # Suche durchführen
+    oRequest = cRequestHandler(URL_SEARCH + sSearchText)
+    data = oRequest.request()
+    
+    # Ergebniss anzeigen
+    showEntries(data, oGui)
