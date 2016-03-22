@@ -30,8 +30,8 @@ LOCAL_FILE_NAME = "xStream_update.zip"
 def checkforupdates():
     logger.info("xStream checkforupdates")
 
-    REMOTE_PATH = REMOTE_PATH_BETA if (cConfig().getSetting('UpdateSetting') == "BETA") else REMOTE_PATH_MASTER
-    REMOTE_VERSION_FILE = REMOTE_VERSION_FILE_BETA if (cConfig().getSetting('UpdateSetting') == "BETA") else REMOTE_VERSION_FILE_MASTER
+    REMOTE_PATH = REMOTE_PATH_BETA if (cConfig().getSetting('UpdateSetting') == "Beta") else REMOTE_PATH_MASTER
+    REMOTE_VERSION_FILE = REMOTE_VERSION_FILE_BETA if (cConfig().getSetting('UpdateSetting') == "Beta") else REMOTE_VERSION_FILE_MASTER
 
     logger.info("Remote Path: " + REMOTE_PATH)
 
@@ -44,7 +44,7 @@ def checkforupdates():
     logger.info("Old Version: " + common.addon.getAddonInfo('version'))
     logger.info("New Version: " + remoteVersion)
 
-    if (V(remoteVersion)>V(localVersion)):
+    if (V(remoteVersion)>V(localVersion) or (V(remoteVersion)<V(localVersion) and cConfig().getSetting('UpdateSetting') == "Stable")):
         logger.info("New Version Available")
 
         download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
