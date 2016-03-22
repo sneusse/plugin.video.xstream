@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.xstream-beta"
+<addon id="plugin.video.xstream"
 	name="xStream (Beta)"
 	version="2.1.16~beta1"
 	provider-name="Lynx187 (originator: murphy, MaxMustermann)">
