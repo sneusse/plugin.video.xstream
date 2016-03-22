@@ -210,7 +210,7 @@ def showMainMenu(sFunction):
     if len(aPlugins) <= 0:
       logger.info("No Plugins found")
       # Open the settings dialog to choose a plugin that could be enabled
-      oGui.showInfo("No Plugins enabled", "Enable more than one Site-Plugin", 10)
+      oGui.showInfo("xStream", "No Site-Plugins enabled", 10)
       oGui.openSettings()
       oGui.updateDirectory()
     else:
