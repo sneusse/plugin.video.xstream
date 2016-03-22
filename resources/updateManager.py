@@ -58,7 +58,7 @@ def checkforupdates():
                 if not os.path.isdir(destdir):
                     os.makedirs(destdir)
                 data = updateFile.read(n)
-                if os._exists(dest):
+                if os.path.exists(dest):
                     os.remove(dest)
                 f = open(dest, 'w')
                 f.write(data)
