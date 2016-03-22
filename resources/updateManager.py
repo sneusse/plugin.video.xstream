@@ -44,7 +44,7 @@ def checkforupdates():
     logger.info("Old Version: " + common.addon.getAddonInfo('version'))
     logger.info("New Version: " + remoteVersion)
 
-    if (V(remoteVersion)>V(localVersion) or (V(remoteVersion)<V(localVersion) and cConfig().getSetting('UpdateSetting') == "Stable")):
+    if (V(remoteVersion)>V(localVersion)):
         logger.info("New Version Available")
 
         download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
