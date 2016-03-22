@@ -335,7 +335,7 @@ def showSearch():
 
     # Keine Eingabe? => raus hier
     if not sSearchText: return
-    
+
     # Suche durchführen
     _search(oGui, sSearchText)
 
@@ -343,10 +343,6 @@ def showSearch():
 def _search(oGui, sSearchText):
     # Keine Eingabe? => raus hier
     if not sSearchText: return
-    
-    # Suche durchführen
-    oRequest = cRequestHandler(URL_SEARCH + sSearchText)
-    data = oRequest.request()
-    
-    # Ergebniss anzeigen
-    showEntries(data, oGui)
+
+    # URL-Übergeben und Ergebniss anzeigen
+    showEntries(URL_SEARCH + sSearchText.strip(), oGui)
