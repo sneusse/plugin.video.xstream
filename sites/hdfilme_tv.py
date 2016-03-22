@@ -23,8 +23,10 @@ URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie/search?key='
 
 # Parameter für die Sortierung
-URL_PARMS_ORDER_ID = 'order_f=id&order_d=desc'
-URL_PARMS_ORDER_NAME = 'order_f=name&order_d=desc'
+URL_PARMS_ORDER_ID = 'order_f=id'
+URL_PARMS_ORDER_ID_ASC = URL_PARMS_ORDER_ID +'&order_d=asc'
+URL_PARMS_ORDER_NAME = 'order_f=name'
+URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
 
 def load():
     # Logger-Eintrag
@@ -54,9 +56,9 @@ def showSeriesMenu():
     # Einträge anlegen
     params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_ID)
     oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME)
+    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME)
+    params.setParam('sUrl', URL_SHOWS + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
 
     # Liste abschließen
@@ -72,9 +74,9 @@ def showMovieMenu():
     # Einträge anlegen
     params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_ID)
     oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME)
+    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME)
+    params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
     
     # Liste abschließen
