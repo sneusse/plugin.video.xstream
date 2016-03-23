@@ -1,5 +1,5 @@
-# xStream Addon for Kodi
-xStream is a xbmc plugin to watch streams from various german film, trailer, music and sport sites
+# xStream for Kodi
+xStream is an addon to watch streams from various german and english film, series, music and sport sites
 
 ## Available Sites:
 * bundesliga.de `broken`
@@ -17,7 +17,7 @@ xStream is a xbmc plugin to watch streams from various german film, trailer, mus
 
 ## Installation:
 * Download [repository](http://xstream-addon.square7.ch/link_counter.php?url=http://xstream-addon.square7.ch/repo/repository.xstream/repository.xstream-1.0.3.zip) file
-* Install it as a xbmc addon
+* Install it as a kodi addon
 * Install xstream addon from xstream repository
 
 ## Support
