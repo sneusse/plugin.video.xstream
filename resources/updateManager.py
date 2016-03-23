@@ -2,6 +2,7 @@ import urllib
 import os
 import time
 import xml.etree.ElementTree as ET
+import json
 import zipfile
 import logger
 import xbmc
@@ -28,15 +29,18 @@ REMOTE_VERSION_FILE_BETA = "https://raw.githubusercontent.com/StoneOffStones/plu
 
 ## Filename of the update File.
 LOCAL_FILE_NAME = "xStream_update.zip"
+LOCAL_NIGHTLY_VERSION = os.path.join(TEMP_DIR, "nightly_commit_sha")
 
 
 def checkforupdates():
     logger.info("xStream checkforupdates")
 
     if cConfig().getSetting('UpdateSetting') == "Nightly":
-        #Update once per hour
-        if time.time() - os.path.getmtime(ROOT_DIR) > 3600:
-            update(REMOTE_URL_NIGHTLY)
+        nightlycommitsXML = urllib.urlopen("https://api.github.com/repos/StoneOffStones/plugin.video.xstream/commits/nightly").read()
+
+        if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != json.loads(nightlycommitsXML)['sha']:
+                update(REMOTE_URL_NIGHTLY)
+                open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
 
     elif cConfig().getSetting('UpdateSetting') == "Beta":
         if getRemoteVersion(REMOTE_VERSION_FILE_BETA) > getLocalVersion():
