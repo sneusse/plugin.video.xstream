@@ -1,5 +1,6 @@
 import urllib
 import os
+import time
 import xml.etree.ElementTree as ET
 import zipfile
 import logger
@@ -33,7 +34,9 @@ def checkforupdates():
     logger.info("xStream checkforupdates")
 
     if cConfig().getSetting('UpdateSetting') == "Nightly":
-        update(REMOTE_URL_NIGHTLY)
+        #Update once per hour
+        if time.time() - os.path.getmtime(ROOT_DIR) > 3600:
+            update(REMOTE_URL_NIGHTLY)
 
     elif cConfig().getSetting('UpdateSetting') == "Beta":
         if getRemoteVersion(REMOTE_VERSION_FILE_BETA) > getLocalVersion():
