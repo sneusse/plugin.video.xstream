@@ -1,4 +1,4 @@
-# xStream XBMC Addon
+# xStream Addon for Kodi
 xStream is a xbmc plugin to watch streams from various german film, trailer, music and sport sites
 
 ## Available Sites:
