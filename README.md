@@ -2,11 +2,18 @@
 xStream is a xbmc plugin to watch streams from various german film, trailer, music and sport sites
 
 ## Available Sites:
-* bundesliga.de `mainly working`
-* burning-seri.es `mainly working`
-* g-stream.in `mainly working`
+* bundesliga.de `broken`
+* bs.to `mainly working`
+* de.ddl.me `works partially`
+* filmpalast.to `mainly working`
+* hdfilme.tv `mainly working`
+* kkiste.to `works partially`
+* kinoleak.tv `works partially`
 * kinox.to `mainly working`
 * movie4k.to `mainly working`
+* moviesever.com `mainly working`
+* seriesever.net `mainly working`
+* szene-streams.com `mainly working`
 
 ## Installation:
 * Download [repository](http://xstream-addon.square7.ch/link_counter.php?url=http://xstream-addon.square7.ch/repo/repository.xstream/repository.xstream-1.0.3.zip) file
