@@ -16,12 +16,14 @@ TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
-REMOTE_PATH_BETA = "https://github.com/StoneOffStones/plugin.video.xstream/archive/beta.zip"
-REMOTE_PATH_MASTER = "https://github.com/Lynx187/plugin.video.xstream/archive/master.zip"
+REMOTE_URL_MASTER = "https://github.com/Lynx187/plugin.video.xstream/archive/master.zip"
+REMOTE_URL_BETA = "https://github.com/StoneOffStones/plugin.video.xstream/archive/beta.zip"
+REMOTE_URL_NIGHTLY = "https://github.com/StoneOffStones/plugin.video.xstream/archive/nightly.zip"
 
 ## Full path of the remote file version.
-REMOTE_VERSION_FILE_BETA = "https://raw.githubusercontent.com/StoneOffStones/plugin.video.xstream/beta/addon.xml"
 REMOTE_VERSION_FILE_MASTER = "https://raw.githubusercontent.com/Lynx187/plugin.video.xstream/master/addon.xml"
+REMOTE_VERSION_FILE_BETA = "https://raw.githubusercontent.com/StoneOffStones/plugin.video.xstream/beta/addon.xml"
+
 
 ## Filename of the update File.
 LOCAL_FILE_NAME = "xStream_update.zip"
@@ -30,38 +32,51 @@ LOCAL_FILE_NAME = "xStream_update.zip"
 def checkforupdates():
     logger.info("xStream checkforupdates")
 
-    REMOTE_PATH = REMOTE_PATH_BETA if (cConfig().getSetting('UpdateSetting') == "Beta") else REMOTE_PATH_MASTER
-    REMOTE_VERSION_FILE = REMOTE_VERSION_FILE_BETA if (cConfig().getSetting('UpdateSetting') == "Beta") else REMOTE_VERSION_FILE_MASTER
+    if cConfig().getSetting('UpdateSetting') == "Nightly":
+        update(REMOTE_URL_NIGHTLY)
 
-    logger.info("Remote Path: " + REMOTE_PATH)
+    elif cConfig().getSetting('UpdateSetting') == "Beta":
+        if getRemoteVersion(REMOTE_VERSION_FILE_BETA) > getLocalVersion():
+            update(REMOTE_URL_BETA)
 
-    remoteVersionXML = urllib.urlopen(REMOTE_VERSION_FILE).read()
-    remoteVersion = ET.fromstring(remoteVersionXML).attrib['version']
+    elif cConfig().getSetting('UpdateSetting') == "Stable":
+        if getRemoteVersion(REMOTE_VERSION_FILE_MASTER) > getLocalVersion():
+            update(REMOTE_URL_MASTER)
 
-    localVersionXML = open(os.path.join(ROOT_DIR, "addon.xml")).read()
-    localVersion = ET.fromstring(localVersionXML).attrib['version']
 
-    logger.info("Old Version: " + common.addon.getAddonInfo('version'))
-    logger.info("New Version: " + remoteVersion)
+def getLocalVersion():
+    xml = open(os.path.join(ROOT_DIR, "addon.xml")).read()
+    version = V(ET.fromstring(xml).attrib['version'])
+    logger.info("xStream Localversion: " + version.vstring)
+    return version
 
-    if (V(remoteVersion)>V(localVersion)):
-        logger.info("New Version Available")
 
-        download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
+def getRemoteVersion(REMOTE_VERSION_URL):
+    xml = urllib.urlopen(REMOTE_VERSION_URL).read()
+    version = V(ET.fromstring(xml).attrib['version'])
+    logger.info("xStream Remoteversion: " + version.vstring)
+    return version
 
-        updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
 
-        for index, n in enumerate(updateFile.namelist()):
-            if n[-1] != "/":
-                dest = os.path.join(ROOT_DIR, "/".join(n.split("/")[1:]))
-                destdir = os.path.dirname(dest)
-                if not os.path.isdir(destdir):
-                    os.makedirs(destdir)
-                data = updateFile.read(n)
-                if os.path.exists(dest):
-                    os.remove(dest)
-                f = open(dest, 'w')
-                f.write(data)
-                f.close()
-        updateFile.close()
-        logger.info("Update Successful")
+def update(REMOTE_PATH):
+
+    logger.info("xStream Update URL: " + REMOTE_PATH)
+
+    download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
+
+    updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
+
+    for index, n in enumerate(updateFile.namelist()):
+        if n[-1] != "/":
+            dest = os.path.join(ROOT_DIR, "/".join(n.split("/")[1:]))
+            destdir = os.path.dirname(dest)
+            if not os.path.isdir(destdir):
+                os.makedirs(destdir)
+            data = updateFile.read(n)
+            if os.path.exists(dest):
+                os.remove(dest)
+            f = open(dest, 'w')
+            f.write(data)
+            f.close()
+    updateFile.close()
+    logger.info("Update Successful")

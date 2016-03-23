@@ -1,5 +1,5 @@
 <settings> 
-    <category label="30021">       
+    <category label="30021">
         <!--<setting default="false" id="debug" label="30000" type="bool" />-->
         <setting default="false" id="autoPlay" label="30005" type="bool" />
         <setting default="100" id="maxHoster" label="maximale Laenge Hosterliste" type="number" />
@@ -10,11 +10,11 @@
         <setting default="false" id="metaOverwrite" label="30008" type="bool" enable="!eq(-1,false)" />
         <setting default="600" id="cacheTime" label="30006" type="number" />
         <setting default="false" id="showAdult" label="30003" type="bool" />
-        <setting default="Stable" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Off" />
+        <setting default="Stable" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
 
         <setting type="sep" />
-    </category> 
-    <category label="30022">       
+    </category>
+    <category label="30022">
         <setting default="false" id="plugin_bundesliga_de" label="Bundesliga.de" type="bool" />
         <setting default="false" id="plugin_burning_series_org" label="Burning-Seri.es" type="bool" />
         <setting default="false" id="plugin_gstream_in" label="G-Stream.in" type="bool" />
@@ -52,5 +52,5 @@
         <setting default="8000" enable="!eq(-2,false)" id="pyload_port" label="30073" type="number" />
         <setting default="user" enable="!eq(-3,false)" id="pyload_user" label="30083" type="text" />
         <setting default="" enable="!eq(-4,false)" id="pyload_passwd" label="30084" type="text" option="hidden" />
-    </category> 
+    </category>
 </settings>
