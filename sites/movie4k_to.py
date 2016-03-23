@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from resources.lib.util import cUtil
 from resources.lib.parser import cParser
 from resources.lib.handler.requestHandler import cRequestHandler
@@ -18,7 +18,7 @@ SITE_SETTINGS = '<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4
 oConfig = cConfig()
 DOMAIN = oConfig.getSetting('movie4k_to-domain')
 ####
-URL_MAIN = 'http://www.' + DOMAIN
+URL_MAIN = 'http://' + DOMAIN
 URL_MOVIES = URL_MAIN + '/index.php'
 URL_MOVIES_ALL = URL_MAIN + '/movies-all'
 URL_MOVIES_GENRE = URL_MAIN + '/genres-movies.html'
