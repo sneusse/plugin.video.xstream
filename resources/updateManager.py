@@ -38,9 +38,12 @@ def checkforupdates():
     if cConfig().getSetting('UpdateSetting') == "Nightly":
         nightlycommitsXML = urllib.urlopen("https://api.github.com/repos/StoneOffStones/plugin.video.xstream/commits/nightly").read()
 
-        if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != json.loads(nightlycommitsXML)['sha']:
-                update(REMOTE_URL_NIGHTLY)
-                open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
+        try:
+            if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != json.loads(nightlycommitsXML)['sha']:
+                    update(REMOTE_URL_NIGHTLY)
+                    open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
+        except:
+            logger.info("Ratelimit reached")
 
     elif cConfig().getSetting('UpdateSetting') == "Beta":
         if getRemoteVersion(REMOTE_VERSION_FILE_BETA) > getLocalVersion():
