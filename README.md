@@ -4,7 +4,7 @@ xStream is a video-addon for Kodi to watch streams from various german film, ser
 ## Available Sites:
 * bundesliga.de `broken`
 * bs.to `mainly working`
-* de.ddl.me `works partially`
+* ddl.me `works partially`
 * filmpalast.to `mainly working`
 * hdfilme.tv `mainly working`
 * kkiste.to `works partially`
