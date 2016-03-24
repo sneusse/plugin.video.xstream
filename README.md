@@ -1,5 +1,5 @@
 # xStream for Kodi
-xStream is an addon to watch streams from various german and english film, series, music and sport sites
+xStream is a video-addon for Kodi to watch streams from various german film, series, music and sport sites
 
 ## Available Sites:
 * bundesliga.de `broken`
