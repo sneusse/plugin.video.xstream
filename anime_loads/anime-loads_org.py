@@ -11,9 +11,9 @@ from resources.lib.util import cUtil
 import re, json
 
 # Basis-Einträge für xStream
-SITE_IDENTIFIER = 'anime_loads'
+SITE_IDENTIFIER = 'anime-loads_org'
 SITE_NAME = 'Anime-Loads'
-SITE_ICON = 'anime_loads.png'
+SITE_ICON = 'anime-loads.png'
 
 # Links definieren
 URL_MAIN = 'http://www.anime-loads.org/'
