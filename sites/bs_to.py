@@ -87,7 +87,14 @@ def showSearch():
 def _getJsonContent(urlPart):
     request = cRequestHandler(URL_MAIN + urlPart)
     mod_request(request, urlPart)
-    return json.loads(request.request())
+    data = json.loads(request.request())
+    
+    # check for error and return Null if there is an Error
+    if 'error' not in data:
+        return data
+    else:
+        logger.info("JSON Error: %s" % data["error"])
+        return []
 
 # Search for series using the requested string sSearchText
 def _search(oGui, sSearchText):
