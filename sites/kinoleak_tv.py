@@ -9,7 +9,7 @@ from resources.lib import blazingfast
 import sys
 
 SITE_IDENTIFIER = 'kinoleak_tv'
-SITE_NAME = 'KinoLeak.Tv'
+SITE_NAME = 'KinoLeak'
 SITE_ICON = 'kinoleak.png'
 
 URL_MAIN = 'http://kinoleak.tv/'

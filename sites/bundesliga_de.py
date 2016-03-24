@@ -7,7 +7,7 @@ from resources.lib.util import cUtil
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
 SITE_IDENTIFIER = 'bundesliga_de'
-SITE_NAME = 'Bundesliga.de'
+SITE_NAME = 'Bundesliga'
 SITE_ICON = 'bl.png'
 
 URL_MAIN = 'http://www.bundesliga.de'

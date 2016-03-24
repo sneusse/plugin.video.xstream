@@ -1,13 +1,13 @@
 <settings> 
     <category label="30021">
-        <!--<setting default="false" id="debug" label="30000" type="bool" />-->
+        
         <setting default="false" id="autoPlay" label="30005" type="bool" />
         <setting default="100" id="maxHoster" label="maximale Laenge Hosterliste" type="number" />
-        <setting default="false" id="hosterListFolder" label="30007" type="bool" enable="eq(-2,false)"/>
-        <setting default="true" id="presortHoster" label="30009" type="bool" enable="eq(-3,false)"/>
+        <setting default="false" enable="eq(-2,false)" id="hosterListFolder" label="30007" type="bool" />
+        <setting default="true" enable="eq(-3,false)" id="presortHoster" label="30009" type="bool" />
         <setting default="2" id="prefLanguage" label="30002" type="enum" values="German|English|All" />
         <setting default="false" id="metahandler" label="30004" type="bool" />
-        <setting default="false" id="metaOverwrite" label="30008" type="bool" enable="!eq(-1,false)" />
+        <setting default="false" enable="!eq(-1,false)" id="metaOverwrite" label="30008" type="bool" />
         <setting default="600" id="cacheTime" label="30006" type="number" />
         <setting default="false" id="showAdult" label="30003" type="bool" />
         <setting default="Stable" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
@@ -15,21 +15,33 @@
         <setting type="sep" />
     </category>
     <category label="30022">
-        <setting default="false" id="plugin_bundesliga_de" label="Bundesliga.de" type="bool" />
-        <setting default="false" id="plugin_burning_series_org" label="Burning-Seri.es" type="bool" />
-        <setting default="false" id="plugin_gstream_in" label="G-Stream.in" type="bool" />
-        <setting default="" id="gstream_in-username" label="Benutzername" type="text" />
-        <setting default="" id="gstream_in-password" label="Passwort" type="text" option="hidden" />
-        <setting default="true" id="plugin_kinoleak_tv" label="KinoLeak.tv" type="bool" />
-        <setting default="false" id="plugin_kinox_to" label="Kinox.to" type="bool" />
-        <setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
-        <setting default="false" id="plugin_kkiste_to" label="KKiste.to" type="bool" />
-        <setting default="false" id="plugin_movie4k_to" label="Movie4k.to" type="bool" />
-        <setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
-        <setting default="false" id="plugin_moviesever_com" label="MoviesEver.com" type="bool" />
-        <setting default="false" id="plugin_seriesever_net" label="SeriesEver.net" type="bool" />
-        <setting type="sep" />
-    </category>
+        <setting label="BurningSeries" type="lsep" />
+	<setting default="false" id="plugin_bs_to" label="BurningSeries" type="bool" />
+	<setting label="Bundesliga" type="lsep" />
+	<setting default="false" id="plugin_bundesliga_de" label="Bundesliga" type="bool" />
+	<setting label="DirectDownLoad" type="lsep" />
+	<setting default="false" id="plugin_ddl_me" label="DirectDownLoad" type="bool" />
+	<setting label="FilmPalast" type="lsep" />
+	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast" type="bool" />
+	<setting label="HDfilme" type="lsep" />
+	<setting default="false" id="plugin_hdfilme_tv" label="HDfilme" type="bool" />
+	<setting label="KinoLeak" type="lsep" />
+	<setting default="false" id="plugin_kinoleak_tv" label="KinoLeak" type="bool" />
+	<setting label="KinoX" type="lsep" />
+	<setting default="false" id="plugin_kinox_to" label="KinoX" type="bool" />
+	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="KinoX domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
+	<setting label="KinoKiste" type="lsep" />
+	<setting default="false" id="plugin_kkiste_to" label="KinoKiste" type="bool" />
+	<setting label="Movie4k" type="lsep" />
+	<setting default="false" id="plugin_movie4k_to" label="Movie4k" type="bool" />
+	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
+	<setting label="MoviesEver" type="lsep" />
+	<setting default="false" id="plugin_moviesever_com" label="MoviesEver" type="bool" />
+	<setting label="SeriesEver" type="lsep" />
+	<setting default="false" id="plugin_seriesever_net" label="SeriesEver" type="bool" />
+	<setting label="SzeneStreams" type="lsep" />
+	<setting default="false" id="plugin_szene-streams_com" label="SzeneStreams" type="bool" />
+</category>
     <category label="Views">
         <setting default="false" id="auto-view" label="automatische Views aktivieren" type="bool" />
         <setting default="503" enable="!eq(-1,false)" id="movies-view" label="Film-View" type="number" />
@@ -39,7 +51,7 @@
     </category>
     <category label="30024">
         <setting label="30080" type="sep" />
-        <setting id="download-folder" type="folder" label="30081" default=""/>
+        <setting default="" id="download-folder" label="30081" type="folder" />
         <setting label="30070" type="sep" />
         <setting default="false" id="jd_enabled" label="30071" type="bool" />
         <setting default="127.0.0.1" enable="!eq(-1,false)" id="jd_host" label="30072" type="text" />
@@ -51,6 +63,6 @@
         <setting default="127.0.0.1" enable="!eq(-1,false)" id="pyload_host" label="30072" type="text" />
         <setting default="8000" enable="!eq(-2,false)" id="pyload_port" label="30073" type="number" />
         <setting default="user" enable="!eq(-3,false)" id="pyload_user" label="30083" type="text" />
-        <setting default="" enable="!eq(-4,false)" id="pyload_passwd" label="30084" type="text" option="hidden" />
+        <setting default="" enable="!eq(-4,false)" id="pyload_passwd" label="30084" option="hidden" type="text" />
     </category>
 </settings>

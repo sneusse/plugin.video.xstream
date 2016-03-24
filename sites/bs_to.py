@@ -12,8 +12,8 @@ import json
 from resources.lib.bs_finalizer import *
 
 # "Global" variables
-SITE_IDENTIFIER = 'burning_series_org'
-SITE_NAME = 'Burning-Series'
+SITE_IDENTIFIER = 'bs_to'
+SITE_NAME = 'BurningSeries'
 SITE_ICON = 'burning_series.png'
 
 URL_MAIN = 'http://www.bs.to/api/'

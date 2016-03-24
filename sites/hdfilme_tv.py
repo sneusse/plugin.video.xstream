@@ -12,7 +12,7 @@ import re, json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
-SITE_NAME = 'HDfilme.TV'
+SITE_NAME = 'HDfilme'
 SITE_ICON = 'hdfilme.png'
 
 # Basis-URL's

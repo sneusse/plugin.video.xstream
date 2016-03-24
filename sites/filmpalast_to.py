@@ -11,7 +11,7 @@ from resources.lib.util import cUtil
 import json
 
 SITE_IDENTIFIER = 'filmpalast_to'
-SITE_NAME = 'FilmPalast.to'
+SITE_NAME = 'FilmPalast'
 SITE_ICON = 'filmpalast.png'
 
 URL_MAIN = 'http://filmpalast.to/'

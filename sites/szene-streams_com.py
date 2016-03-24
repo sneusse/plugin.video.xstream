@@ -10,7 +10,7 @@ from resources.lib.util import cUtil
 import re
 
 SITE_IDENTIFIER = 'szene-streams_com'
-SITE_NAME = 'Szene-Streams'
+SITE_NAME = 'SzeneStreams'
 SITE_ICON = 'szenestreams.png'
 
 URL_MAIN = 'http://www.szene-streams.com/'
