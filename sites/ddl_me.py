@@ -5,7 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib import logger
-import re
+import re, json
 
 SITE_IDENTIFIER = 'ddl_me'
 SITE_NAME = 'DirectDownLoad'
@@ -232,28 +232,34 @@ def showHosters():
    
     # Seite Laden und anpassen
     sHtmlContent = cRequestHandler(sUrl).request()
-    sHtmlContent = sHtmlContent.replace('\\','')
 
-    sPattern = '"\d{1,2}","\w+",".*?","([^"]+)","\d+","stream"'
-    aResult = cParser().parse(sHtmlContent, sPattern, ignoreCase = True)
+    # JSon für die Hoster ermitteln
+    sPattern = "var[ ]subcats[ ]=[ ](.*?);";
+    aResult = cParser().parse(sHtmlContent, sPattern)
 
     # hosterliste initialisieren
     hosters = []
 
-    if aResult[0]:
-        for aEntry in aResult[1]:
-            hoster = {}
-            hoster['link'] = aEntry
+    # Prüfen ob Daten gefunden wurden
+    if aResult[0]: 
+        # JSon-Daten Laden
+        data = json.loads(aResult[1][0])
 
-            # Hostername ermittel
-            hname = 'Unknown Hoster'
-            try:
-                hname = re.compile('^(?:https?:\/\/)?(?:www\.)?(?:[^@\n]+@)?([^:\/\n]+)', flags=re.I | re.M).findall(hoster['link'])[0]
-            except:
-                pass
+        # Ermittelt ob der Film aus verschiedenen Parts besteht
+        partCount = int(data[data.keys()[0]]['1'])
 
-            hoster['name'] = hname
-            hosters.append(hoster)
+        # Hoster durchlaufen
+        for jHoster in data[data.keys()[0]]['links']:
+            # Alle Einträge der Hoste durchlaufen
+            for jHosterEntry in data[data.keys()[0]]['links'][jHoster]:
+                # Nur Einträge beachten die auch Streams sind
+                if jHosterEntry[5] == 'stream':
+                    hoster = {}
+                    if partCount > 1:
+                        hoster['displayedName'] = jHoster + ' - Part ' + jHosterEntry[0]
+                    hoster['link'] = jHosterEntry[3]
+                    hoster['name'] = jHoster
+                    hosters.append(hoster)
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if len(hosters) > 0:
@@ -261,15 +267,13 @@ def showHosters():
 
     # Rückgabe
     return hosters
-   
+  
 def getHosterUrl(sUrl = False):
     #ParameterHandler erzeugen
     oParams = ParameterHandler()
 
     # URL ermitteln falls nicht übergeben
     if not sUrl: sUrl = oParams.getValue('url')
-
-    logger.info("url %s" % sUrl)
 
     # Array mit einem Eintrag für Hosterliste erzeugen (sprich direkt abspielen)
     results = []
