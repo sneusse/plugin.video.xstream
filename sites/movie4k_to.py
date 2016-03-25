@@ -324,7 +324,7 @@ def parseMovieSimpleList():
         sUrl = params.getValue('sUrl')
         logger.info(sUrl)
         if (sUrl.find('tvshows-season-') != -1):
-            sPattern = '<TR>\s*<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="http://[^/]+/img/([^"]+)".*?</TR>'
+            sPattern = '<TR>\s*<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="(http://[^/]+){0,1}/img/([^"]+)".*?</TR>'
             if params.exist('sLanguageToken'):
                 sLanguageToken = params.getValue('sLanguageToken')
                 oRequest = cRequestHandler(sUrl)
@@ -335,7 +335,7 @@ def parseMovieSimpleList():
                         sUrl = str(aEntry[0]).strip()
                         if not (sUrl.startswith('http')):
                             sUrl = URL_MAIN +'/'+ sUrl
-                        if aEntry[2] == sLanguageToken:
+                        if aEntry[3] == sLanguageToken:
                             break
                     oRequest = cRequestHandler(sUrl)
                     sHtmlContent = oRequest.request()
@@ -345,7 +345,7 @@ def parseMovieSimpleList():
                             sUrl = str(aEntry[0]).strip()
                             if not (sUrl.startswith('http')):
                                 sUrl = URL_MAIN +'/'+ sUrl
-                            if aEntry[2] == sLanguageToken:
+                            if aEntry[3] == sLanguageToken:
                                 break
                                 
             else:
