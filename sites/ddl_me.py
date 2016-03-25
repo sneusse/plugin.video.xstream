@@ -60,8 +60,6 @@ def showMovieMenu():
     params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
     oGui.addFolder(cGuiElement('Nach Jahr', SITE_IDENTIFIER, 'showEntries'), params)
     #params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME_ASC)
-    #oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
-    #params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME_ASC)
     #oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
     
     # Liste abschließen
@@ -98,6 +96,43 @@ def showEntries(entryUrl = False, sGui = False):
 
     # HTML parsen
     aResult = cParser().parse(sHtmlContent, pattern)
+
+    # Fallback falls die Suche nur ein Ergebniss liefert
+    if not aResult[0] or not aResult[1][0]: 
+        pattern = "<h1[^>]*id='itemType'[^>]*>(.*?)[(](\d*).*?"
+
+        # Thumbnail ermitteln
+        pattern += "<img[^>]*src='([^']*)'[^>]*>.*?"
+
+        # HTML parsen
+        aOneResult = cParser().parse(sHtmlContent, pattern)
+
+        # Funktion verlassen falls keine Daten ermittelt werden konnten
+        if not aOneResult[0] or not aOneResult[1][0]: 
+            oGui.showInfo('xStream1','Es wurde kein Eintrag gefunden')
+            return
+        
+        # Alle Ergebnisse durchlaufen
+        for sName, sYear, sThumbnail in aOneResult[1]:
+            # Listen-Eintrag erzeugen
+            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+
+            # Falls vorhanden Jahr ergänzen
+            if sYear:
+                oGuiElement.setYear(sYear)
+
+            # Eigenschaften setzen und Listeneintrag hinzufügen
+            oGuiElement.setThumbnail(sThumbnail)
+            oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
+            params.setParam('entryUrl', entryUrl)
+            params.setParam('sName', sName)
+            params.setParam('sThumbnail', sThumbnail)
+            oGui.addFolder(oGuiElement, params, bIsFolder = False)
+        # Liste abschließen
+        oGui.setEndOfDirectory()
+        
+        # Funktion verlassen
+        return
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
     if not aResult[0] or not aResult[1][0]: 
