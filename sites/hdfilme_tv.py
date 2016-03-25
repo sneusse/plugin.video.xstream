@@ -232,8 +232,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    oRequest = cRequestHandler(entryUrl)
-    sHtmlContent = oRequest.request()
+    sHtmlContent = __getHtmlContent(entryUrl)
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
