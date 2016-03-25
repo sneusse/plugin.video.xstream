@@ -59,11 +59,43 @@ def showMovieMenu():
     oGui.addFolder(cGuiElement('Nach IMDB-Rating', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
     oGui.addFolder(cGuiElement('Nach Jahr', SITE_IDENTIFIER, 'showEntries'), params)
-    #params.setParam('sUrl', URL_MOVIES + URL_PARMS_ORDER_NAME_ASC)
-    #oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
+    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
     
     # Liste abschließen
-    oGui.setEndOfDirectory()  
+    oGui.setEndOfDirectory()
+
+def showGenreList():
+    # GUI-Element erzeugen
+    oGui = cGui()
+
+    # ParameterHandler erzeugen
+    params = ParameterHandler()
+
+    # URL vom ParameterHandler ermitteln
+    entryUrl = params.getValue('sUrl')
+
+    # Seite laden
+    sHtmlContent = cRequestHandler(entryUrl).request()
+
+    # Filter für Genres
+    pattern = '<i[^>]*class="fa fa-dot-circle-o".*?i>(.*?)</a>*?'
+    pattern += '<a[^>]*href="([^"]*)"'
+    
+    # Regex parsen
+    aResult = cParser().parse(sHtmlContent, pattern)
+
+    # Nichts gefunden? => raus hier
+    if not aResult[0]:
+        return
+
+    # Alle Genres durchlaufen und Liste erzeugen
+    for sTitle,sUrl in aResult[1]:
+        params.setParam('sUrl',URL_MAIN + sUrl)
+        oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'showEntries'), params)
+    
+    # Liste abschließen
+    oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
     # GUI-Element erzeugen wenn nötig
