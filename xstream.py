@@ -252,14 +252,6 @@ def showMainMenu(sFunction):
       # oGuiElement.setThumbnail("DefaultAddonService.png")
       # oGui.addFolder(oGuiElement)
 
-      if cConfig().getSetting('metahandler')=='true':
-      # Create a gui element for metahandler settings
-          oGuiElement = cGuiElement()
-          oGuiElement.setTitle("Metahandler Settings")
-          oGuiElement.setSiteName("metahandler")
-          oGuiElement.setFunction("display_settings")
-          oGuiElement.setThumbnail("DefaultAddonService.png")
-          oGui.addFolder(oGuiElement)
     oGui.setEndOfDirectory()
 
 def showHosterGui(sFunction):
@@ -294,6 +286,15 @@ def showSettingsFolder():
     oGuiElement.setFunction("display_settings")
     oGuiElement.setThumbnail("DefaultAddonService.png")
     oGui.addFolder(oGuiElement)
+
+    if cConfig().getSetting('metahandler') == 'true':
+        # Create a gui element for metahandler settings
+        oGuiElement = cGuiElement()
+        oGuiElement.setTitle("Metahandler Settings")
+        oGuiElement.setSiteName("metahandler")
+        oGuiElement.setFunction("display_settings")
+        oGuiElement.setThumbnail("DefaultAddonService.png")
+        oGui.addFolder(oGuiElement)
 
     oGui.setEndOfDirectory()
 
