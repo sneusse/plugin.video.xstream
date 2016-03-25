@@ -175,7 +175,10 @@ def parseUrl():
             return    
         elif sSiteName == 'favGui':
             showFavGui(sFunction)
-            return 
+            return
+        elif sSiteName == 'Settings':
+            showSettingsFolder()
+            return
         # If addon settings are called  
         elif sSiteName == 'xStream':
             oGui = cGui()
@@ -207,6 +210,15 @@ def showMainMenu(sFunction):
     oGui = cGui()
     oPluginHandler = cPluginHandler()
     aPlugins = oPluginHandler.getAvailablePlugins()
+
+    # Create a gui element for global search
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("Globale Suche")
+    oGuiElement.setSiteName("globalSearch")
+    oGuiElement.setFunction("globalSearch")
+    # oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGui.addFolder(oGuiElement)
+
     if len(aPlugins) <= 0:
       logger.info("No Plugins found")
       # Open the settings dialog to choose a plugin that could be enabled
@@ -223,39 +235,23 @@ def showMainMenu(sFunction):
         if aPlugin['icon'] != '':
             oGuiElement.setThumbnail(aPlugin['icon'])
         oGui.addFolder(oGuiElement)
-      
-      # Create a gui element for global search
-      oGuiElement = cGuiElement()
-      oGuiElement.setTitle("Globale Suche")
-      oGuiElement.setSiteName("globalSearch")
-      oGuiElement.setFunction("globalSearch")
-      #oGuiElement.setThumbnail("DefaultAddonService.png")
-      oGui.addFolder(oGuiElement)
-        
-      # Create a gui element for favorites
-      #oGuiElement = cGuiElement()
-      #oGuiElement.setTitle("Favorites")
-      #oGuiElement.setSiteName("FavGui")
-      #oGuiElement.setFunction("showFavs")
-      #oGuiElement.setThumbnail("DefaultAddonService.png")
-      #oGui.addFolder(oGuiElement)
 
-      # Create a gui element for addon settings
+      # Create a gui element for Settingsfolder
       oGuiElement = cGuiElement()
-      oGuiElement.setTitle("xStream Settings")
-      oGuiElement.setSiteName("xStream")
-      oGuiElement.setFunction("display_settings")
+      oGuiElement.setTitle("Settings")
+      oGuiElement.setSiteName("Settings")
+      oGuiElement.setFunction("showSettingsFolder")
       oGuiElement.setThumbnail("DefaultAddonService.png")
       oGui.addFolder(oGuiElement)
-      
-      # Create a gui element for urlresolver settings
-      oGuiElement = cGuiElement()
-      oGuiElement.setTitle("Resolver Settings")
-      oGuiElement.setSiteName("urlresolver")
-      oGuiElement.setFunction("display_settings")
-      oGuiElement.setThumbnail("DefaultAddonService.png")
-      oGui.addFolder(oGuiElement)
-      
+
+      # Create a gui element for favorites
+      # oGuiElement = cGuiElement()
+      # oGuiElement.setTitle("Favorites")
+      # oGuiElement.setSiteName("FavGui")
+      # oGuiElement.setFunction("showFavs")
+      # oGuiElement.setThumbnail("DefaultAddonService.png")
+      # oGui.addFolder(oGuiElement)
+
       if cConfig().getSetting('metahandler')=='true':
       # Create a gui element for metahandler settings
           oGuiElement = cGuiElement()
@@ -279,6 +275,28 @@ def showHosterGui(sFunction):
     #function = getattr(oFavGui, functionName)
     #function()
     #return True
+
+def showSettingsFolder():
+    oGui = cGui()
+
+    # Create a gui element for addon settings
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("xStream Settings")
+    oGuiElement.setSiteName("xStream")
+    oGuiElement.setFunction("display_settings")
+    oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGui.addFolder(oGuiElement)
+
+    # Create a gui element for urlresolver settings
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("Resolver Settings")
+    oGuiElement.setSiteName("urlresolver")
+    oGuiElement.setFunction("display_settings")
+    oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGui.addFolder(oGuiElement)
+
+    oGui.setEndOfDirectory()
+
 
 def searchGlobal():
     import threading
