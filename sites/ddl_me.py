@@ -79,8 +79,8 @@ def showGenreList():
     sHtmlContent = cRequestHandler(entryUrl).request()
 
     # Filter für Genres
-    pattern = '<i[^>]*class="fa fa-dot-circle-o".*?i>(.*?)</a>*?'
-    pattern += '<a[^>]*href="([^"]*)"'
+    pattern = '<a[^>]*href="([^"]*)".*?'
+    pattern += '<i[^>]*class="fa fa-dot-circle-o".*?i>(.*?)</a>.*?'
     
     # Regex parsen
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -90,7 +90,7 @@ def showGenreList():
         return
 
     # Alle Genres durchlaufen und Liste erzeugen
-    for sTitle,sUrl in aResult[1]:
+    for sUrl, sTitle in aResult[1]:
         params.setParam('sUrl',URL_MAIN + sUrl)
         oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     
