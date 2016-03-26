@@ -5,13 +5,21 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib import logger
+from resources.lib.config import cConfig
 import re, json
 
+# Plugin-Eigenschaften
 SITE_IDENTIFIER = 'ddl_me'
 SITE_NAME = 'DirectDownLoad'
 SITE_ICON = 'ddl.png'
+SITE_SETTINGS = '<setting default="de.ddl.me" enable="!eq(-1,false)" id="ddl_me-domain" label="' + SITE_NAME + ' domain" type="labelenum" values="de.ddl.me|en.ddl.me" />'
 
-URL_MAIN = 'http://de.ddl.me'
+# Settings Auslesen
+oConfig = cConfig()
+DOMAIN = oConfig.getSetting('ddl_me-domain')
+
+# Basis-URL's
+URL_MAIN = 'http://' + DOMAIN
 URL_SEARCH = URL_MAIN + '/search_99/?q='
 URL_MOVIES = URL_MAIN + '/moviez'
 URL_SHOWS = URL_MAIN + '/episodez'
