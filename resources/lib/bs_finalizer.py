@@ -55,7 +55,7 @@ except:
 def mod_request(request, string):
     # try:
     request.addHeaderEntry(l1111(u"ࡄࡖ࠱࡙ࡵ࡫ࡦࡰࠥ"), l111ll(string))
-    request.addHeaderEntry(l1111(u"࡛ࡳࡦࡴ࠰ࡅ࡬࡫࡮ࡵࡓ"), l1111(u"ࡧࡹ࠭ࡢࡰࡧࡶࡴ࡯ࡤࡒ"))
+    request.addHeaderEntry(l1111(u"࡛ࡳࡦࡴ࠰ࡅ࡬࡫࡮ࡵࡓ"), l1111(u"ࡧࡹ࠮ࡢࡰࡧࡶࡴ࡯ࡤࡒ"))
     # except:
     #   print l1111 (u"࡜ࡇࡕࡖࡔࡘ࡝ࠡࠋࠣࡆࡘࠦࡲࡦࡳࡸࡩࡸࡺࠠࡧ࡫ࡱࡥࡱ࡯ࡺࡪࡰࡪࠤ࡫ࡧࡩ࡭ࡧࡧ࠹")
 
