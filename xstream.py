@@ -216,7 +216,7 @@ def showMainMenu(sFunction):
     oGuiElement.setTitle("Globale Suche")
     oGuiElement.setSiteName("globalSearch")
     oGuiElement.setFunction("globalSearch")
-    # oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGuiElement.setThumbnail("DefaultAddonWebSkin.png")
     oGui.addFolder(oGuiElement)
 
     if len(aPlugins) <= 0:
@@ -284,7 +284,7 @@ def showSettingsFolder():
     oGuiElement.setTitle("Resolver Settings")
     oGuiElement.setSiteName("urlresolver")
     oGuiElement.setFunction("display_settings")
-    oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGuiElement.setThumbnail("DefaultMusicPlaylists.png")
     oGui.addFolder(oGuiElement)
 
     if cConfig().getSetting('metahandler') == 'true':
@@ -293,7 +293,7 @@ def showSettingsFolder():
         oGuiElement.setTitle("Metahandler Settings")
         oGuiElement.setSiteName("metahandler")
         oGuiElement.setFunction("display_settings")
-        oGuiElement.setThumbnail("DefaultAddonService.png")
+        oGuiElement.setThumbnail("DefaultAddonTvInfo.png")
         oGui.addFolder(oGuiElement)
 
     oGui.setEndOfDirectory()
