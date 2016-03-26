@@ -17,8 +17,6 @@
     <category label="30022">
         <setting label="BurningSeries" type="lsep" />
 	<setting default="false" id="plugin_bs_to" label="BurningSeries" type="bool" />
-	<setting label="Bundesliga" type="lsep" />
-	<setting default="false" id="plugin_bundesliga_de" label="Bundesliga" type="bool" />
 	<setting label="DirectDownLoad" type="lsep" />
 	<setting default="false" id="plugin_ddl_me" label="DirectDownLoad" type="bool" />
 	<setting label="FilmPalast" type="lsep" />
@@ -29,7 +27,7 @@
 	<setting default="false" id="plugin_kinoleak_tv" label="KinoLeak" type="bool" />
 	<setting label="KinoX" type="lsep" />
 	<setting default="false" id="plugin_kinox_to" label="KinoX" type="bool" />
-	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="KinoX domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
+	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
 	<setting label="KinoKiste" type="lsep" />
 	<setting default="false" id="plugin_kkiste_to" label="KinoKiste" type="bool" />
 	<setting label="Movie4k" type="lsep" />
