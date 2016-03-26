@@ -276,7 +276,7 @@ def showSettingsFolder():
     oGuiElement.setTitle("xStream Settings")
     oGuiElement.setSiteName("xStream")
     oGuiElement.setFunction("display_settings")
-    oGuiElement.setThumbnail("DefaultAddonService.png")
+    oGuiElement.setThumbnail("DefaultAddonProgram.png")
     oGui.addFolder(oGuiElement)
 
     # Create a gui element for urlresolver settings
