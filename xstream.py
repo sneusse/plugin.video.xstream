@@ -284,7 +284,7 @@ def showSettingsFolder():
     oGuiElement.setTitle("Resolver Settings")
     oGuiElement.setSiteName("urlresolver")
     oGuiElement.setFunction("display_settings")
-    oGuiElement.setThumbnail("DefaultMusicPlaylists.png")
+    oGuiElement.setThumbnail("DefaultAddonRepository.png")
     oGui.addFolder(oGuiElement)
 
     if cConfig().getSetting('metahandler') == 'true':
