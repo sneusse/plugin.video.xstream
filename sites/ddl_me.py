@@ -44,52 +44,35 @@ def load():
     params = ParameterHandler()
 
     # Einträge anlegen
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMovieMenu'))
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'))
+    params.setParam('sUrl', URL_MOVIES)
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
+    params.setParam('sUrl', URL_SHOWS)
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
 
     # Liste abschließen
     oGui.setEndOfDirectory()
 
-def showMovieMenu():
+def showContentMenu():
     # GUI-Element erzeugen
     oGui = cGui()
 
     # ParameterHandler erzeugen
     params = ParameterHandler()
 
-    # Einträge anlegen
-    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
-    oGui.addFolder(cGuiElement('Letztes Update', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_BLOCKBUSTER)
-    oGui.addFolder(cGuiElement('Blockbuster', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_IMDB_RATING)
-    oGui.addFolder(cGuiElement('IMDB Rating', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
-    oGui.addFolder(cGuiElement('Jahr', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MOVIES + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
-    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
-    
-    # Liste abschließen
-    oGui.setEndOfDirectory()
-
-def showSeriesMenu():
-    # GUI-Element erzeugen
-    oGui = cGui()
-
-    # ParameterHandler erzeugen
-    params = ParameterHandler()
+    # Basis-URL ermitteln (Filme oder Serien)
+    baseURL = params.getValue('sUrl')
 
     # Einträge anlegen
-    params.setParam('sUrl', URL_SHOWS + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
+    params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
     oGui.addFolder(cGuiElement('Letztes Update', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + PARMS_GENRE_ALL + PARMS_SORT_BLOCKBUSTER)
+    params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_BLOCKBUSTER)
     oGui.addFolder(cGuiElement('Blockbuster', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + PARMS_GENRE_ALL + PARMS_SORT_IMDB_RATING)
+    params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_IMDB_RATING)
     oGui.addFolder(cGuiElement('IMDB Rating', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
+    params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
     oGui.addFolder(cGuiElement('Jahr', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SHOWS + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
+    params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
     oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
     
     # Liste abschließen
