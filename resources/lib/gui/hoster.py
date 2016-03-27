@@ -148,7 +148,7 @@ class cHosterGui:
         data = self._getInfoAndResolve(siteResult)
         if not data: return False
 
-        logger.info('download file link: ' + str(sLink))
+        logger.info('download file link: ' + str(data['link']))
         if self.dialog:
             self.dialog.close()
         oDownload = cDownload()
