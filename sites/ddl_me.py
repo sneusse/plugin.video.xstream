@@ -23,6 +23,7 @@ URL_MAIN = 'http://' + DOMAIN
 URL_SEARCH = URL_MAIN + '/search_99/?q='
 URL_MOVIES = URL_MAIN + '/moviez'
 URL_SHOWS = URL_MAIN + '/episodez'
+URL_TOP100 = URL_MAIN + '/top100/cover/'
 
 # Basis-Genre (rest wird generiert)
 PARMS_GENRE_ALL = "_00"
@@ -45,9 +46,13 @@ def load():
 
     # Einträge anlegen
     params.setParam('sUrl', URL_MOVIES)
+    params.setParam('sTop100Type', 'movies')
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('sUrl', URL_SHOWS)
+    params.setParam('sTop100Type', 'tv')
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
+    params.setParam('sUrl', URL_TOP100 + 'total/all/')
+    oGui.addFolder(cGuiElement('Hall of Fame', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
 
     # Liste abschließen
@@ -64,6 +69,7 @@ def showContentMenu():
     baseURL = params.getValue('sUrl')
 
     # Einträge anlegen
+    oGui.addFolder(cGuiElement('Top 100',SITE_IDENTIFIER,'showTop100Menu'), params) 
     params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
     oGui.addFolder(cGuiElement('Letztes Update', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_BLOCKBUSTER)
@@ -73,8 +79,24 @@ def showContentMenu():
     params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_YEAR)
     oGui.addFolder(cGuiElement('Jahr', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + PARMS_GENRE_ALL + PARMS_SORT_LAST_UPDATE)
-    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)
     
+    # Liste abschließen
+    oGui.setEndOfDirectory()
+
+def showTop100Menu():
+    # GUI-Element erzeugen
+    oGui = cGui()
+
+    # ParameterHandler erzeugen
+    params = ParameterHandler()
+
+    # Einträge anlegen
+    params.setParam('sUrl',URL_TOP100 + 'today/' + params.getValue('sTop100Type'))
+    oGui.addFolder(cGuiElement('Heute', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl',URL_TOP100 + 'month/' + params.getValue('sTop100Type'))
+    oGui.addFolder(cGuiElement('Monat', SITE_IDENTIFIER, 'showEntries'), params)
+
     # Liste abschließen
     oGui.setEndOfDirectory()
 
