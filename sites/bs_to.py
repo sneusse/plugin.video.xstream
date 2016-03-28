@@ -7,13 +7,14 @@ from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.config import cConfig
 from resources.lib import logger
+import collections
 import string
 import json
 from resources.lib.bs_finalizer import *
 
 # "Global" variables
-SITE_IDENTIFIER = 'burning_series_org'
-SITE_NAME = 'Burning-Series'
+SITE_IDENTIFIER = 'bs_to'
+SITE_NAME = 'BurningSeries'
 SITE_ICON = 'burning_series.png'
 
 URL_MAIN = 'http://www.bs.to/api/'
@@ -24,6 +25,7 @@ def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, 'showSeries'))
+    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'))
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
@@ -72,6 +74,32 @@ def showCharacters():
         oParams.setParam('char', letter)
         oGui.addFolder(oGuiElement, oParams)
     oGui.setEndOfDirectory()
+    
+def showGenres():
+    oGui = cGui()
+    oParams = ParameterHandler()
+    sGenre = oParams.getValue('genre')
+    genres = _getJsonContent("series:genre")
+    od = collections.OrderedDict(sorted(genres.items()))
+    
+    if sGenre:
+        total = len(genres[sGenre])
+        for serie in genres[sGenre]["series"]:
+            sTitle = serie["name"].encode('utf-8')
+            guiElement = cGuiElement(sTitle, SITE_IDENTIFIER, 'showSeasons')
+            guiElement.setMediaType('tvshow')
+            guiElement.setThumbnail(URL_COVER % serie["id"])
+            oParams.addParams({'seriesID' : str(serie["id"]), 'Title' : sTitle})
+            oGui.addFolder(guiElement, oParams, iTotal = total)
+        oGui.setView('tvshows')
+        oGui.setEndOfDirectory()
+    else:
+        for genre in od:
+            genre = genre.encode('utf-8')
+            oGuiElement = cGuiElement(genre, SITE_IDENTIFIER, 'showGenres')
+            oParams.setParam('genre', genre)
+            oGui.addFolder(oGuiElement, oParams)
+        oGui.setEndOfDirectory()
 
 # Show the search dialog, return/abort on empty input
 def showSearch():
@@ -87,7 +115,14 @@ def showSearch():
 def _getJsonContent(urlPart):
     request = cRequestHandler(URL_MAIN + urlPart)
     mod_request(request, urlPart)
-    return json.loads(request.request())
+    data = json.loads(request.request())
+    
+    # check for error and return Null if there is an Error
+    if 'error' not in data:
+        return data
+    else:
+        logger.info("JSON Error: %s" % data["error"])
+        return []
 
 # Search for series using the requested string sSearchText
 def _search(oGui, sSearchText):

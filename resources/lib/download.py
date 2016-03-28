@@ -17,12 +17,15 @@ class cDownload:
         self.__oDialog = oDialog
 
     def __createDownloadFilename(self, sTitle):
-        valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        filename = ''.join(c for c in sTitle if c in valid_chars)
+        #valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+        #filename = ''.join(c for c in sTitle if c in valid_chars)
+        filename = sTitle
         filename = filename.replace(' ','_')
         return filename
 
     def download(self, url, sTitle, showDialog = True):
+        sTitle = u'%s' % sTitle.decode('utf-8')
+        
         self.__processIsCanceled = False
         # extract header
         try: header = dict([item.split('=') for item in (url.split('|')[1]).split('&')])
@@ -45,7 +48,7 @@ class cDownload:
                     sPath = dialog.browse(3, 'Downloadfolder', 'files', '')
 
                 if (sPath != ''):
-                    sDownloadPath = xbmc.translatePath(sPath +  '%s' % (self.__sTitle, )).decode('utf-8')
+                    sDownloadPath = xbmc.translatePath(sPath +  '%s' % (self.__sTitle, ))
                     self.__prepareDownload(url, header, sDownloadPath)
 
         elif self.__sTitle != False:
@@ -76,7 +79,7 @@ class cDownload:
             iTotalSize = int(headers["Content-Length"])
 
         chunk = 4096
-        f = open(fpath, "wb")
+        f = open(r'%s' % fpath.decode('utf-8'), "wb")
         iCount = 0
         self._startTime = time.time()      
         while 1:

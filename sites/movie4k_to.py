@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from resources.lib.util import cUtil
 from resources.lib.parser import cParser
 from resources.lib.handler.requestHandler import cRequestHandler
@@ -12,13 +12,13 @@ from resources.lib import jsunprotect
 
 
 SITE_IDENTIFIER = 'movie4k_to'
-SITE_NAME = 'Movie4k.to'
+SITE_NAME = 'Movie4k'
 SITE_ICON = 'movie4k.png'
 SITE_SETTINGS = '<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />'
 oConfig = cConfig()
 DOMAIN = oConfig.getSetting('movie4k_to-domain')
 ####
-URL_MAIN = 'http://www.' + DOMAIN
+URL_MAIN = 'http://' + DOMAIN
 URL_MOVIES = URL_MAIN + '/index.php'
 URL_MOVIES_ALL = URL_MAIN + '/movies-all'
 URL_MOVIES_GENRE = URL_MAIN + '/genres-movies.html'
@@ -324,7 +324,7 @@ def parseMovieSimpleList():
         sUrl = params.getValue('sUrl')
         logger.info(sUrl)
         if (sUrl.find('tvshows-season-') != -1):
-            sPattern = '<TR>\s*<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="http://[^/]+/img/([^"]+)".*?</TR>'
+            sPattern = '<TR>\s*<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="(http://[^/]+){0,1}/img/([^"]+)".*?</TR>'
             if params.exist('sLanguageToken'):
                 sLanguageToken = params.getValue('sLanguageToken')
                 oRequest = cRequestHandler(sUrl)
@@ -335,7 +335,7 @@ def parseMovieSimpleList():
                         sUrl = str(aEntry[0]).strip()
                         if not (sUrl.startswith('http')):
                             sUrl = URL_MAIN +'/'+ sUrl
-                        if aEntry[2] == sLanguageToken:
+                        if aEntry[3] == sLanguageToken:
                             break
                     oRequest = cRequestHandler(sUrl)
                     sHtmlContent = oRequest.request()
@@ -345,7 +345,7 @@ def parseMovieSimpleList():
                             sUrl = str(aEntry[0]).strip()
                             if not (sUrl.startswith('http')):
                                 sUrl = URL_MAIN +'/'+ sUrl
-                            if aEntry[2] == sLanguageToken:
+                            if aEntry[3] == sLanguageToken:
                                 break
                                 
             else:

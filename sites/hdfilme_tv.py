@@ -12,7 +12,7 @@ import re, json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
-SITE_NAME = 'HDfilme.TV'
+SITE_NAME = 'HDfilme'
 SITE_ICON = 'hdfilme.png'
 
 # Basis-URL's
@@ -232,8 +232,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    oRequest = cRequestHandler(entryUrl)
-    sHtmlContent = oRequest.request()
+    sHtmlContent = __getHtmlContent(entryUrl)
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
@@ -284,8 +283,7 @@ def showLinks(sUrl =False, sName = False):
     sName = sName if sName else params.getValue('sName')
 
     # Seite abrufen
-    oRequest = cRequestHandler(sUrl)
-    sHtmlContent = oRequest.request()
+    sHtmlContent = __getHtmlContent(sUrl)
 
     # JSon mit den Links ermitteln
     pattern = 'var hdfilme_vip = .*?(\[.*?\])'            
@@ -348,3 +346,16 @@ def _search(oGui, sSearchText):
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH + sSearchText.strip(), oGui)
+
+# Funktion zum ermitteln des HTML-Contens (mit angepassten Header)
+def __getHtmlContent(sUrl = False,):
+    #ParameterHandler erzeugen
+    oParams = ParameterHandler()
+
+    # URL ermitteln falls nicht übergeben
+    if not sUrl: sUrl = oParams.getValue('url')
+
+    # Request durchführen
+    oRequest = cRequestHandler(sUrl)
+    oRequest.addHeaderEntry('User-Agent', 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13C75 Safari/601.1')
+    return oRequest.request()
