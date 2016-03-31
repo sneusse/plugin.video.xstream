@@ -8,13 +8,13 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import json
+import re,json
 
 SITE_IDENTIFIER = 'filmpalast_to'
 SITE_NAME = 'FilmPalast.to'
 SITE_ICON = 'filmpalast.png'
 
-URL_MAIN = 'http://www.filmpalast.to/'
+URL_MAIN = 'http://filmpalast.to/'
 URL_STREAM = URL_MAIN + 'stream/%d/1'
 URL_MOVIES_NEW = URL_MAIN + 'movies/new/'
 URL_MOVIES_TOP = URL_MAIN + 'movies/top/'
@@ -28,7 +28,7 @@ def load():
     params.setParam('sUrl', URL_MOVIES_NEW)
     oGui.addFolder(cGuiElement('Neue Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_SHOWS_NEW)
-    oGui.addFolder(cGuiElement('Neue Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Neue Episoden', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MOVIES_TOP)
     oGui.addFolder(cGuiElement('Top Filme', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'))
@@ -75,29 +75,40 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     oRequest = cRequestHandler(entryUrl)
-    oGui.setView('tvshows' if 'serien/' in entryUrl else 'movies')
+    if 'serien/' in entryUrl:
+        contentType = 'episodes'
+        mediaType = 'episode'
+    else:
+        contentType = 'movies'
+        mediaType = 'movie'
+  
     sHtmlContent = oRequest.request()
     # Grab the link and title
     pattern = '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>[^<]*'
     # Grab the thumbnail
     pattern +='<img[^>]*src=["\']([^"\']*)["\'][^>]*class="cover-opacity"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
-    if not aResult[0]:
-        return
+    if not aResult[0]: return
     for sUrl, sName, sThumbnail in aResult[1]:
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
-        oGuiElement.setMediaType('movie')
+        oGuiElement.setMediaType(mediaType)
+        if mediaType == 'episode':
+            res = re.search('S(\d{2})E(\d{2})',sName)
+            if res:
+                oGuiElement.setEpisode(res.group(1))
+                oGuiElement.setSeason(res.group(2))
         oGuiElement.setThumbnail(__checkUrl(sThumbnail))
         params.setParam('entryUrl', __checkUrl(sUrl))
         oGui.addFolder(oGuiElement, params, bIsFolder = False)
-
+    #check next page
     pattern = '<a[^>]*class="[^"]*pageing[^"]*"[^>]*'
     pattern += 'href=["\']([^"\']*)["\'][^>]*>[ ]*vorw'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', aResult[1][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-    if not sGui:	
+    if not sGui:
+        oGui.setView(contentType)	
         oGui.setEndOfDirectory()
 
 # Show the hosters dialog
@@ -135,11 +146,9 @@ def getHosterUrl(sUrl = False):
 
 # Show the search dialog, return/abort on empty input
 def showSearch():
-    oGui = cGui()
-    sSearchText = oGui.showKeyBoard()
+    sSearchText = cGui().showKeyBoard()
     if not sSearchText: return
-    _search(oGui, sSearchText)
-    oGui.setEndOfDirectory()
+    _search(False, sSearchText)
 
 # Search using the requested string sSearchText
 def _search(oGui, sSearchText):
@@ -152,9 +161,9 @@ def __checkUrl(url):
 def __getSource(id):
     oRequest = cRequestHandler(URL_STREAM % int(id))
     oRequest.addParameters('streamID', id)
-    oRequest.addHeaderEntry('Referer', URL_MAIN)
+    oRequest.addHeaderEntry('Origin', URL_MAIN)
+    oRequest.addHeaderEntry('Host', 'filmpalast.to')
     oRequest.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
-    oRequest.setRequestType(oRequest.REQUEST_TYPE_POST)
     data = json.loads(oRequest.request())
     if 'error' in data and int(data['error']) == 0 and 'url' in data:
         return data['url']
