@@ -41,9 +41,11 @@ def showEntries(entryUrl = False, sGui = False):
 
     if URL_SHOWS in entryUrl:
         contentType = 'tvshows'
+        mediaType = 'tvshow'
         isFolder = True
     else:
         contentType = 'movies'
+        mediaType = 'movie'
         isFolder = False
 
     # Filter out the main section
@@ -62,9 +64,10 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<span[^>]*class="name"[^>]*>([^<>]*)</span>.*?'
     # Grab the description
     pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
-
+    
     aResult = cParser().parse(sMainContent, pattern)
     if not aResult[0]: return
+    total = len (aResult[1])
     for sUrl, sThumbnail, sName, sDesc in aResult[1]:
         # Grab the year (for movies)
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
@@ -74,9 +77,15 @@ def showEntries(entryUrl = False, sGui = False):
             iYear = year
             break
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        if mediaType == 'tvshow':
+            res = re.search('(.*?) staffel (\d+)', sName,re.I)
+            if res:           
+                oGuiElement.setSeason(res.group(2)) 
+                oGuiElement.setTVShowTitle(res.group(1))
+                oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),res.group(2)))
         if iYear:
             oGuiElement.setYear(iYear)
-        oGuiElement.setMediaType('movie')
+        oGuiElement.setMediaType(mediaType)
         sThumbnail = sThumbnail.replace('_thumb', '')
         oGuiElement.setThumbnail(sThumbnail)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
@@ -84,7 +93,7 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
-        oGui.addFolder(oGuiElement, params, isFolder)
+        oGui.addFolder(oGuiElement, params, isFolder, total)
 
     pattern = '<ul[^>]*class="pagination[^>]*>.*?'
     pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*?</ul>'
@@ -113,7 +122,7 @@ def showHosters():
 def showEpisodes(aResult, params):
     oGui = cGui()
     sName = params.getValue('sName')
-    iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sName.lower())[0])
+    iSeason = int(params.getValue('season'))
     sThumbnail = params.getValue('sThumbnail')
     for iEpisode, sUrl in aResult:
         sName = 'Folge ' + str(iEpisode)
