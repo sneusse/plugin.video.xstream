@@ -4,6 +4,7 @@ import sys
 import urllib
 import httplib
 import mechanize
+import socket
 import xbmc
 import xbmcgui
 
@@ -92,9 +93,8 @@ class cRequestHandler:
         else:
             oRequest = mechanize.Request(self.__sUrl)
 
-        for aHeader in self.__headerEntries:                
-            for sHeaderKey, sHeaderValue in aHeader.items():
-                oRequest.add_header(sHeaderKey, sHeaderValue)
+        for key, value  in self.__headerEntries.items():
+            oRequest.add_header(key, value)
         cookieJar.add_cookie_header(oRequest)
         
         if self.caching and self.cacheTime > 0:
@@ -102,7 +102,7 @@ class cRequestHandler:
             if sContent:
                 return sContent
         try:
-            oResponse = opener.open(oRequest,timeout = 60)             
+            oResponse = opener.open(oRequest,timeout = 60)
         except mechanize.HTTPError, e:
             if not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xStream','Fehler beim Abrufen der Url:',self.__sUrl, str(e))
