@@ -4,6 +4,7 @@ import sys
 import urllib
 import httplib
 import mechanize
+import socket
 import xbmc
 import xbmcgui
 
