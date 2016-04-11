@@ -68,7 +68,7 @@ def updateMeta(params):
                 logger.info('error or nothing found')
                 foundInfo = False
         elif mediaType == 'tvshow':
-            foundInfo = metahandlers.TheTVDB().get_matching_shows(sSearchText, language="all")
+            foundInfo = metahandlers.TheTVDB().get_matching_shows(sSearchText, language="all", want_raw=True)
         else:
             return
 
@@ -82,8 +82,10 @@ def updateMeta(params):
             if mediaType == 'movie':
                 items.append(str(item['title'].encode('utf-8'))+' ('+str(item['year'])+')')
             elif mediaType == 'tvshow':
-                if len(item)>2:items.append(str(item[1])+' ('+str(item[2])+')')
-                else: items.append(str(item[1]))
+                if 'FirstAired' in item:
+                    items.append(item['SeriesName']+' ('+str(item['FirstAired'])[:4]+') ' + item.get('language',''))
+                else:
+                    items.append(item['SeriesName']+' '+item.get('language',''))
             else:
                 return
         index = dialog.select('Film/Serie wählen', items)
@@ -109,7 +111,7 @@ def updateMeta(params):
         elif season:
             meta.update_season(name, imdbID, season)
         else:
-            meta.update_meta(mediaType, name, imdbID, new_imdb_id=str(item[2]), new_tmdb_id=str(item[0]), year=year)
+            meta.update_meta(mediaType, name, imdbID, new_imdb_id=str(item.get('IMDB_ID','')), new_tmdb_id=str(item['id']), year=year)
     xbmc.executebuiltin("XBMC.Container.Refresh")
     return
 
