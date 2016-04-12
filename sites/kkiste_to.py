@@ -4,9 +4,8 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.gui.gui import cGui
-from resources.lib.config import cConfig
 from json import loads
-import logger
+from resources.lib import logger
 
 
 SITE_IDENTIFIER = 'kkiste_to'
@@ -30,6 +29,8 @@ PARAM_MOVIESEGMENT_KEY = 'sMovieSegment'
 PARAM_URL_KEY = 'sUrl'
 PARAM_PAGE_KEY = 'iPage'
 PARAM_ROOTURL_KEY = "sRootUrl"
+
+searchString = False
 
 def load():
     oGui = cGui()
@@ -121,13 +122,15 @@ def _parseMovie(sHtmlContent,sUrl,sRootUrl,iPage,sPattern, oGui):
         for aEntry in aResult[1]:
             oOutputParameterHandler = ParameterHandler()
             movieUrlSegment = str(aEntry[0])
-            newUrl = URL_MAIN + '/' + movieUrlSegment;
+            newUrl = URL_MAIN + movieUrlSegment;
 
             if (sRootUrl.startswith(URL_MOVIES_ALL) |
                 sRootUrl.startswith(URL_SEARCH)):
                 sMovieTitle = str(aEntry[1])
                 # pattern Jetzt <TITLE> Stream ansehen
                 sMovieTitle = sMovieTitle[6:len(sMovieTitle)-15]
+                # filter not relevant search results
+                if searchString and searchString.lower() not in sMovieTitle.lower(): continue
                 coverUrl = ''
             else:
                 coverUrl = str(aEntry[1])+"_145_215.jpg"
@@ -230,6 +233,8 @@ def showEpisodes():
         oGuiElement.setTitle(sMovieTitle + '- S'+sSeason+'E'+str(aEntry['episode']))
         oGuiElement.setMediaType('episode')
         oGuiElement.setEpisode(aEntry['episode'])
+        oGuiElement.setSeason(sSeason)
+        oGuiElement.setTVShowTitle(sMovieTitle)
 
         oOutputParameterHandler = ParameterHandler()
         oOutputParameterHandler.setParam('link',aEntry['link'])
@@ -257,10 +262,8 @@ def _playEpisode():
 def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
-    if (sSearchText != False and sSearchText != ''):
-        _search(oGui, sSearchText)
-    else:
-        return
+    if not sSearchText: return
+    _search(oGui, sSearchText)
     oGui.setEndOfDirectory()
 
 def showCharacters():
@@ -283,18 +286,33 @@ def showHosters():
     sMovieTitle = oInputParameterHandler.getValue('sMovieTitle')
     sUrl = oInputParameterHandler.getValue(PARAM_URL_KEY)
     sHtmlContent = cRequestHandler(sUrl).request()
-
-    sPattern = '<a href="http://www.ecostream.tv/([^"]+)" target="_blank">Ecostream <small>([^<]+)</small>'
+    
+    sPattern = 'data-det="([^"]+)"'
     aResult = cParser().parse(sHtmlContent, sPattern)
     results = []
 
-    if aResult[0]: # multipart stream
-        for aEntry in aResult[1]:
-            result = {}
-            result['streamUrl'] = 'http://www.ecostream.tv/'+aEntry[0]
-            result['resolved'] = False
-            result['title'] = sMovieTitle + ' ' +aEntry[1]
-            results.append(result)
+    if not aResult[0]: return results
+    # can't handle without changes to requestHandler
+    import mechanize, json
+    request = mechanize.Request("http://kkiste.to/xhr/link", aResult[1][0])
+    request.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    request.add_header("X-Requested-With","XMLHttpRequest")
+    request.add_header('Referer', sUrl)
+    request.add_header('Accept', '*/*')
+    request.add_header('Host', SITE_NAME.lower())
+    request.add_header('Content-Length',len(aResult[1][0]))
+    request.add_header('Content-Type','text/plain')
+    resp = mechanize.urlopen(request)
+    sHtmlContent = resp.read()
+    try: items = json.loads(sHtmlContent)
+    except: return results
+    # multipart stream
+    for i, item in enumerate(items) :
+        result = {}
+        result['streamUrl'] = 'http://www.ecostream.tv/stream/'+item
+        result['resolved'] = False
+        result['title'] = sMovieTitle + ' part ' +str(i)
+        results.append(result)
     return results
 
 def _mediaIsASerie(sUrl):
@@ -320,6 +338,8 @@ def __createCharacters(oGui, sCharacter, sBaseUrl):
     oGui.addFolder(oGuiElement, oOutputParameterHandler)
 
 def _search(oGui, sSearchText):
+    global searchString
+    searchString = sSearchText
     sUrl = URL_SEARCH + sSearchText
     _parseMedia(sUrl,sUrl,1,PATTERN_LIST, oGui)
 
@@ -341,7 +361,7 @@ def __createMainMenuItem(oGui, sTitle, sUrl, sFunction):
     oGuiElement.setTitle(sTitle)
     oOutputParameterHandler = ParameterHandler()
 
-    if (sUrl != ''):
+    if sUrl:
         oOutputParameterHandler.setParam(PARAM_PAGE_KEY,1)
         oOutputParameterHandler.setParam(PARAM_ROOTURL_KEY, sUrl)
         oOutputParameterHandler.setParam(PARAM_URL_KEY, sUrl)
