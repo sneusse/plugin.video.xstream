@@ -4,6 +4,7 @@ import sys
 import urllib
 import httplib
 import mechanize
+import socket
 import xbmc
 import xbmcgui
 
@@ -22,7 +23,7 @@ class cRequestHandler:
         self.__sRealUrl = ''
         self.__cType = 0
         self.__aParameters = {}
-        self.__aHeaderEntries = []
+        self.__headerEntries = {}
         self.__cachePath = ''
         self._cookiePath = ''
         self.ignoreDiscard(False)
@@ -48,14 +49,13 @@ class cRequestHandler:
         self.__cType = cType
 
     def addHeaderEntry(self, sHeaderKey, sHeaderValue):
-        aHeader = {sHeaderKey : sHeaderValue}
-        self.__aHeaderEntries.append(aHeader)
+        self.__headerEntries[sHeaderKey] = sHeaderValue
 
-    def addParameters(self, sParameterKey, sParameterValue, quote = False):
+    def addParameters(self, key, value, quote = False):
         if not quote:
-            self.__aParameters[sParameterKey] = sParameterValue
+            self.__aParameters[key] = value
         else:
-            self.__aParameters[sParameterKey] = urllib.quote(str(sParameterValue))
+            self.__aParameters[key] = urllib.quote(str(value))
 
     def getResponseHeader(self):
         return self.__sResponseHeader
@@ -82,19 +82,19 @@ class cRequestHandler:
             cookieJar.load(self._cookiePath, self.__bIgnoreDiscard, self.__bIgnoreExpired)
         except Exception as e:
             logger.info(e)
-        sParameters = urllib.urlencode(self.__aParameters)
 
+        sParameters = urllib.urlencode(self.__aParameters)
         opener = mechanize.build_opener(SmartRedirectHandler,
                                         mechanize.HTTPEquivProcessor,
-                                        mechanize.HTTPRefreshProcessor)
+                                        mechanize.HTTPRefreshProcessor,
+                                        newHTTPSHandler)
         if (len(sParameters) > 0):
             oRequest = mechanize.Request(self.__sUrl, sParameters)
         else:
             oRequest = mechanize.Request(self.__sUrl)
 
-        for aHeader in self.__aHeaderEntries:                
-                for sHeaderKey, sHeaderValue in aHeader.items():
-                    oRequest.add_header(sHeaderKey, sHeaderValue)
+        for key, value  in self.__headerEntries.items():
+            oRequest.add_header(key, value)
         cookieJar.add_cookie_header(oRequest)
         
         if self.caching and self.cacheTime > 0:
@@ -102,7 +102,7 @@ class cRequestHandler:
             if sContent:
                 return sContent
         try:
-            oResponse = opener.open(oRequest,timeout = 60)             
+            oResponse = opener.open(oRequest,timeout = 60)
         except mechanize.HTTPError, e:
             if not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xStream','Fehler beim Abrufen der Url:',self.__sUrl, str(e))
@@ -170,6 +170,40 @@ class cRequestHandler:
             file = open(cookieFile, 'w')
             file.close()
         self._cookiePath = cookieFile
+
+    #from kennethreitz module "requests"
+    def createCookie(self, name, value, **kwargs):
+        """Make a cookie from underspecified parameters.
+        By default, the pair of `name` and `value` will be set for the domain ''
+        and sent on every request (this is sometimes called a "supercookie").
+        """
+        result = dict(
+            version=0,
+            name=name,
+            value=value,
+            port=None,
+            domain='',
+            path='/',
+            secure=False,
+            expires=None,
+            discard=True,
+            comment=None,
+            comment_url=None,
+            rest={'HttpOnly': None},
+            rfc2109=False,)
+
+        badargs = set(kwargs) - set(result)
+        if badargs:
+            err = 'create_cookie() got unexpected keyword arguments: %s'
+            raise TypeError(err % list(badargs))
+
+        result.update(kwargs)
+        result['port_specified'] = bool(result['port'])
+        result['domain_specified'] = bool(result['domain'])
+        result['domain_initial_dot'] = result['domain'].startswith('.')
+        result['path_specified'] = bool(result['path'])
+
+        return mechanize.Cookie(**result)
 
     def getCookie(self, sCookieName):
         cookieJar = mechanize.LWPCookieJar()
@@ -249,17 +283,28 @@ class cRequestHandler:
             if fileAge > self.cacheTime:
                 os.remove(cacheFile)
 
-# get more control over redirect (extract further cookies) 
-class SmartRedirectHandler(mechanize.HTTPRedirectHandler):     
-    def http_error_301(self, req, fp, code, msg, headers):
-        result = mechanize.HTTPRedirectHandler.http_error_301( 
-            self, req, fp, code, msg, headers)             
-        result.status = code
-        return result                                       
+# python 2.7.9 and 2.7.10 certificate workaround
+class newHTTPSHandler(mechanize.HTTPSHandler):
+    def do_open(self, conn_factory, req):
+        conn_factory = newHTTPSConnection
+        return mechanize.HTTPSHandler.do_open(self, conn_factory, req)
 
-    def http_error_302(self, req, fp, code, msg, headers):   
-        result = mechanize.HTTPRedirectHandler.http_error_302(
-            self, req, fp, code, msg, headers)              
+class newHTTPSConnection(httplib.HTTPSConnection):
+    def __init__(self, host, port=None, key_file=None, cert_file=None, strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None, context=None):
+        if sys.version_info >= (2, 7, 9) and sys.version_info <= (2, 7, 10):
+            import ssl
+            context = ssl._create_unverified_context()
+        httplib.HTTPSConnection.__init__(self, host, port, key_file, cert_file, strict, timeout, source_address, context)
+
+# get more control over redirect (extract further cookies) 
+class SmartRedirectHandler(mechanize.HTTPRedirectHandler):
+    def http_error_301(self, req, fp, code, msg, headers):
+        result = mechanize.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
+        result.status = code
+        return result
+
+    def http_error_302(self, req, fp, code, msg, headers):
+        result = mechanize.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
         result.status = code
         self.export_cookies(req, fp, code, msg, headers)
         return result
@@ -271,6 +316,6 @@ class SmartRedirectHandler(mechanize.HTTPRedirectHandler):
         try:
             cookieJar.load(oRequest._cookiePath)
         except Exception as e:
-            logger.info(e)            
+            logger.info(e)
         cookieJar.extract_cookies(resp,req)  
         cookieJar.save(oRequest._cookiePath)

@@ -16,8 +16,8 @@ SITE_IDENTIFIER = 'burning_series_org'
 SITE_NAME = 'Burning-Series'
 SITE_ICON = 'burning_series.png'
 
-URL_MAIN = 'http://www.bs.to/api/'
-URL_COVER = 'http://s.bs.to/img/cover/%s.jpg|encoding=gzip'
+URL_MAIN = 'https://www.bs.to/api/'
+URL_COVER = 'https://s.bs.to/img/cover/%s.jpg|encoding=gzip'
 
 # Mainmenu
 def load():
