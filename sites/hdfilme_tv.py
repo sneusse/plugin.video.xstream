@@ -16,7 +16,6 @@ SITE_ICON = 'hdfilme.png'
 
 # Basis-URL's
 URL_MAIN = 'http://hdfilme.tv/'
-URL_LOGIN = URL_MAIN + 'login.html?'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie/search?key='
