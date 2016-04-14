@@ -3,7 +3,6 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.config import cConfig
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
@@ -78,8 +77,7 @@ def showGenreList():
     entryUrl = params.getValue('sUrl')
 
     # Movie-Seite laden
-    oRequestHandler = cRequestHandler(entryUrl)
-    sHtmlContent = oRequestHandler.request()
+    sHtmlContent = cRequestHandler(entryUrl).request()
 
     # Select für Generes Laden
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
@@ -130,7 +128,7 @@ def showEntries(entryUrl = False, sGui = False):
     isTvshow = True if URL_SHOWS in entryUrl else False
 
     # Filter out the main section
-    pattern = '<ul class="products row">.*?</ul>'
+    pattern = '<ul class="products row">(.*?)</ul>'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
@@ -174,7 +172,7 @@ def showEntries(entryUrl = False, sGui = False):
         for name, year in aYear:
             sName = name
             iYear = year
-            break;
+            break
 
         # Listen-Eintrag erzeugen
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
@@ -286,7 +284,7 @@ def getHosters(sUrl =False, sName = False):
     sHtmlContent = cRequestHandler(sUrl).request()
 
     # JSon mit den Links ermitteln
-    pattern = 'var.*?(\[{"file":.*?\])'
+    pattern = '(\[{".*?}\])'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
@@ -304,7 +302,6 @@ def getHosters(sUrl =False, sName = False):
         hoster = dict()
         hoster['link'] = entry['file']
         hoster['name'] = sLabel
-        #hoster['displayedName'] = sLabel
         hoster['resolveable'] = True
         hosters.append(hoster)
 
