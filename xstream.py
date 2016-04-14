@@ -5,6 +5,7 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.config import cConfig
 from resources.lib import logger
+from resources import updateManager
 import xbmc
 import xbmcgui
 import sys
@@ -188,6 +189,8 @@ def parseUrl():
         function()
 
 def showMainMenu(sFunction):
+    if cConfig().getSetting('UpdateSetting') != 'Off':
+        updateManager.checkforupdates()
     oGui = cGui()
     oPluginHandler = cPluginHandler()
     aPlugins = oPluginHandler.getAvailablePlugins()
