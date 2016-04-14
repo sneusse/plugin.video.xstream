@@ -143,8 +143,11 @@ def showEntries(entryUrl = False, sGui = False):
     pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*?'
     pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?'
 
-    # Rhumbnail ermitteln
+    # Thumbnail ermitteln
     pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?'
+
+    # Prüfung auf Episoden-Einträge
+    pattern += '(?:<div[^>]*class="episode"[^>]*>([^"]*)</div>.*?)?'
 
     # Name ermitteln
     pattern += '<div[^>]*class="popover-title"[^>]*>.*?'
@@ -165,7 +168,7 @@ def showEntries(entryUrl = False, sGui = False):
     total = len (aResult[1])
 
     # Alle Ergebnisse durchlaufen
-    for sUrl, sThumbnail, sName, sDesc in aResult[1]:
+    for sUrl, sThumbnail, sEpisodeNrs, sName, sDesc in aResult[1]:
         # Bei Filmen das Jahr vom Title trennen
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
         iYear = False
@@ -173,6 +176,9 @@ def showEntries(entryUrl = False, sGui = False):
             sName = name
             iYear = year
             break
+
+        # prüfen ob der Eintrag ein Serie/Staffel ist
+        isTvshowEntry = True if sEpisodeNrs else False
 
         # Listen-Eintrag erzeugen
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
@@ -193,12 +199,13 @@ def showEntries(entryUrl = False, sGui = False):
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
         oGuiElement.setThumbnail(sThumbnail)
-        oGuiElement.setMediaType('tvshow' if isTvshow or res else 'movie')
+        oGuiElement.setMediaType('tvshow' if isTvshowEntry else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
-        oGui.addFolder(oGuiElement, params, True if isTvshow or res else False, total)
+        params.setParam('isTvshowEntry', isTvshowEntry)
+        oGui.addFolder(oGuiElement, params, isTvshowEntry, total)
 
     # Pattern um die Aktuelle Seite zu ermitteln
     pattern = '<ul[^>]*class="pagination[^>]*>.*'
@@ -231,8 +238,15 @@ def showHosters():
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
 
+    # Prüfen ob Einträge vorliegen
+    if not aResult[0]:
+        return
+
+    # Ermitteln ob es sich um eine Serie handelt
+    isTvshowEntry = params.getValue('isTvshowEntry')
+
     # Falls Episoden gefunden worden => Episodenauswahl vorschalten
-    if aResult[0] and re.match('.*-staf+el-.*', entryUrl) is not None:
+    if isTvshowEntry == 'True':
         showEpisodes(aResult[1], params)
     else:
         return getHosters(entryUrl, params.getValue('sName'))
