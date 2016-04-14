@@ -178,7 +178,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
 
         # Bei Serien Title anpassen
-        res = re.search('(.*?) staffel (\d+)', sName,re.I)
+        res = re.search('(.*?) staf+el (\d+)', sName,re.I)
         if res:
             oGuiElement.setTVShowTitle(res.group(1))
             oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),int(res.group(2))))
@@ -232,7 +232,7 @@ def showHosters():
     aResult = cParser().parse(sHtmlContent, pattern)
 
     # Falls Episoden gefunden worden => Episodenauswahl vorschalten
-    if aResult[0] and '-staffel-' in entryUrl:
+    if aResult[0] and re.match('.*-staf+el-.*', entryUrl) is not None:
         showEpisodes(aResult[1], params)
     else:
         return getHosters(entryUrl, params.getValue('sName'))
@@ -244,7 +244,7 @@ def showEpisodes(aResult, params):
     # Variable für Ansicht vorbereiten
     sTVShowTitle = params.getValue('TVShowTitle')
     sName = params.getValue('sName')
-    iSeason = int(re.compile('.*?staffel\s*(\d+)').findall(sName.lower())[0])
+    iSeason = int(re.compile('.*?staf+el\s*(\d+)').findall(sName.lower())[0])
     sThumbnail = params.getValue('sThumbnail')
 
     # Listengröße ermitteln
