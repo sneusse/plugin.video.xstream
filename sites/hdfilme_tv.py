@@ -124,9 +124,6 @@ def showEntries(entryUrl = False, sGui = False):
     # Daten ermitteln
     sHtmlContent = oRequest.request()
     
-    # Prüfen ob es sich um einen Film oder um eine Serie handelt
-    isTvshow = True if URL_SHOWS in entryUrl else False
-
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -178,16 +175,19 @@ def showEntries(entryUrl = False, sGui = False):
             break
 
         # prüfen ob der Eintrag ein Serie/Staffel ist
-        isTvshowEntry = True if sEpisodeNrs else False
+        isTvshow = True if sEpisodeNrs else False
 
         # Listen-Eintrag erzeugen
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
 
         # Bei Serien Title anpassen
-        res = re.search('(.*?) staf+el (\d+)', sName,re.I)
+        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName,re.I)
         if res:
             oGuiElement.setTVShowTitle(res.group(1))
             oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),int(res.group(2))))
+        elif not res and isTvshow:
+            oGuiElement.setTVShowTitle(sName)
+            oGuiElement.setTitle('%s - Staffel %s' % (sName,"1"))
 
         # Thumbnail und Beschreibung für Anzeige anpassen
         sThumbnail = sThumbnail.replace('_thumb', '')
@@ -199,13 +199,13 @@ def showEntries(entryUrl = False, sGui = False):
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
         oGuiElement.setThumbnail(sThumbnail)
-        oGuiElement.setMediaType('tvshow' if isTvshowEntry else 'movie')
+        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
-        params.setParam('isTvshowEntry', isTvshowEntry)
-        oGui.addFolder(oGuiElement, params, isTvshowEntry, total)
+        params.setParam('isTvshow', isTvshow)
+        oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     # Pattern um die Aktuelle Seite zu ermitteln
     pattern = '<ul[^>]*class="pagination[^>]*>.*'
@@ -221,7 +221,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     # Liste abschließen und View setzen
     if not sGui:
-        oGui.setView('tvshows' if isTvshow else 'movies')
+        oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
@@ -243,7 +243,7 @@ def showHosters():
         return
 
     # Ermitteln ob es sich um eine Serie handelt
-    isTvshowEntry = params.getValue('isTvshowEntry')
+    isTvshowEntry = params.getValue('isTvshow')
 
     # Falls Episoden gefunden worden => Episodenauswahl vorschalten
     if isTvshowEntry == 'True':
@@ -258,8 +258,13 @@ def showEpisodes(aResult, params):
     # Variable für Ansicht vorbereiten
     sTVShowTitle = params.getValue('TVShowTitle')
     sName = params.getValue('sName')
-    iSeason = int(re.compile('.*?staf+el\s*(\d+)').findall(sName.lower())[0])
     sThumbnail = params.getValue('sThumbnail')
+    iSeason = 1
+
+    # Staffel ermitteln
+    res = re.search('.*?\s(?:staf+el|s)\s*(\d+)', sName,re.I)
+    if res:
+        iSeason = int(res.group(1))
 
     # Listengröße ermitteln
     total = len (aResult)
