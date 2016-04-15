@@ -112,7 +112,7 @@ class cGui:
             infoString = '[I]%s[/I]' % infoString
         itemValues['title'] = itemTitle + infoString
          
-        oListItem = xbmcgui.ListItem(itemTitle, oGuiElement.getTitleSecond(), oGuiElement.getIcon(), oGuiElement.getThumbnail())
+        oListItem = xbmcgui.ListItem(itemTitle + infoString, oGuiElement.getTitleSecond(), oGuiElement.getIcon(), oGuiElement.getThumbnail())
         oListItem.setInfo(oGuiElement.getType(), itemValues)     
         oListItem.setProperty('fanart_image', oGuiElement.getFanart())
         aProperties = oGuiElement.getItemProperties()
