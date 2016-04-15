@@ -185,9 +185,11 @@ def showEntries(entryUrl = False, sGui = False):
         if res:
             oGuiElement.setTVShowTitle(res.group(1))
             oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),int(res.group(2))))
+            params.setParam('sSeason', int(res.group(2)))
         elif not res and isTvshow:
             oGuiElement.setTVShowTitle(sName)
             oGuiElement.setTitle('%s - Staffel %s' % (sName,"1"))
+            params.setParam('sSeason', "1")
 
         # Thumbnail und Beschreibung für Anzeige anpassen
         sThumbnail = sThumbnail.replace('_thumb', '')
@@ -259,12 +261,7 @@ def showEpisodes(aResult, params):
     sTVShowTitle = params.getValue('TVShowTitle')
     sName = params.getValue('sName')
     sThumbnail = params.getValue('sThumbnail')
-    iSeason = 1
-
-    # Staffel ermitteln
-    res = re.search('.*?\s(?:staf+el|s)\s*(\d+)', sName,re.I)
-    if res:
-        iSeason = int(res.group(1))
+    sSeason = params.getValue('sSeason')
 
     # Listengröße ermitteln
     total = len (aResult)
@@ -275,7 +272,7 @@ def showEpisodes(aResult, params):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
-        oGuiElement.setSeason(iSeason)
+        oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(iEpisode)
         oGuiElement.setThumbnail(sThumbnail)
         params.setParam('sUrl', sUrl)
