@@ -3,12 +3,9 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.config import cConfig
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import re, json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'gute_filme_to'
