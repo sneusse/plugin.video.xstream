@@ -6,7 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib import logger
 from resources.lib.config import cConfig
-import re, json
+import json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'ddl_me'
