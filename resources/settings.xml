@@ -8,7 +8,7 @@
     <setting default="false" enable="!eq(-1,false)" id="metaOverwrite" label="30008" type="bool" />
     <setting default="600" id="cacheTime" label="30006" type="number" />
     <setting default="false" id="showAdult" label="30003" type="bool" />
-    <setting default="Stable" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
+    <setting default="Off" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
     <setting type="sep" />
   </category> 
   <category label="30022">
