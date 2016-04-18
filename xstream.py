@@ -5,6 +5,7 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.config import cConfig
 from resources.lib import logger
+from resources.lib import updateManager
 import xbmc
 import xbmcgui
 import sys
@@ -136,12 +137,16 @@ def parseUrl():
         elif sFunction == 'searchAlter':
             searchAlter(params)
             return
+        elif sFunction == 'updateXstream' and cConfig().getSetting('UpdateSetting') != 'Off':
+            updateManager.checkforupdates()
+            return
     else:
       sFunction = 'load'
 
     # Test if we should run a function on a special site
     if not params.exist('site'):
         xbmc.executebuiltin('XBMC.RunPlugin(%s?function=clearCache)' % sys.argv[0])
+        xbmc.executebuiltin('XBMC.RunPlugin(%s?function=updateXstream)' % sys.argv[0])
         # As a default if no site was specified, we run the default starting gui with all plugins
         showMainMenu(sFunction)
         return
