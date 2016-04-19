@@ -7,8 +7,8 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
 
-SITE_IDENTIFIER = 'kinoleak'
-SITE_NAME = 'KinoLeak.Tv'
+SITE_IDENTIFIER = 'kinoleak_tv'
+SITE_NAME = 'KinoLeak'
 SITE_ICON = 'kinoleak.png'
 
 URL_MAIN = 'http://kinoleak.tv/'
