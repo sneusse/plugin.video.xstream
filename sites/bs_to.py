@@ -26,7 +26,7 @@ def load():
     oGui = cGui()
     oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, 'showSeries'))
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'))
-    oGui.addFolder(cGuiElement('Zufällige Auswahl', SITE_IDENTIFIER, 'showRandom'))
+    oGui.addFolder(cGuiElement('Zufall', SITE_IDENTIFIER, 'showRandom'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -202,11 +202,11 @@ def showRandom():
 	oGui = cGui()
  	oParams = ParameterHandler()
 
-	oGui.addFolder(cGuiElement('Zufalls Serie', SITE_IDENTIFIER, 'randomSerie'))
+	oGui.addFolder(cGuiElement('Zufällige Serie', SITE_IDENTIFIER, 'randomSerie'))
 	oParams.setParam('specific', 'Season')
-	oGui.addFolder(cGuiElement('Zufalls Staffel', SITE_IDENTIFIER, 'randomSeason'), oParams)
+	oGui.addFolder(cGuiElement('Zufällige Staffel', SITE_IDENTIFIER, 'randomSeason'), oParams)
 	oParams.setParam('specific', 'Episode')
-	oGui.addFolder(cGuiElement('Zufalls Episode', SITE_IDENTIFIER, 'randomEpisode'), oParams)
+	oGui.addFolder(cGuiElement('Zufällige Episode', SITE_IDENTIFIER, 'randomEpisode'), oParams)
 
 	oGui.setEndOfDirectory()
 
