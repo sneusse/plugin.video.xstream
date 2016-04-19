@@ -37,22 +37,19 @@ class cGui:
             self.pluginPath = sys.argv[0]
         except:
             self.pluginPath = ''
-        if cConfig().getSetting('metahandler')=='true':
-           self.isMetaOn = True
-        else:
-           self.isMetaOn = False
+        self.isMetaOn = cConfig().getSetting('metahandler')=='true'
         if cConfig().getSetting('metaOverwrite')=='true':
            self.metaMode = 'replace'
         else:
            self.metaMode = 'add'
-        #check if we were using globalSearch
-        inParams = ParameterHandler()
-        self.globalSearch = inParams.getValue("function") == "globalSearch"
-        self.alterSearch = inParams.getValue("function") == "searchAlter"
+        #for globalSearch or alterSearch
+        self.globalSearch = False
+        self._collectMode = False
         self.searchResults = []
 
 
-    def addFolder(self, oGuiElement, oOutputParameterHandler='', bIsFolder = True, iTotal = 0, isHoster = False):
+
+    def addFolder(self, oGuiElement, outParams='', bIsFolder = True, iTotal = 0, isHoster = False):
         '''
         add GuiElement to Gui, adds listitem to a list
         '''
@@ -60,25 +57,26 @@ class cGui:
         if xbmc.abortRequested:
             self.setEndOfDirectory(False)
             raise RuntimeError('UserAborted')
-        # store result in list if we searched for other sources
-        #if  self.altersearch:
-        #    self.searchresults.append(oguielement)
-        #    return
+        # store result in list if we searched global for other sources
+        if  self._collectMode:
+            import copy
+            self.searchResults.append({'guiElement':oGuiElement,'params':copy.deepcopy(outParams),'isFolder':bIsFolder})
+            return
 
         if not oGuiElement._isMetaSet and self.isMetaOn and oGuiElement._mediaType:
-            imdbID = oOutputParameterHandler.getValue('imdbID')
+            imdbID = outParams.getValue('imdbID')
             if imdbID:
                 oGuiElement.getMeta(oGuiElement._mediaType, imdbID, mode = self.metaMode)
             else:
                 oGuiElement.getMeta(oGuiElement._mediaType, mode = self.metaMode)
 
-        sItemUrl = self.__createItemUrl(oGuiElement, bIsFolder, oOutputParameterHandler)
+        sItemUrl = self.__createItemUrl(oGuiElement, bIsFolder, outParams)
         oListItem = self.createListItem(oGuiElement) 
         if not bIsFolder and cConfig().getSetting('hosterSelect') == 'list':
             bIsFolder = True
         if isHoster:
             bIsFolder = False
-        oListItem = self.__createContextMenu(oGuiElement, oListItem, bIsFolder, sItemUrl, oOutputParameterHandler)
+        oListItem = self.__createContextMenu(oGuiElement, oListItem, bIsFolder, sItemUrl, outParams)
                  
         if not bIsFolder:
             oListItem.setProperty('IsPlayable', 'true')        
