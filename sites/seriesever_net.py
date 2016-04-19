@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# version: 0.2
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
@@ -140,7 +139,7 @@ def showSeries(sUrl=False):
     if not sUrl:
         sUrl = oParams.getValue('sUrl')
 
-    sPagePattern = '<a href="' + sUrl + '(.*?).html">'
+    sPagePattern = '<a href="' + sUrl + '(\d+).html">'
 
     # request
     sHtmlContent = __getHtmlContent(sUrl)
@@ -151,8 +150,8 @@ def showSeries(sUrl=False):
     pages = 1
 
     if aResult[0]:
-        if representsInt(aResult[1][-1][0]):
-            pages = aResult[1][-1][0]
+		if representsInt(aResult[1][-1]):
+			pages = aResult[1][-1]
 
     oGui = cGui()
 
