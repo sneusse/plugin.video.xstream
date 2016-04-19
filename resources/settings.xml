@@ -12,32 +12,34 @@
     <setting type="sep" />
   </category> 
   <category label="30022">
-    <setting label="Bundesliga.de" type="lsep" />
-	<setting default="false" id="plugin_bundesliga_de" label="Bundesliga.de" type="bool" />
-	<setting label="Burning-Series" type="lsep" />
-	<setting default="false" id="plugin_burning_series_org" label="Burning-Series" type="bool" />
-	<setting label="FilmPalast.to" type="lsep" />
-	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast.to" type="bool" />
-	<setting label="G-Stream" type="lsep" />
-	<setting default="false" id="plugin_gstream_in" label="G-Stream" type="bool" />
-	<setting default="" id="gstream_in-username" label="Benutzername" type="text" />
-	<setting default="" id="gstream_in-password" label="Passwort" option="hidden" type="text" />
-	<setting label="KinoLeak.Tv" type="lsep" />
-	<setting default="false" id="plugin_kinoleak" label="KinoLeak.Tv" type="bool" />
-	<setting label="Kinox.to" type="lsep" />
-	<setting default="false" id="plugin_kinox_to" label="Kinox.to" type="bool" />
+  	<setting label="AnimeLoads" type="lsep" />
+	<setting default="false" id="plugin_anime-loads_org" label="anime-loads.org" type="bool" />
+	<setting label="BurningSeries" type="lsep" />
+	<setting default="false" id="plugin_bs_to" label="bs.to" type="bool" />
+	<setting label="DirectDownLoad" type="lsep" />
+	<setting default="false" id="plugin_ddl_me" label="ddl.me" type="bool" />
+	<setting label="FilmPalast" type="lsep" />
+	<setting default="false" id="plugin_filmpalast_to" label="filmpalast.to" type="bool" />
+	<setting label="Gute Filme" type="lsep" />
+	<setting default="false" id="plugin_gute-filme_to" label="gute-filme.to" type="bool" />
+	<setting label="HDfilme" type="lsep" />
+	<setting default="false" id="plugin_hdfilme_tv" label="hdfilme.tv" type="bool" />
+	<setting label="KinoLeak" type="lsep" />
+	<setting default="false" id="plugin_kinoleak_tv" label="kinoleak.tv" type="bool" />
+	<setting label="KinoX" type="lsep" />
+	<setting default="false" id="plugin_kinox_to" label="kinox.to" type="bool" />
 	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
-	<setting label="KKiste.to" type="lsep" />
-	<setting default="false" id="plugin_kkiste_to" label="KKiste.to" type="bool" />
-	<setting label="Movie4k.to" type="lsep" />
-	<setting default="false" id="plugin_movie4k_to" label="Movie4k.to" type="bool" />
+	<setting label="KinoKiste" type="lsep" />
+	<setting default="false" id="plugin_kkiste_to" label="kkiste.to" type="bool" />
+	<setting label="Movie4k" type="lsep" />
+	<setting default="false" id="plugin_movie4k_to" label="movie4k.to" type="bool" />
 	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
 	<setting label="MoviesEver" type="lsep" />
-	<setting default="false" id="plugin_moviesever_com" label="MoviesEver" type="bool" />
+	<setting default="false" id="plugin_moviesever_com" label="moviesever.com" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
-	<setting default="false" id="plugin_seriesever_net" label="SeriesEver" type="bool" />
-	<setting label="Szene-Streams" type="lsep" />
-	<setting default="false" id="plugin_szene-streams_com" label="Szene-Streams" type="bool" />
+	<setting default="false" id="plugin_seriesever_net" label="seriesever.net" type="bool" />
+	<setting label="SzeneStreams" type="lsep" />
+	<setting default="false" id="plugin_szene-streams_com" label="szene-streams.com" type="bool" />
 </category>
   <category label="Views">
     <setting default="false" id="auto-view" label="automatische Views aktivieren" type="bool" />
