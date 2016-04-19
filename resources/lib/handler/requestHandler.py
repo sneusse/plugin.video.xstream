@@ -84,10 +84,13 @@ class cRequestHandler:
             logger.info(e)
 
         sParameters = urllib.urlencode(self.__aParameters)
-        opener = mechanize.build_opener(SmartRedirectHandler,
-                                        mechanize.HTTPEquivProcessor,
-                                        mechanize.HTTPRefreshProcessor,
-                                        newHTTPSHandler)
+
+        handlers = [SmartRedirectHandler,
+                    mechanize.HTTPEquivProcessor,
+                    mechanize.HTTPRefreshProcessor]
+        if sys.version_info >= (2, 7, 9) and sys.version_info < (2, 7, 11):
+            handlers.append(newHTTPSHandler)
+        opener = mechanize.build_opener(*handlers)
         if (len(sParameters) > 0):
             oRequest = mechanize.Request(self.__sUrl, sParameters)
         else:
@@ -291,9 +294,8 @@ class newHTTPSHandler(mechanize.HTTPSHandler):
 
 class newHTTPSConnection(httplib.HTTPSConnection):
     def __init__(self, host, port=None, key_file=None, cert_file=None, strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None, context=None):
-        if sys.version_info >= (2, 7, 9) and sys.version_info <= (2, 7, 10):
-            import ssl
-            context = ssl._create_unverified_context()
+        import ssl
+        context = ssl._create_unverified_context()
         httplib.HTTPSConnection.__init__(self, host, port, key_file, cert_file, strict, timeout, source_address, context)
 
 # get more control over redirect (extract further cookies) 
