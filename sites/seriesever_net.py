@@ -150,8 +150,8 @@ def showSeries(sUrl=False):
     pages = 1
 
     if aResult[0]:
-		if representsInt(aResult[1][-1]):
-			pages = aResult[1][-1]
+        if representsInt(aResult[1][-1]):
+            pages = aResult[1][-1]
 
     oGui = cGui()
 
