@@ -8,7 +8,7 @@
     <import addon="script.module.urlresolver"   version="2.9.0"/>
     <import addon="script.module.metahandler"   version="1.0.0"/>
     <import addon="script.module.mechanize"     version="0.2.6"/>
-    <import addon="script.module.cryptopy"	version="1.2.6"/>
+    <import addon="script.module.cryptopy"		version="1.2.6"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="default.py">
     <provides>video</provides>
