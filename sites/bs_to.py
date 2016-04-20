@@ -263,16 +263,22 @@ def randomEpisode():
         series = {'id': oParams.getValue('seriesID'), 'series': oParams.getValue('Title')}
 
     season = _getJsonContent("series/%s/1" % series['id'])
-    randomepisode = (random.choice(season['epi']))['epi']
+    randomEpisodeNr = (random.choice(season['epi']))['epi']
+    randomEpisode = filter(lambda person: person['epi'] == randomEpisodeNr, season['epi'])[0]
 
-    Title = season['series']['series'].encode('utf-8') + ' - Staffel ' + str(season['season']) + ' - ' + str(filter(lambda person: person['epi'] == randomepisode, season['epi'])[0]['german'].encode('utf-8'))
+    Title = season['series']['series'].encode('utf-8') + ' - Staffel ' + str(season['season']) + ' - '
+    if randomEpisode['german']:
+        Title += randomEpisode['german'].encode('utf-8')
+    else:
+        Title += randomEpisode['english'].encode('utf-8')
+
     guiElement = cGuiElement(Title, SITE_IDENTIFIER, 'showHosters')
     guiElement.setMediaType('episode')
-    guiElement.setEpisode(randomepisode)
+    guiElement.setEpisode(randomEpisodeNr)
     guiElement.setSeason(season['season'])
     guiElement.setTVShowTitle(series['series'])
     guiElement.setThumbnail(URL_COVER % int(season['series']['id']))
-    oParams.setParam('EpisodeNr', randomepisode)
+    oParams.setParam('EpisodeNr', randomEpisodeNr)
     oParams.setParam('seriesID', season['series']['id'])
     oParams.setParam('Season', season['season'])
     oGui.addFolder(guiElement, oParams, bIsFolder=False, iTotal=1)
