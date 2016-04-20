@@ -265,7 +265,7 @@ def randomEpisode():
     season = _getJsonContent("series/%s/1" % series['id'])
     randomepisode = (random.choice(season['epi']))['epi']
 
-    Title = season['series']['series'].encode('utf-8') + ' - Staffel ' + str(season['season']) + ' - ' + str(filter(lambda person: person['epi'] == randomepisode, season['epi'])[0]['german']).encode('utf-8')
+    Title = season['series']['series'].encode('utf-8') + ' - Staffel ' + str(season['season']) + ' - ' + str(filter(lambda person: person['epi'] == randomepisode, season['epi'])[0]['german'].encode('utf-8'))
     guiElement = cGuiElement(Title, SITE_IDENTIFIER, 'showHosters')
     guiElement.setMediaType('episode')
     guiElement.setEpisode(randomepisode)
