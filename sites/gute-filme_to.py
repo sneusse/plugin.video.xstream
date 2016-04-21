@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 
-SITE_IDENTIFIER = 'gute_filme_to'
+SITE_IDENTIFIER = 'gute-filme_to'
 SITE_NAME = 'Gute Filme'
 SITE_ICON = 'gutefilme.png'
 

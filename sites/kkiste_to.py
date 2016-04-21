@@ -10,7 +10,7 @@ import logger
 
 
 SITE_IDENTIFIER = 'kkiste_to'
-SITE_NAME = 'KKiste.to'
+SITE_NAME = 'KinoKiste'
 SITE_ICON = 'kinokiste.png'
 
 URL_MAIN = 'http://kkiste.to'

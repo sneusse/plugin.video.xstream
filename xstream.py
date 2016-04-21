@@ -203,7 +203,7 @@ def showMainMenu(sFunction):
         oGui.updateDirectory()
     else:
         # Create a gui element for every plugin found
-        for aPlugin in aPlugins:
+        for aPlugin in sorted(aPlugins, key=lambda k: k['id']):
             oGuiElement = cGuiElement()
             oGuiElement.setTitle(aPlugin['name'])
             oGuiElement.setSiteName(aPlugin['id'])

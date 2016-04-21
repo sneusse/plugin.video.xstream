@@ -12,7 +12,7 @@ from resources.lib import jsunprotect
 
 
 SITE_IDENTIFIER = 'movie4k_to'
-SITE_NAME = 'Movie4k.to'
+SITE_NAME = 'Movie4k'
 SITE_ICON = 'movie4k.png'
 SITE_SETTINGS = '<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />'
 oConfig = cConfig()
