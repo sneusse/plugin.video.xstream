@@ -148,7 +148,6 @@ def showSeries(sUrl=False):
     aResult = oParser.parse(sHtmlContent, sPagePattern)
 
     pages = 1
-
     if aResult[0]:
         if representsInt(aResult[1][-1]):
             pages = aResult[1][-1]
@@ -209,16 +208,15 @@ def showSeriesPage(oGui, sUrl, iPage, dupeCheck):
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
 
-    if (aResult[0] == True):
+    if aResult[0]:
         for link, img, title in aResult[1]:
-            if title not in dupeCheck:
-                guiElement = cGuiElement(title, SITE_IDENTIFIER, 'showSeasons')
-                guiElement.setMediaType('tvshow')
-                guiElement.setThumbnail(img)
-                oParams.addParams({'sUrl': link, 'Title': title})
-                oGui.addFolder(guiElement, oParams)
-                dupeCheck.append(title)
-
+            if title in dupeCheck: continue
+            guiElement = cGuiElement(title, SITE_IDENTIFIER, 'showSeasons')
+            guiElement.setMediaType('tvshow')
+            guiElement.setThumbnail(img)
+            oParams.addParams({'sUrl': link, 'Title': title})
+            oGui.addFolder(guiElement, oParams)
+            dupeCheck.append(title)
     return dupeCheck
 
 
@@ -235,7 +233,7 @@ def showSeasons():
     aResult = oParser.parse(sHtmlContent, sPattern)
 
     oGui = cGui()
-    if (aResult[0] == True):
+    if aResult[0]:
         for sId, seasonNum in aResult[1]:
             guiElement = cGuiElement('%s - Staffel %s' % (sTitle, seasonNum), SITE_IDENTIFIER, 'showEpisodes')
             guiElement.setMediaType('season')
@@ -336,14 +334,14 @@ def showHosters():
         app = re.findall('<script src="(%sassets/js/app.js.*?)"></script>' % URL_MAIN, sHtmlContent)
 
         domain_list = []
-        try:
-            domain_list = __get_domain_list(app, domain_list)
-        except:
-            logger.info('Could not get domain list')
-        if not domain_list:
-            domain_list = ['se1.seriesever.net', 'se2.seriesever.net']
-        import random
-        random.shuffle(domain_list)
+        #try:
+        #    domain_list = __get_domain_list(app, domain_list)
+        #except:
+        #    logger.info('Could not get domain list')
+        #if not domain_list:
+        #    domain_list = ['se1.seriesever.net', 'se2.seriesever.net']
+        #import random
+        #random.shuffle(domain_list)
 
         json_data = __getVideoPage(video_id, part_name, '0')
 
