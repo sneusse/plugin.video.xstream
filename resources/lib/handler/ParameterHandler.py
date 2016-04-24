@@ -5,7 +5,7 @@ class ParameterHandler:
 	
     def __init__(self):          
         params = dict()
-        if len(sys.argv)>=2 and len(sys.argv[2])>0:               
+        if len(sys.argv)>=3 and len(sys.argv[2])>0:               
             params = dict(part.split('=') for part in sys.argv[ 2 ][ 1: ].split('&')) 
         for param in params:
             params[param]=urllib.unquote_plus(params[param])
