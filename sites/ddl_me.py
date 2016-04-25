@@ -94,9 +94,10 @@ def showGenreList():
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
-
-    if not sGui: oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
+    
     if not entryUrl: entryUrl = params.getValue('sUrl')
+    if not sGui: oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
+    
 
     sHtmlContent = cRequestHandler(entryUrl).request()
     pattern = "<div[^>]*class='iwrap type_(\d*)'[^>]*>\s*?" # smType
