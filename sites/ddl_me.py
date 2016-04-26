@@ -93,24 +93,23 @@ def showGenreList():
 
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
-    params = ParameterHandler()
-    
-    if not entryUrl: entryUrl = params.getValue('sUrl')
-    if not sGui: oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
-    
+    params = ParameterHandler() 
+    if not entryUrl: entryUrl = params.getValue('sUrl')  
 
     sHtmlContent = cRequestHandler(entryUrl).request()
     pattern = "<div[^>]*class='iwrap type_(\d*)'[^>]*>\s*?" # smType
     pattern += "<a[^>]*title='([^']*)'*[^>]*href='([^']*)'*>.*?" # title / url
     pattern += "<img[^>]*src='([^']*)'[^>]*>.*?" # thumbnail
     pattern += "<span[^>]*class='bottomtxt'[^>]*>\s*?<i>(\d*)<span" # year
-    aResult = cParser().parse(sHtmlContent, pattern)
+    parser = cParser()
+    aResult = parser.parse(sHtmlContent, pattern)
 
     if not aResult[0] or not aResult[1][0]: 
+        # pattern to parse movie/show page if search returns single result
         pattern = "<title>(.*?)[(](\d*)[)].*?" # name
         pattern += "<img[^>]*class='detailCover'[^>]*src='([^']*)'[^>]*>.*?" # thumbnail
         pattern += "var[ ]mtype[ ]=[ ](\d*);" # mediatyp
-        aOneResult = cParser().parse(sHtmlContent, pattern)
+        aOneResult = parser().parse(sHtmlContent, pattern)
 
         if not aOneResult[0] or not aOneResult[1][0]: 
             if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -137,7 +136,7 @@ def showEntries(entryUrl = False, sGui = False):
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
-    for smType, sName, sUrl, sThumbnail,sYear in aResult[1]:
+    for smType, sName, sUrl, sThumbnail, sYear in aResult[1]:
         sName = _stripTitle(sName)
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if sYear: oGuiElement.setYear(sYear)
@@ -152,20 +151,17 @@ def showEntries(entryUrl = False, sGui = False):
         else:
             oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
-    pattern = "<div[^>]*class='paging'[^>]*>(.*?)</div>"
-    aResult = cParser().parse(sHtmlContent, pattern)
+    aResult = parser.parse(sHtmlContent, "<a[^>]href='([^']*)'[^>]*>(\d)<[^>]*>")
     if aResult[0]:
-        aResult = cParser().parse(aResult[1][0], "<a[^>]href='([^']*)'[^>]*>(\d)<[^>]*>")
-        if aResult[0]:
-            currentPage = int(params.getValue('mediaTypePageId'))
-            for sUrl, sPage in aResult[1]:
-                page = int(sPage)
-                if page <= currentPage: continue
-                params.setParam('sUrl', URL_MAIN + sUrl)
-                params.setParam('mediaTypePageId', page)
-                oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-                break
+        currentPage = int(params.getValue('mediaTypePageId'))
+        sUrl, nextPage = aResult[1][-1]
+        nextPage = int(nextPage)
+        if nextPage > currentPage:
+            params.setParam('sUrl', URL_MAIN + sUrl)
+            params.setParam('mediaTypePageId', currentPage+1)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
+    oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
     if not sGui:
         oGui.setEndOfDirectory()
 
@@ -203,13 +199,14 @@ def showAllSeasons():
         oGuiElement.setSeason(iSeason)
         oGuiElement.setMediaType('season')
         oGuiElement.setThumbnail(sThumbnail)
-        oOutParms = ParameterHandler()
-        oOutParms.setParam('entryUrl', sUrl)
-        oOutParms.setParam('sName', sName)
-        oOutParms.setParam('sThumbnail', sThumbnail)
-        oOutParms.setParam('iSeason', iSeason)
-        oOutParms.setParam('sJson', aResult[1][0])
-        oGui.addFolder(oGuiElement, oOutParms, iTotal = total)
+
+        #oOutParms.setParam('entryUrl', sUrl)
+        #oOutParms.setParam('sName', sName)
+        #oOutParms.setParam('sThumbnail', sThumbnail)
+        #oOutParms.setParam('iSeason', iSeason)
+        #oOutParms.setParam('sJson', aResult[1][0])
+        # whole json through parameters is not a good idea
+        oGui.addFolder(oGuiElement, params, iTotal = total)
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
@@ -217,13 +214,20 @@ def showAllEpisodes():
     oGui = cGui()
 
     params = ParameterHandler()
-    iSeason = int(params.getValue('iSeason'))
+    iSeason = int(params.getValue('season'))
     sThumbnail = params.getValue('sThumbnail')
     sName = params.getValue('sName')
-    sJson = params.getValue('sJson')
+    url = params.getValue('entryUrl')
+
+    # 2nd request of json should cached so no problem, 
+    # temp file for json would be another option
+    sHtmlContent = cRequestHandler(url).request()
+    aResult = cParser().parse(sHtmlContent, "var[ ]subcats[ ]=[ ](.*?);")
+    if not aResult[0] or not aResult[1][0]: 
+        return
 
     episodes = {}
-    data = json.loads(sJson)
+    data = json.loads(aResult[1][0])
     for key, value in data.items():
         SeasonsNr = int(value['info']['staffel'])
         if SeasonsNr != iSeason:
@@ -237,56 +241,48 @@ def showAllEpisodes():
         oGuiElement.setSiteName(SITE_IDENTIFIER)
         oGuiElement.setFunction('showHosters')
         epiName = data[sEpisodesID]['info']['name'].encode('utf-8')
-        aResult = cParser().parse(epiName, "(.*?)»") # try to get name
-        if aResult[0]: 
-            epiName = aResult[1][0]
+        epiName = epiName.split("»")[0].strip()
         oGuiElement.setTitle(str(iEpisodesNr) + " - " + epiName)
-        oGuiElement.setTVShowTitle(sName)
-        oGuiElement.setSeason(iSeason)
+        #oGuiElement.setTVShowTitle(sName)
+        #oGuiElement.setSeason(iSeason)
         oGuiElement.setEpisode(iEpisodesNr)
         oGuiElement.setMediaType('episode')
         oGuiElement.setThumbnail(sThumbnail)
-        oOutParms = ParameterHandler()
-        oOutParms.setParam('sJson', sJson)
-        oOutParms.setParam('sJsonID', sEpisodesID)
-        oGui.addFolder(oGuiElement, oOutParms, bIsFolder = False)
+        params.setParam('sJsonID', sEpisodesID)
+        oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
 def showHosters():
     params = ParameterHandler()
-    
-    sJson = params.getValue('sJson')
-    if not sJson:
-        sHtmlContent = cRequestHandler(params.getValue('entryUrl')).request()
-        aResult = cParser().parse(sHtmlContent, "var[ ]subcats[ ]=[ ](.*?);")
-        if aResult[0]: 
-            sJson = aResult[1][0]
+    sHtmlContent = cRequestHandler(params.getValue('entryUrl')).request()
+    aResult = cParser().parse(sHtmlContent, "var[ ]subcats[ ]=[ ](.*?);")
+    if not aResult[0]: return []
 
     hosters = []
-    if sJson:
-        data = json.loads(sJson)
-        sJsonID = params.getValue('sJsonID')
-        if not sJsonID:
-            sJsonID = data.keys()[0]
-        partCount = 1 # fallback for series (because they get no MultiParts)
-        if '1' in data[sJsonID]:
-            partCount = int(data[sJsonID]['1'])
-        for jHoster in data[sJsonID]['links']:
-            for jHosterEntry in data[sJsonID]['links'][jHoster]:
-                if jHosterEntry[5] == 'stream':
-                    hoster = {}
-                    if partCount > 1:
-                        hoster['displayedName'] = jHoster + ' - Part ' + jHosterEntry[0]
-                    hoster['link'] = jHosterEntry[3]
-                    hoster['name'] = jHoster
-                    hosters.append(hoster)
+    print aResult[1][0]
+    data = json.loads(aResult[1][0])
+    sJsonID = params.getValue('sJsonID')
+    if not sJsonID:
+        sJsonID = data.keys()[0]
+    partCount = 1 # fallback for series (because they get no MultiParts)
+    if '1' in data[sJsonID]:
+        partCount = int(data[sJsonID]['1'])
+    for jHoster in data[sJsonID]['links']:
+        for jHosterEntry in data[sJsonID]['links'][jHoster]:
+            if jHosterEntry[5] != 'stream': continue
+            hoster = {}
+            if partCount > 1:
+                hoster['displayedName'] = jHoster + ' - Part ' + jHosterEntry[0]
+            hoster['link'] = jHosterEntry[3]
+            hoster['name'] = jHoster
+            hosters.append(hoster)
 
     if len(hosters) > 0:
         hosters.append('getHosterUrl')
     return hosters
-  
+
 def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
     results = []
