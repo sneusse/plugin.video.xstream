@@ -5,7 +5,6 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.config import cConfig
 from resources.lib import logger
-from resources.lib import updateManager
 import xbmc
 import xbmcgui
 import sys
@@ -137,7 +136,8 @@ def parseUrl():
         elif sFunction == 'searchAlter':
             searchAlter(params)
             return
-        elif sFunction == 'updateXstream' and cConfig().getSetting('UpdateSetting') != 'Off':
+        elif sFunction == 'updateXstream':
+            from resources.lib import updateManager
             updateManager.checkforupdates()
             return
     else:
@@ -146,7 +146,8 @@ def parseUrl():
     # Test if we should run a function on a special site
     if not params.exist('site'):
         xbmc.executebuiltin('XBMC.RunPlugin(%s?function=clearCache)' % sys.argv[0])
-        xbmc.executebuiltin('XBMC.RunPlugin(%s?function=updateXstream)' % sys.argv[0])
+        if cConfig().getSetting('UpdateSetting') != 'Off':
+            xbmc.executebuiltin('XBMC.RunPlugin(%s?function=updateXstream)' % sys.argv[0])
         # As a default if no site was specified, we run the default starting gui with all plugins
         showMainMenu(sFunction)
         return
@@ -203,7 +204,7 @@ def showMainMenu(sFunction):
         oGui.updateDirectory()
     else:
         # Create a gui element for every plugin found
-        for aPlugin in aPlugins:
+        for aPlugin in sorted(aPlugins, key=lambda k: k['id']):
             oGuiElement = cGuiElement()
             oGuiElement.setTitle(aPlugin['name'])
             oGuiElement.setSiteName(aPlugin['id'])
@@ -271,6 +272,8 @@ def showHosterGui(sFunction):
 def searchGlobal():
     import threading
     oGui = cGui()
+    oGui.globalSearch = True
+    oGui._collectMode = True
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return True
     aPlugins = []
@@ -280,14 +283,20 @@ def searchGlobal():
     numPlugins = len(aPlugins)
     threads = []
     for count, pluginEntry in enumerate(aPlugins):
-        dialog.update((count+1)*100/numPlugins,'Searching: '+str(pluginEntry['name'])+'...')
+        dialog.update((count+1)*50/numPlugins,'Searching: '+str(pluginEntry['name'])+'...')
         logger.info('Searching for %s at %s' % (sSearchText, pluginEntry['id']))
-        t = threading.Thread(target=_pluginSearch, args=(pluginEntry,sSearchText,oGui))
+        t = threading.Thread(target=_pluginSearch, args=(pluginEntry,sSearchText,oGui), name =pluginEntry['name'])
         threads += [t]
         t.start()
-    for t in threads:
+    for count, t in enumerate(threads):
         t.join()
+        dialog.update((count+1)*50/numPlugins+50, t.getName()+' returned')
     dialog.close()
+    # deactivate collectMode attribute because now we want the elements really added
+    oGui._collectMode = False
+    total=len(oGui.searchResults)
+    for result in sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()):
+        oGui.addFolder(result['guiElement'],result['params'],bIsFolder=result['isFolder'],iTotal=total)
     oGui.setView()
     oGui.setEndOfDirectory()
     return True
@@ -298,6 +307,8 @@ def searchAlter(params):
     searchYear = params.getValue('searchYear')
     import threading
     oGui = cGui()
+    oGui.globalSearch = True
+    oGui._collectMode = True
     aPlugins = []
     aPlugins = cPluginHandler().getAvailablePlugins()
     dialog = xbmcgui.DialogProgress()
@@ -305,29 +316,33 @@ def searchAlter(params):
     numPlugins = len(aPlugins)
     threads = []
     for count, pluginEntry in enumerate(aPlugins):
-        dialog.update((count+1)*100/numPlugins,'Searching: '+str(pluginEntry['name'])+'...')
+        dialog.update((count+1)*50/numPlugins,'Searching: '+str(pluginEntry['name'])+'...')
         logger.info('Searching for ' + searchTitle + pluginEntry['id'].encode('utf-8'))
-        t = threading.Thread(target=_pluginSearch, args=(pluginEntry,searchTitle, oGui))
+        t = threading.Thread(target=_pluginSearch, args=(pluginEntry,searchTitle, oGui), name =pluginEntry['name'])
         threads += [t]
         t.start()
-    for t in threads:
+    for count, t in enumerate(threads):
         t.join()
-    #check results, put this to the threaded part, too
+        dialog.update((count+1)*50/numPlugins+50, t.getName()+' returned')
     dialog.close()
+    #check results, put this to the threaded part, too
     filteredResults = []
     for result in oGui.searchResults:
-        print 'Site: %s Titel: %s' % (result.getSiteName(), result.getTitle())
-        if not searchTitle in result.getTitle(): continue
-        if result.getYear() and result.getYear() != year: continue
-        if result.getItemProperties().get('imdbID',False) and result.getItemProperties().get('imdbID',False) != searchImdbId: continue
+        guiElement = result['guiElement']
+        logger.info('Site: %s Titel: %s' % (guiElement.getSiteName(), guiElement.getTitle()))
+        if not searchTitle in guiElement.getTitle(): continue
+        if guiElement._sYear and searchYear and guiElement._sYear != searchYear: continue
+        if searchImdbId and guiElement.getItemProperties().get('imdbID',False) and guiElement.getItemProperties().get('imdbID',False) != searchImdbId: continue
         filteredResults.append(result)
 
-    for result in filteredResults:
-        print 'Site: %s Titel: %s' % (result.getSiteName(), result.getTitle())
+    oGui._collectMode = False
+    total=len(filteredResults)
+    for result in sorted(filteredResults, key=lambda k: k['guiElement'].getSiteName()):
+        oGui.addFolder(result['guiElement'],result['params'],bIsFolder=result['isFolder'],iTotal=total)
 
     oGui.setView()
     oGui.setEndOfDirectory()
-    #xbmc.executebuiltin('Container.Update')
+    xbmc.executebuiltin('Container.Update')
     return True
 
 def _pluginSearch(pluginEntry, sSearchText, oGui):

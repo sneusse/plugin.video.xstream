@@ -184,6 +184,7 @@ def __decode(text):
     return text
 
 def __checkSEUrl(sUrl):
+    logger.info("Checking " + sUrl)
     if "play/old/framer.php" in sUrl:
         sHtmlContent = __getHtmlContent(sUrl)
         sUrl = re.findall('src="(.*?)"', sHtmlContent)[0]
@@ -192,6 +193,8 @@ def __checkSEUrl(sUrl):
         sHtmlContent = __getHtmlContent(sUrl)
         sHash = re.findall('link:"(.*?)"', sHtmlContent)[0]
         return __decodeHash(sHash)
+    url = __decodeHash(sUrl)
+    if url.startswith('http'): return url
     return None
 
 
@@ -230,7 +233,6 @@ def showHosters():
     # parse content
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
-
     hosters = []
 
     hosters = getHoster(sHtmlContent, hosters)
@@ -247,13 +249,12 @@ def showHosters():
 
 
 def getHoster(sHtmlContent, hosters):
-    sPattern = '<p><iframe src="(.*?)"'
+    sPattern = '(?:\{"link":"|<p><iframe src=")([^"]*?)"'
 
     # parse content
     oParser = cParser()
 
     aResult = oParser.parse(sHtmlContent, sPattern)
-
     if aResult[0]:
         hoster = dict()
 
