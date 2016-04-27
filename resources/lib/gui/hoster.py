@@ -42,12 +42,18 @@ class cHosterGui:
         data['thumb'] = params.getValue('thumb')
         # resolve
         if siteResult:
-            mediaUrl = siteResult['streamUrl']
-            logger.info('resolve: ' + mediaUrl)
-            if siteResult['resolved']:
-                link = mediaUrl
-            else:
-                link = urlresolver.resolve(mediaUrl)
+            mediaUrl = siteResult.get('streamUrl',False)
+            mediaId = siteResult.get('streamID',False)
+            
+            if mediaUrl:
+                logger.info('resolve: ' + mediaUrl)
+                if siteResult['resolved']:
+                    link = mediaUrl
+                else:
+                    link = urlresolver.resolve(mediaUrl)
+            elif mediaId:
+                logger.info('resolve: hoster: %s - mediaID: %s' % (siteResult['host'], mediaId)) 
+                link = urlresolver.HostedMediaFile(host=siteResult['host'].lower(), media_id=mediaId).resolve()
         elif mediaUrl:
             logger.info('resolve: ' + mediaUrl)
             link = urlresolver.resolve(mediaUrl)
@@ -380,11 +386,9 @@ class cHosterGui:
             check = False
             self.dialog.create('xStream','try hosters...')
             total = len(hosters)
-            count = 0
-            for hoster in hosters:               
+            for count, hoster in enumerate(hosters):               
                 if self.dialog.iscanceled() or xbmc.abortRequested or check: return
-                count = count + 1
-                percent = count*100/total
+                percent = (count+1)*100/total
                 try:
                     logger.info('try hoster %s' % hoster['name'])
                     self.dialog.create('xStream','try hosters...')
