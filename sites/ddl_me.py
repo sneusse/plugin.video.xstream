@@ -109,7 +109,7 @@ def showEntries(entryUrl = False, sGui = False):
         pattern = "<title>(.*?)[(](\d*)[)].*?" # name
         pattern += "<img[^>]*class='detailCover'[^>]*src='([^']*)'[^>]*>.*?" # thumbnail
         pattern += "var[ ]mtype[ ]=[ ](\d*);" # mediatyp
-        aOneResult = parser().parse(sHtmlContent, pattern)
+        aOneResult = parser.parse(sHtmlContent, pattern)
 
         if not aOneResult[0] or not aOneResult[1][0]: 
             if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -256,7 +256,6 @@ def showHosters():
     if not aResult[0]: return []
 
     hosters = []
-    print aResult[1][0]
     data = json.loads(aResult[1][0])
     sJsonID = params.getValue('sJsonID')
     if not sJsonID:
