@@ -119,26 +119,10 @@ def __addMovieEntry(oGui, sName, sUrl, sThumbnail, sDesc = ""):
     oGui.addFolder(oGuiElement, oOutParms, bIsFolder = False)
 
 def __addNextPage(oGui, sHtmlContent, params, function):
-    pattern = "<ul[^>]*class=['\"]wpmoly page-numbers['\"][^>]*>(.*?)</ul>"
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if not aResult[0]:
-        pattern = "<p[^>]*class=['\"]navigation-links['\"][^>]*>(.*?)</p>"
-        aResult = cParser().parse(sHtmlContent, pattern)
-
-    if aResult[0]: 
-        sHtmlContent = aResult[1][0]
-        pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>(\d+)</a>"
-        aResult = cParser().parse(sHtmlContent, pattern)
-        if aResult[0]:
-            currentPage = int(params.getValue('mediaTypePageId'))
-            if currentPage == 0: currentPage = 1
-            for sUrl, sPage in aResult[1]:
-                page = int(sPage)
-                if page <= currentPage: continue
-                params.setParam('sUrl', sUrl)
-                params.setParam('mediaTypePageId', page)
-                oGui.addNextPage(SITE_IDENTIFIER, function, params)
-                break
+    aResult = cParser().parse(sHtmlContent, "<span[^>]class=['\"]page-numbers current['\"].*?<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\d+</a>")
+    if aResult[0] and aResult[1][0]:
+        params.setParam('sUrl', aResult[1][0])
+        oGui.addNextPage(SITE_IDENTIFIER, function, params)
 
 def showHosters():
     sHtmlContent = cRequestHandler(ParameterHandler().getValue('entryUrl')).request()

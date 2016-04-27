@@ -17,7 +17,7 @@ SITE_ICON = 'hdfilme.png'
 URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
-URL_SEARCH = URL_MAIN + 'movie/search?key='
+URL_SEARCH = URL_MAIN + 'movie/search?key="%s"'
 
 # Parameter für die Sortierung
 URL_PARMS_ORDER_ID = 'order_f=id'
@@ -367,4 +367,4 @@ def _search(oGui, sSearchText):
     if not sSearchText: return
 
     # URL-Übergeben und Ergebniss anzeigen
-    showEntries(URL_SEARCH + sSearchText.strip(), oGui)
+    showEntries(URL_SEARCH % sSearchText.strip(), oGui)
