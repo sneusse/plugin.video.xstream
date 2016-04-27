@@ -129,16 +129,10 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, True, total)
 
-    aResult = cParser().parse(sHtmlContent, '<li><a[^>]*href="([^"]*)"[^>]*>(\d+)</a[>]</li>.*?')
-    if aResult[0]:
-        currentPage = int(params.getValue('mediaTypePageId'))
-        for sUrl, sPage in aResult[1]:
-            page = int(sPage)
-            if page <= currentPage: continue
-            params.setParam('sUrl', URL_MAIN + sUrl)
-            params.setParam('mediaTypePageId', page)
-            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-            break
+    aResult = cParser().parse(sHtmlContent, "<a[^>]*href=['\"]#['\"][^>]*>\d+</a>.*?<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\d+</a>")
+    if aResult[0] and aResult[1][0]:
+        params.setParam('sUrl', aResult[1][0])
+        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
         oGui.setView('tvshows' if isTvshow else 'movies')
