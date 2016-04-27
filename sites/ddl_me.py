@@ -109,7 +109,7 @@ def showEntries(entryUrl = False, sGui = False):
         pattern = "<title>(.*?)[(](\d*)[)].*?" # name
         pattern += "<img[^>]*class='detailCover'[^>]*src='([^']*)'[^>]*>.*?" # thumbnail
         pattern += "var[ ]mtype[ ]=[ ](\d*);" # mediatyp
-        aOneResult = parser().parse(sHtmlContent, pattern)
+        aOneResult = parser.parse(sHtmlContent, pattern)
 
         if not aOneResult[0] or not aOneResult[1][0]: 
             if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -151,15 +151,10 @@ def showEntries(entryUrl = False, sGui = False):
         else:
             oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
-    aResult = parser.parse(sHtmlContent, "<a[^>]href='([^']*)'[^>]*>(\d)<[^>]*>")
-    if aResult[0]:
-        currentPage = int(params.getValue('mediaTypePageId'))
-        sUrl, nextPage = aResult[1][-1]
-        nextPage = int(nextPage)
-        if nextPage > currentPage:
-            params.setParam('sUrl', URL_MAIN + sUrl)
-            params.setParam('mediaTypePageId', currentPage+1)
-            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+    aResult = parser.parse(sHtmlContent, "<a[^>]class='active'.*?<a[^>]href='([^']*)'[^>]*>\d+<[^>]*>")
+    if aResult[0] and aResult[1][0]:
+        params.setParam('sUrl', URL_MAIN + aResult[1][0])
+        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
     if not sGui:
@@ -261,7 +256,6 @@ def showHosters():
     if not aResult[0]: return []
 
     hosters = []
-    print aResult[1][0]
     data = json.loads(aResult[1][0])
     sJsonID = params.getValue('sJsonID')
     if not sJsonID:
