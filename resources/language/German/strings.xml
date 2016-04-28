@@ -12,6 +12,7 @@
   <string id="30008">Metahandler ersetzt Infos von Site</string>
   <string id="30009">Hosterliste prüfen und sortieren (langsam auf schwachen Systemen)</string>
   <string id="30010">Auto-Update Quelle</string>
+  <string id="30013">bevorzugte AutoPlay Qualität (sofern vorhanden)</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">Allgemein</string>

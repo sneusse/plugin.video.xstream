@@ -9,6 +9,7 @@
     <setting default="600" id="cacheTime" label="30006" type="number" />
     <setting default="false" id="showAdult" label="30003" type="bool" />
     <setting default="Off" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
+    <setting default="best" id="preferedQuality" label="30013" type="labelenum" values="240p|360p|480p|720p|1080p|best" />
     <setting type="sep" />
   </category> 
   <category label="30022">

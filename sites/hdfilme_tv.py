@@ -349,6 +349,7 @@ def _getHostFromUrl(sUrl, sServername):
         sLabel = sServername + ' - ' + entry['label'].encode('utf-8')
         hoster = dict()
         hoster['link'] = entry['file']
+        hoster['quality'] = entry['label'].encode('utf-8')[:-1]
         hoster['name'] = sLabel
         hoster['resolveable'] = True
         hosters.append(hoster)
