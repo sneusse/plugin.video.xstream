@@ -187,6 +187,11 @@ def parseUrl():
     elif sSiteName == 'metahandler':
         import metahandler
         metahandler.display_settings()
+    elif sSiteName == 'settings':
+        oGui = cGui()
+        for folder in settingsGuiElements():
+            oGui.addFolder(folder)
+        oGui.setEndOfDirectory()
     else:
         # Else load any other site as plugin and run the function
         plugin = __import__(sSiteName, globals(), locals())
@@ -195,6 +200,10 @@ def parseUrl():
 
 def showMainMenu(sFunction):
     oGui = cGui()
+    
+    if cConfig().getSetting('GlobalSearchPosition') == 'true':
+        oGui.addFolder(globalSearchGuiElement())
+        
     oPluginHandler = cPluginHandler()
     aPlugins = oPluginHandler.getAvailablePlugins()
     if not aPlugins:
@@ -213,13 +222,8 @@ def showMainMenu(sFunction):
                 oGuiElement.setThumbnail(aPlugin['icon'])
             oGui.addFolder(oGuiElement)
 
-        # Create a gui element for global search
-        oGuiElement = cGuiElement()
-        oGuiElement.setTitle("Globale Suche")
-        oGuiElement.setSiteName("globalSearch")
-        oGuiElement.setFunction("globalSearch")
-        #oGuiElement.setThumbnail("DefaultAddonService.png")
-        oGui.addFolder(oGuiElement)
+        if cConfig().getSetting('GlobalSearchPosition') == 'false':
+            oGui.addFolder(globalSearchGuiElement())
 
         # Create a gui element for favorites
         #oGuiElement = cGuiElement()
@@ -229,31 +233,58 @@ def showMainMenu(sFunction):
         #oGuiElement.setThumbnail("DefaultAddonService.png")
         #oGui.addFolder(oGuiElement)
 
-        # Create a gui element for addon settings
+    if cConfig().getSetting('SettingsFolder') == 'true':
+        # Create a gui element for Settingsfolder
         oGuiElement = cGuiElement()
-        oGuiElement.setTitle("xStream Settings")
-        oGuiElement.setSiteName("xStream")
-        oGuiElement.setFunction("display_settings")
+        oGuiElement.setTitle("Settings")
+        oGuiElement.setSiteName("settings")
+        oGuiElement.setFunction("showSettingsFolder")
         oGuiElement.setThumbnail("DefaultAddonService.png")
         oGui.addFolder(oGuiElement)
-
-        # Create a gui element for urlresolver settings
-        oGuiElement = cGuiElement()
-        oGuiElement.setTitle("Resolver Settings")
-        oGuiElement.setSiteName("urlresolver")
-        oGuiElement.setFunction("display_settings")
-        oGuiElement.setThumbnail("DefaultAddonService.png")
-        oGui.addFolder(oGuiElement)
-
-        # Create a gui element for metahandler settings
-        if cConfig().getSetting('metahandler')=='true':
-            oGuiElement = cGuiElement()
-            oGuiElement.setTitle("Metahandler Settings")
-            oGuiElement.setSiteName("metahandler")
-            oGuiElement.setFunction("display_settings")
-            oGuiElement.setThumbnail("DefaultAddonService.png")
-            oGui.addFolder(oGuiElement)
+    else:
+        for folder in settingsGuiElements():
+            oGui.addFolder(folder)
+            
     oGui.setEndOfDirectory()
+
+def settingsGuiElements():
+    # Create a gui element for addon settings
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("xStream Settings")
+    oGuiElement.setSiteName("xStream")
+    oGuiElement.setFunction("display_settings")
+    oGuiElement.setThumbnail("DefaultAddonProgram.png")
+    xStreamSettings = oGuiElement
+
+    # Create a gui element for urlresolver settings
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("Resolver Settings")
+    oGuiElement.setSiteName("urlresolver")
+    oGuiElement.setFunction("display_settings")
+    oGuiElement.setThumbnail("DefaultAddonRepository.png")
+    urlResolverSettings = oGuiElement
+
+    # Create a gui element for metahandler settings
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("Metahandler Settings")
+    oGuiElement.setSiteName("metahandler")
+    oGuiElement.setFunction("display_settings")
+    oGuiElement.setThumbnail("DefaultAddonTvInfo.png")
+    metaSettings = oGuiElement
+
+    if cConfig().getSetting('metahandler') == 'true':
+        return xStreamSettings, urlResolverSettings, metaSettings
+
+    return xStreamSettings, urlResolverSettings
+
+def globalSearchGuiElement():
+    # Create a gui element for global search
+    oGuiElement = cGuiElement()
+    oGuiElement.setTitle("Globale Suche")
+    oGuiElement.setSiteName("globalSearch")
+    oGuiElement.setFunction("globalSearch")
+    oGuiElement.setThumbnail("DefaultAddonWebSkin.png")
+    return oGuiElement
 
 def showHosterGui(sFunction):
     from resources.lib.gui.hoster import cHosterGui
