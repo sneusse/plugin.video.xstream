@@ -215,13 +215,14 @@ class cHosterGui:
                 ranking.append([999,hoster])
 
         if any('quality' in hoster[1] for hoster in ranking):
-            if cConfig().getSetting('preferedQuality') != 'best' and \
-                    any(int(hoster[1]['quality']) == int(cConfig().getSetting('preferedQuality')[:-1]) for hoster in ranking):
+            if cConfig().getSetting('preferedQuality') != '5' and \
+                    any('quality' in hoster[1] and int(hoster[1]['quality']) == int(cConfig().getSetting('preferedQuality')) \
+                     for hoster in ranking):
                 ranking = sorted(ranking, key=lambda hoster: \
-                    int(hoster[1]['quality']) == int(cConfig().getSetting('preferedQuality')[:-1]), reverse=True)
+                    int('quality' in hoster[1] and hoster[1]['quality']) == int(cConfig().getSetting('preferedQuality')), reverse=True)
 
             else:
-                ranking = sorted(ranking, key=lambda hoster: int(hoster[1]['quality']), reverse=True)
+                ranking = sorted(ranking, key=lambda hoster: 'quality' in hoster[1] and int(hoster[1]['quality']), reverse=True)
         else:
             ranking.sort()
 

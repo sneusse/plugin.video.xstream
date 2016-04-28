@@ -25,6 +25,8 @@ URL_PARMS_ORDER_ID_ASC = URL_PARMS_ORDER_ID +'&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
 URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
 
+QUALITY_ENUM = {'240P':0, '360P':1, '480P':2, '720P':3, '1080P':4}
+
 def load():
     # Logger-Eintrag
     logger.info("Load %s" % SITE_NAME)
@@ -349,7 +351,7 @@ def _getHostFromUrl(sUrl, sServername):
         sLabel = sServername + ' - ' + entry['label'].encode('utf-8')
         hoster = dict()
         hoster['link'] = entry['file']
-        hoster['quality'] = entry['label'].encode('utf-8')[:-1]
+        hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')]
         hoster['name'] = sLabel
         hoster['resolveable'] = True
         hosters.append(hoster)
