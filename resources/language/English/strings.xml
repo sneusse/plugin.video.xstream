@@ -12,7 +12,7 @@
   <string id="30008">metahandler replaces infos from site</string>
   <string id="30009">Pre-validate and sort hosterlist (slow on weak systems)</string>
   <string id="30010">Auto-Update source</string>
-  <string id="30011">Global Search at first</string>
+  <string id="30011">Global Search at first position</string>
   <string id="30012">Centralized Settings</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
