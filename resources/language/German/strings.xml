@@ -12,6 +12,8 @@
   <string id="30008">Metahandler ersetzt Infos von Site</string>
   <string id="30009">Hosterliste prüfen und sortieren (langsam auf schwachen Systemen)</string>
   <string id="30010">Auto-Update Quelle</string>
+  <string id="30011">Globale Suche an erster Position</string>
+  <string id="30012">Zentralisierte Einstellungen</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">Allgemein</string>
