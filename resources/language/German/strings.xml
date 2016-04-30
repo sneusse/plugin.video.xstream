@@ -14,6 +14,7 @@
   <string id="30010">Auto-Update Quelle</string>
   <string id="30011">Globale Suche an erster Position</string>
   <string id="30012">Zentralisierte Einstellungen</string>
+  <string id="30013">bevorzugte AutoPlay Qualität (sofern vorhanden)</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">Allgemein</string>
