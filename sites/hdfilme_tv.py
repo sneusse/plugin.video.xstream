@@ -17,13 +17,15 @@ SITE_ICON = 'hdfilme.png'
 URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
-URL_SEARCH = URL_MAIN + 'movie/search?key='
+URL_SEARCH = URL_MAIN + 'movie/search?key="%s"'
 
 # Parameter für die Sortierung
 URL_PARMS_ORDER_ID = 'order_f=id'
 URL_PARMS_ORDER_ID_ASC = URL_PARMS_ORDER_ID +'&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
 URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
+
+QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
 
 def load():
     # Logger-Eintrag
@@ -251,7 +253,7 @@ def showHosters():
     if isTvshowEntry == 'True':
         showEpisodes(aResult[1], params)
     else:
-        return getHosters(entryUrl, params.getValue('sName'))
+        return getHosters(entryUrl)
 
 def showEpisodes(aResult, params):
     # GUI-Element erzeugen wenn nötig
@@ -285,17 +287,49 @@ def showEpisodes(aResult, params):
     # Liste abschließen
     oGui.setEndOfDirectory()
 
-def getHosters(sUrl =False, sName = False):
-    # GUI-Element erzeugen wenn nötig
-    oGui = cGui()
-
+def getHosters(sUrl = False):
     #ParameterHandler erzeugen
     params = ParameterHandler()
 
     # URL und Name ermitteln falls nicht übergeben
     sUrl = sUrl if sUrl else params.getValue('sUrl')
-    sName = sName if sName else params.getValue('sName')
 
+    # Seite abrufen
+    sHtmlContent = cRequestHandler(sUrl).request()
+
+    # Servername und Episoden pro Server ermitteln
+    pattern = "[^>]*>([a-zA-Z0-9_ ]+)</div>\s+<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>(.*?)</ul>"
+    parser = cParser()
+    aResult = parser.parse(sHtmlContent, pattern)
+
+    # Hosterliste initialisieren
+    hosters = []
+
+    # Prüfen ob Server ermittelt werden konnte
+    if aResult[0]:
+        # Prüfen ob eine direkte-Episode gewünscht ist
+        aMatches = re.compile("episode=(\d+)&").findall(sUrl)
+
+        # gewünsche Episode ermitteln wenn möglich
+        sEpisode = "1" if not aMatches else aMatches[0]
+
+        # Server-Block durchlaufen
+        for sServername, sInnerHtml in aResult[1]:
+            # Nur Links für die gewünschte Episode ermitteln
+            pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\s+(?:%s|HD|SD)\s+</a>" % sEpisode
+            aResultLinks = parser.parse(sInnerHtml, pattern, ignoreCase = True)
+
+            # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
+            if aResultLinks[0]:
+                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername))
+
+    # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
+    if hosters:
+        hosters.append('play')
+
+    return hosters
+
+def _getHostFromUrl(sUrl, sServername):
     # Seite abrufen
     sHtmlContent = cRequestHandler(sUrl).request()
 
@@ -314,17 +348,16 @@ def getHosters(sUrl =False, sName = False):
     # Alle Einträge durchlaufen und Hostereintrag erstellen
     for entry in json.loads(aResult[1][0]):
         if 'file' not in entry or 'label' not in entry: continue
-        sLabel = sName + ' - ' + entry['label'].encode('utf-8')
+        sLabel = sServername + ' - ' + entry['label'].encode('utf-8')
         hoster = dict()
         hoster['link'] = entry['file']
+        if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
+            hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
         hoster['name'] = sLabel
         hoster['resolveable'] = True
         hosters.append(hoster)
 
-    # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
-    if hosters:
-        hosters.append('play')
-
+    # Hoster zurückgeben
     return hosters
 
 def play(sUrl = False):
@@ -367,4 +400,4 @@ def _search(oGui, sSearchText):
     if not sSearchText: return
 
     # URL-Übergeben und Ergebniss anzeigen
-    showEntries(URL_SEARCH + sSearchText.strip(), oGui)
+    showEntries(URL_SEARCH % sSearchText.strip(), oGui)

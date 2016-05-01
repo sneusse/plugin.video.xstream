@@ -69,6 +69,8 @@ class cPluginHandler:
         return plugins
 
     def __updatePluginDB(self, data):
+        if not os.path.exists(self.profilePath):
+            os.makedirs(self.profilePath)
         file = open(self.pluginDBFile, 'w')
         json.dump(data,file)
         file.close()

@@ -283,10 +283,8 @@ def randomEpisode():
     oParams.setParam('Season', season['season'])
     oGui.addFolder(guiElement, oParams, bIsFolder=False, iTotal=1)
 
-
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
-
     return
  
 # Show a hoster dialog for a requested episode
@@ -316,10 +314,13 @@ def getHosterUrl(sUrl = False):
     #sHoster = oParams.getValue('Hoster')
     if not sUrl: sUrl = oParams.getValue('url')
     data = _getJsonContent(sUrl.replace(URL_MAIN, ''))
-
     results = []
     result = {}
-    result['streamUrl'] = data['fullurl']
+    if data['fullurl'].startswith('http'):
+        result['streamUrl'] = data['fullurl']
+    else:
+        result['streamID'] = data['url']
+        result['host'] = data['hoster']
     result['resolved'] = False
     results.append(result)
     return results
