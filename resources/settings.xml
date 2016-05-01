@@ -15,18 +15,10 @@
     <setting type="sep" />
   </category> 
   <category label="30022">
-    <setting label="Bundesliga.de" type="lsep" />
-	<setting default="false" id="plugin_bundesliga_de" label="Bundesliga.de" type="bool" />
 	<setting label="Burning-Series" type="lsep" />
 	<setting default="false" id="plugin_burning_series_org" label="Burning-Series" type="bool" />
 	<setting label="FilmPalast.to" type="lsep" />
 	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast.to" type="bool" />
-	<setting label="G-Stream" type="lsep" />
-	<setting default="false" id="plugin_gstream_in" label="G-Stream" type="bool" />
-	<setting default="" id="gstream_in-username" label="Benutzername" type="text" />
-	<setting default="" id="gstream_in-password" label="Passwort" option="hidden" type="text" />
-	<setting label="KinoLeak.Tv" type="lsep" />
-	<setting default="false" id="plugin_kinoleak" label="KinoLeak.Tv" type="bool" />
 	<setting label="Kinox.to" type="lsep" />
 	<setting default="false" id="plugin_kinox_to" label="Kinox.to" type="bool" />
 	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
