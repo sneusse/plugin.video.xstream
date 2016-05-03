@@ -17,7 +17,7 @@ SITE_ICON = 'hdfilme.png'
 URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
-URL_SEARCH = URL_MAIN + 'movie/search?key="%s"'
+URL_SEARCH = URL_MAIN + 'movie/search?key=%s'
 
 # Parameter für die Sortierung
 URL_PARMS_ORDER_ID = 'order_f=id'
@@ -399,5 +399,14 @@ def _search(oGui, sSearchText):
     # Keine Eingabe? => raus hier
     if not sSearchText: return
 
+    # Unnötigen Leerzeichen entfernen
+    sSearchText = sSearchText.strip()
+
+    # Bei Leerzeichen Suchstring Escapen und Wildcard hinzufügen falls nicht vorhanden
+    if " " in sSearchText:
+        sSearchText = '"' + sSearchText + '"'
+    elif "*" not in sSearchText:
+        sSearchText = sSearchText + '*'
+
     # URL-Übergeben und Ergebniss anzeigen
-    showEntries(URL_SEARCH % sSearchText.strip(), oGui)
+    showEntries(URL_SEARCH % sSearchText, oGui)
