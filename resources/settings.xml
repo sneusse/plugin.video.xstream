@@ -18,7 +18,7 @@
 	<setting label="AnimeLoads" type="lsep" />
 	<setting default="false" id="plugin_anime-loads_org" label="AnimeLoads" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
-	<setting default="false" id="plugin_burning_series_org" label="BurningSeries" type="bool" />
+	<setting default="false" id="plugin_bs_to" label="BurningSeries" type="bool" />
 	<setting label="DirectDownLoad" type="lsep" />
 	<setting default="false" id="plugin_ddl_me" label="DirectDownLoad" type="bool" />
 	<setting default="de.ddl.me" enable="!eq(-1,false)" id="ddl_me-domain" label="DirectDownLoad domain" type="labelenum" values="de.ddl.me|en.ddl.me" />
