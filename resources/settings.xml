@@ -30,7 +30,7 @@
 	<setting default="false" id="plugin_hdfilme_tv" label="HDfilme" type="bool" />
 	<setting label="KinoX" type="lsep" />
 	<setting default="false" id="plugin_kinox_to" label="KinoX" type="bool" />
-	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
+	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="KinoX domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
 	<setting label="KinoKiste" type="lsep" />
 	<setting default="false" id="plugin_kkiste_to" label="KinoKiste" type="bool" />
 	<setting label="Movie4k" type="lsep" />
