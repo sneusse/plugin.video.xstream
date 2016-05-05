@@ -26,8 +26,8 @@ URL_PARMS_ORDER_YEAR = 'order_f=year'
 URL_PARMS_ORDER_YEAR_ASC = URL_PARMS_ORDER_YEAR +'&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
 URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
-URL_PARMS_ORDER_TOPAUFRUFE = 'order_f=view'
-URL_PARMS_ORDER_TOPAUFRUFE_ASC = URL_PARMS_ORDER_TOPAUFRUFE +'&order_d=asc'
+URL_PARMS_ORDER_VIEWS = 'order_f=view'
+URL_PARMS_ORDER_VIEWS_ASC = URL_PARMS_ORDER_VIEWS +'&order_d=asc'
 URL_PARMS_ORDER_IMDB = 'order_f=imdb'
 URL_PARMS_ORDER_IMDB_ASC = URL_PARMS_ORDER_IMDB +'&order_d=asc'
 URL_PARMS_ORDER_HDRATE = 'order_f=rate'
@@ -72,7 +72,7 @@ def showContentMenu():
     oGui.addFolder(cGuiElement('Herstellungsjahr', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_TOPAUFRUFE_ASC)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_VIEWS_ASC)
     oGui.addFolder(cGuiElement('Top Aufrufe', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_IMDB_ASC)
     oGui.addFolder(cGuiElement('IMDB Punkt', SITE_IDENTIFIER, 'showEntries'), params)
