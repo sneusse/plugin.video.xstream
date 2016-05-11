@@ -251,9 +251,7 @@ Angaben in (...) = Aktueller "Ort"
 CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:590)
 File "/Users/Shared/jenkins/workspace/TVOS/tools/depends/xbmc line 579, in __init__
 
-	- Status: Problem behoben (Master)
-
-	- Anmerkung: in den xStream-Settings die Suche nach Updates ausschalten, dann läuft es wieder
+	- Lösung: in den xStream-Settings die Suche nach Updates ausschalten, dann läuft es wieder
 Updates von Git muss man dann manuell einspielen oder auf Updates über das offizielle xStreamRepo warten
 
 	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=618)
@@ -266,11 +264,22 @@ Updates von Git muss man dann manuell einspielen oder auf Updates über das offi
 		ValueError MO JSON object could be decoded File 
 "/Users/Shared/xbmc-depends/appletvos9.1_arm64-target/lib 
 line 366, in decode
+	- Lösung: Folgende Datei downloaden:
 
-	- Status: Problem behoben (Master)
+		https://github.com/Lynx187/plugin.video....master.zip
+
+	- die Datei in "plugin.video.xstream.zip" umbenennen (quasi das "-master" entfernen)
+	- öffne (nicht entpacken) die Datei mit 7-Zip (oder einem anderen Packer)
+	
+	- dort solltest du einen orderner sehen der "plugin.video.xstream-master" heißt => auch hier das "-master" entfernen
+
+
+Die Zip dann installieren. Damit sollte das SSL-Problem gefixt sein. 
 
  - Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=627)
  
+
+
 ## 4. Fehlerbericht über Log-Datei
 
 
