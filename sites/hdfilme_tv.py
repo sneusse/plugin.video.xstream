@@ -404,15 +404,6 @@ def showSearch():
     # Keine Eingabe? => raus hier
     if not sSearchText: return
 
-    # Unnötigen Leerzeichen entfernen
-    sSearchText = sSearchText.strip()
-
-    # Bei Leerzeichen Suchstring Escapen und Wildcard hinzufügen falls nicht vorhanden
-    if " " in sSearchText:
-        sSearchText = '"' + sSearchText + '"'
-    elif "*" not in sSearchText:
-        sSearchText = sSearchText + '*'
-
     # Suche durchführen
     _search(False, sSearchText)
 
@@ -423,6 +414,15 @@ def showSearch():
 def _search(oGui, sSearchText):
     # Keine Eingabe? => raus hier
     if not sSearchText: return
+
+    # Unnötigen Leerzeichen entfernen
+    sSearchText = sSearchText.strip()
+
+    # Bei Leerzeichen Suchstring Escapen und Wildcard hinzufügen falls nicht vorhanden
+    if " " in sSearchText:
+        sSearchText = '"' + sSearchText + '"'
+    elif "*" not in sSearchText:
+        sSearchText = sSearchText + '*'
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
