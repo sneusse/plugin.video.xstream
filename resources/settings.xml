@@ -3,7 +3,7 @@
     <setting default="Off" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
     <setting default="false" id="SettingsFolder" label="30012" type="bool" />
     <setting default="true" id="GlobalSearchPosition" label="30011" type="bool" />
-    <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="dialog|auto|list" />
+    <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
     <setting default="100" id="maxHoster" label="30007" type="number" />
     <setting default="true" enable="!eq(-2,1)" id="presortHoster" label="30009" type="bool" />
     <setting default="5" id="preferedQuality" label="30013" type="enum" values="240p|360p|480p|720p|1080p|Best" />
