@@ -376,7 +376,7 @@ def __parseMovieSimpleList(sUrl, iPage, oGui, sHtmlContent = False):
         oRequest = cRequestHandler(sUrl)
         sHtmlContent = __getHtmlContent(sUrl)
     
-    sPattern = '<TR.*?<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="/img/([^"]+)".*?</TR>'
+    sPattern = '<TR[^>]*>\s<TD[^>]*id="tdmovies"*>\s<a href="([^"]+)">(.*?)</a>.*?<img[^>]*border=0[^>]*src="/img/([^"]+)"[^>]*>.*?</TR>'
     aResult = oParser.parse(sHtmlContent, sPattern)
 
     pattern = "coverPreview([0-9]+)\"\)\.hover.*?<p id='coverPreview'><img src='(.*?)' alt='Image preview'"
