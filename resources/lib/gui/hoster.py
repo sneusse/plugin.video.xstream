@@ -249,7 +249,7 @@ class cHosterGui:
             cGui().showInfo('xStream','stream/hoster not available')
             return
         # if result is not a list, make in one
-        if not type(siteResult) is List:
+        if not type(siteResult) is list:
             temp = []
             temp.append(siteResult)
             siteResult = temp
@@ -291,7 +291,7 @@ class cHosterGui:
             siteResult = function(siteResult['link'])
 
             # if result is not a list, make in one
-            if not type(siteResult) is List:
+            if not type(siteResult) is list:
                 temp = []
                 temp.append(siteResult)
                 siteResult = temp
@@ -321,7 +321,7 @@ class cHosterGui:
             self.sendToPyLoad(siteResult)
 
     def _chooseHoster(self, siteResult):
-        Dialog = xbmcgui.Dialog()
+        dialog = xbmcgui.Dialog()
         titles = []
         for result in siteResult:
             if 'displayedName' in result:
@@ -378,7 +378,7 @@ class cHosterGui:
             cGui().showInfo('xStream','stream/hoster not available')
             return False
         # if result is not a list, make in one
-        if not type(siteResult) is List:
+        if not type(siteResult) is list:
             temp = []
             temp.append(siteResult)
             siteResult = temp
