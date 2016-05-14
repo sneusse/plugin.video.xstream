@@ -168,11 +168,8 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<div[^>]*class="popover-title"[^>]*>.*?'
     pattern += '<span[^>]*class="name"[^>]*>([^<>]*)</span>.*?'
 
-	# Beschreibung ermitteln
-    pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>.*?'
-	
-	# IMDB ermitteln
-    pattern += '<b>IMDB[^>]*Punkt:[^>]*</b>([^<>]*)<br>'
+    # Beschreibung ermitteln
+    pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
 
     # HTML parsen
     aResult = cParser().parse(sMainContent, pattern)
@@ -186,9 +183,9 @@ def showEntries(entryUrl = False, sGui = False):
     total = len (aResult[1])
 
     # Alle Ergebnisse durchlaufen
-    for sUrl, sThumbnail, sEpisodeNrs, sNameOrig, sDesc, sImdb in aResult[1]:
+    for sUrl, sThumbnail, sEpisodeNrs, sName, sDesc in aResult[1]:
         # Bei Filmen das Jahr vom Title trennen
-        aYear = re.compile("(.*?)\((\d*)\)").findall(sNameOrig)
+        aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
         iYear = False
         for name, year in aYear:
             sName = name
@@ -199,17 +196,17 @@ def showEntries(entryUrl = False, sGui = False):
         isTvshow = True if sEpisodeNrs else False
 
         # Listen-Eintrag erzeugen
-        oGuiElement = cGuiElement(("(" + sImdb.strip() + ") " + sNameOrig), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
 
         # Bei Serien Title anpassen
-        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sNameOrig,re.I)
+        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName,re.I)
         if res:
-            oGuiElement.setTVShowTitle("(" + sImdb.strip() + ") " + res.group(1))
-            oGuiElement.setTitle('%s - Staffel %s' % (("(" + sImdb.strip() + ") " + res.group(1)),int(res.group(2))))
+            oGuiElement.setTVShowTitle(res.group(1))
+            oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),int(res.group(2))))
             params.setParam('sSeason', int(res.group(2)))
         elif not res and isTvshow:
-            oGuiElement.setTVShowTitle("(" + sImdb.strip() + ") " + sNameOrig)
-            oGuiElement.setTitle('%s - Staffel %s' % (("(" + sImdb.strip() + ") " + sNameOrig),"1"))
+            oGuiElement.setTVShowTitle(sName)
+            oGuiElement.setTitle('%s - Staffel %s' % (sName,"1"))
             params.setParam('sSeason', "1")
 
         # Thumbnail und Beschreibung für Anzeige anpassen
@@ -225,7 +222,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
-        params.setParam('sName', sNameOrig)
+        params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
         params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
