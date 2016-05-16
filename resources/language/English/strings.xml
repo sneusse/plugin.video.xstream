@@ -2,19 +2,19 @@
 <strings>
   <!-- general begin by 30000 - 30050 -->
   <string id="30000">Debug-Mode</string>
-  <string id="30001">Videoplayer</string>
+  <string id="30001">Video-Player</string>
   <string id="30002">Preferred language</string>
-  <string id="30003">Show XXX sections (you have to be at legal age)</string>
+  <string id="30003">Show XXX-Content for adult users</string>
   <string id="30004">Use metahandler</string>
   <string id="30005">Hoster selection</string>
-  <string id="30006">Cachetime for websites (seconds)</string>
-  <string id="30007">Maximum lenth of hoster list</string>
-  <string id="30008">Metahandler replaces infos from site</string>
-  <string id="30009">Pre-validate and sort hosterlist (slow on weak systems)</string>
-  <string id="30010">Auto-Update source</string>
+  <string id="30006">Cachetime for websites in seconds</string>
+  <string id="30007">Maximum number of hosters</string>
+  <string id="30008">Metahandler replaces information of websites</string>
+  <string id="30009">Pre-validate and sort hosterlist (not for weak systems)</string>
+  <string id="30010">AutoUpdate source</string>
   <string id="30011">Global Search at first position</string>
-  <string id="30012">Centralized Settings</string>
-  <string id="30013">Prefered AutoPlay quality (if available)</string>
+  <string id="30012">Show centralized Settings</string>
+  <string id="30013">Prefered quality for AutoPlay function</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">General</string>
@@ -29,7 +29,7 @@
   <string id="30073">Port</string>
   <string id="30074">Start download automatically</string>
   <string id="30075">Send to LinkGrabber only</string>
-  <string id="30080">XBMC-Download</string>
+  <string id="30080">Kodi-Download</string>
   <string id="30081">Download-folder</string>
   <string id="30082">PyLoad on/off</string>
   <string id="30083">Username</string>
