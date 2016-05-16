@@ -1,24 +1,42 @@
-﻿- Version 2.1.16
+﻿- Version 2.2.0 - 30.04.2016
 ================================================================================
     - fix:
-       - M4K fix hoster detection for a few cases [thx viper2k4]
+       - M4K fix hoster detection for a few cases
        - BS fix for serveral platforms        
-       - Seriesever & Moviesever [thx Seberoth]
+       - Seriesever & Moviesever
+       - KKiste
        - handle non ASCII chars in WIN username (can still fail due dependencies)
        - keep trying other hosters if Kodi player times out on valid link
+       - SSL Context issues under python 2.7.9 and 2.7.10 
         
     - add:
-       - BS add movies [thx versable]
-       - Filmplalast [thx versable]
-       - Szene-streams [thx versable]
-       - Kinox split episodes in seasons [thx versable]
+       - BS add movies
+       - BS add genre filter
+       - BS add random selection
+       - Filmpalast
+       - Hdfilme.tv
+       - Szene-Streams
+       - Gute-Filme
+       - Anime-Loads
+       - DDL.me
+       - Kinox split episodes in seasons
        - context option to search the selected item in other site-plugins
        - dynamic settings for site-plugins
        - mutli threaded global search
-       - new icons and fanart [thx StoneOfStones]
+       - Auto-Update option to install updates directly from GitHub
+       - new icons and fanart
        - one setting for hoster selection mode, so modes exclude each other
-        
-            
+       - context menu option for manual hoster selection if hoster selection mode is auto
+       - option to select preferred quality
+       - sort hoster by qulatity if provided by site-plugin (HDfilme,M4K)
+       
+    - removed:
+        - gstream, site is dead
+        - kinoleak, site is dead
+        - bundesliga, since nobody is in the mood to fix it
+    
+    THX to all contributors, especially:
+        seberoth, sraedler, StoneOfStones, versable, Viper2k4  
 
 - Version 2.1.15 - 13.09.2015
 ================================================================================
@@ -32,7 +50,7 @@
     - fix: hoster filtering and sorting
     - fix: kleak find get all available hosters
     - fix: downloader handles now links with attached headers
-    - add: SerieaEver+MoviesEver [thx Seberoth]
+    - add: SeriesEver+MoviesEver [thx Seberoth]
     - add: gstream login to get hosters etc.
            a gtsream account is now required [thx Seberoth]
     - add: "send to pyload" will first try to resolve the link
