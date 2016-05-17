@@ -405,3 +405,5 @@ In folgenden Ordnern sind die Kodi-Addons abgelegt:
 Das Addon xStream wird in aller Regel unter plugin.video.xstream istalliert.
 Im Verzeichnis `sites/` sind die .py Daten und im Ordner `resources/art/sites/` die jeweiligen Artworks bzw. Site-Icons der einzelnen Webseiten abgelegt.
 
+Info für den URL Resolver:
+https://github.com/Twilight0/repo.twilight0
