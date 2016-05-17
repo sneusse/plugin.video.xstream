@@ -300,11 +300,11 @@ def _uncaptcha():
 
 def _getSiteKey():
     sHtmlContent = _getRequestHandler(URL_MAIN, True).request()
-    pattern = '<script [^>]*src="([^"]*basic.min.js[^"]*)"[^>]*></script[>].*?'
+    pattern = '<script [^>]*src="([^"]*basic.js[^"]*)"[^>]*></script[>].*?'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0]:
         sHtmlContent = _getRequestHandler(aResult[1][0], True).request()
-        aResult = cParser().parse(sHtmlContent, "'sitekey':'(.*?)'")
+        aResult = cParser().parse(sHtmlContent, "'sitekey' : '(.*?)'")
         if aResult[0]:
             return aResult[1][0]
         else:
