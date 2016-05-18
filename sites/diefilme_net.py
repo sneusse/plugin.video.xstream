@@ -13,19 +13,24 @@ SITE_NAME = 'DieFilme'
 SITE_ICON = 'diefilme_net.png'
 
 URL_MAIN = 'http://diefilme.net'
-URL_MOVIES = URL_MAIN
-URL_SHOWS = URL_MAIN + '/tv-serien-kostenlos-online-schauen'
 URL_SEARCH =  URL_MAIN + '/search?q=%s' 
+
+QUALITY_ENUM = {'CAM':0, 'TS':1, 'TV':2, 'DVD':3, 'HD':4, '3D':4}
 
 def load():
     logger.info("Load %s" % SITE_NAME)
 
     params = ParameterHandler()
     oGui = cGui()
-    params.setParam('sUrl', URL_MOVIES)
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
-    params.setParam('sUrl', URL_SHOWS)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
+
+    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    pattern = '<li[^>]*><a[^>]*href="([^"]*)"[^>]*>(.*?)</a></li>' # url / title
+    aResult = cParser().parse(sHtmlContent, pattern)
+
+    for sUrl, sTitle in aResult[1]:
+        params.setParam('sUrl', URL_MAIN + sUrl)
+        oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'showContentMenu'), params)
+
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -49,23 +54,23 @@ def showContentMenu():
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
+    parser = cParser()
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
     sHtmlContent = cRequestHandler(entryUrl).request()
     pattern = "<div[^>]id=['\"]\w+-\d+['\"].*?" # entry-typ
-    pattern += '(?:<div[^>]*class="movieQuality[^>]*"[^>]*>([^"]*)</div>.*?)' # quality
     pattern += '(?:<div[^>]*class="movieTV"[^>]*>([^"]*)</div>.*?)?' # season / episodes
     pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?' # Thumbnail
     pattern += '<h\d[^>]*><a[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?' # url / title
-    aResult = cParser().parse(sHtmlContent, pattern)
+    aResult = parser.parse(sHtmlContent, pattern)
 
     if not aResult[0] or not aResult[1][0]: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     total = len (aResult[1])
-    for squality, sEpisodeStr, sThumbnail, sUrl, sName in aResult[1]:       
+    for sEpisodeStr, sThumbnail, sUrl, sName in aResult[1]:       
         isMovie = True if not sEpisodeStr else False
         oGuiElement = cGuiElement()
         oGuiElement.setSiteName(SITE_IDENTIFIER)
@@ -80,7 +85,7 @@ def showEntries(entryUrl = False, sGui = False):
         oOutParms.setParam('entryUrl', URL_MAIN + sUrl)
         oGui.addFolder(oGuiElement, oOutParms, (not isMovie), total)
 
-    aResult = cParser().parse(sHtmlContent, "<span[^>]class=['\"]currentStep['\"].*?<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\d+</a>")
+    aResult = parser.parse(sHtmlContent, "<span[^>]class=['\"]currentStep['\"].*?<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\d+</a>")
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', URL_MAIN + aResult[1][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
@@ -161,7 +166,9 @@ def showHosters():
         else:
                 return False
 
-    pattern = '<div[^>]*class="[^"]*linkHiddenUrl[^"]*"[^>]*>([^"]*)</div>\s+' # url
+    pattern = '(?:<div[^>]*class="linkQuality[^>]*"[^>]*>([^"<]*)</div>.*?)' # quality
+    pattern += '(?:<div[^>]*class="linkAdded"[^>]*>.*?;([^"]*)</div>.*?)' # add by
+    pattern += '<div[^>]*class="[^"]*linkHiddenUrl[^"]*"[^>]*>([^"]*)</div>\s+' # url
     pattern += '<div[^>]*class="[^"]*linkHiddenContact[^"]*"[^"]*><a[^>]*href="[^"]*"[^>]*>([^"]*)</a></div>' # hostername
     aResult = parser.parse(sHtmlContent, pattern)
 
@@ -169,11 +176,14 @@ def showHosters():
         return False
 
     hosters = []
-    for sUrl, sName in aResult[1]:
+    for sQuality, sDate, sUrl, sName in aResult[1]:
         hoster = dict()
+        if sDate:
+            hoster['displayedName'] = '%s - %s - Quality: %s' % (sDate.strip(), sName, sQuality)
+        if sQuality.upper() in QUALITY_ENUM:
+            hoster['quality'] = QUALITY_ENUM[sQuality.upper()]
         hoster['link'] = sUrl
         hoster['name'] = sName
-        hoster['resolveable'] = True
         hosters.append(hoster)
 
     if hosters:
