@@ -15,32 +15,32 @@
     <setting type="sep" />
   </category> 
   <category label="30022">
-	<setting label="1. Site-Plugin" type="lsep" />
+	<setting label="AnimeLoads" type="lsep" />
 	<setting default="false" id="plugin_anime-loads_org" label="AnimeLoads" type="bool" />
-	<setting label="2. Site-Plugin" type="lsep" />
+	<setting label="BurningSeries" type="lsep" />
 	<setting default="false" id="plugin_bs_to" label="BurningSeries" type="bool" />
-	<setting label="3. Site-Plugin" type="lsep" />
+	<setting label="DirectDownLoad" type="lsep" />
 	<setting default="false" id="plugin_ddl_me" label="DirectDownLoad" type="bool" />
 	<setting default="de.ddl.me" enable="!eq(-1,false)" id="ddl_me-domain" label="DirectDownLoad domain" type="labelenum" values="de.ddl.me|en.ddl.me" />
-	<setting label="4. Site-Plugin" type="lsep" />
+	<setting label="FilmPalast" type="lsep" />
 	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast" type="bool" />
-	<setting label="5. Site-Plugin" type="lsep" />
+	<setting label="Gute Filme" type="lsep" />
 	<setting default="false" id="plugin_gute-filme_to" label="Gute Filme" type="bool" />
-	<setting label="6. Site-Plugin" type="lsep" />
+	<setting label="HDfilme" type="lsep" />
 	<setting default="false" id="plugin_hdfilme_tv" label="HDfilme" type="bool" />
-	<setting label="7. Site-Plugin" type="lsep" />
+	<setting label="KinoX" type="lsep" />
 	<setting default="false" id="plugin_kinox_to" label="KinoX" type="bool" />
 	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="Kinox domain" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
-	<setting label="8. Site-Plugin" type="lsep" />
+	<setting label="KinoKiste" type="lsep" />
 	<setting default="false" id="plugin_kkiste_to" label="KinoKiste" type="bool" />
-	<setting label="9. Site-Plugin" type="lsep" />
+	<setting label="Movie4k" type="lsep" />
 	<setting default="false" id="plugin_movie4k_to" label="Movie4k" type="bool" />
 	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
-	<setting label="10. Site-Plugin" type="lsep" />
+	<setting label="MoviesEver" type="lsep" />
 	<setting default="false" id="plugin_moviesever_com" label="MoviesEver" type="bool" />
-	<setting label="11. Site-Plugin" type="lsep" />
+	<setting label="SeriesEver" type="lsep" />
 	<setting default="false" id="plugin_seriesever_net" label="SeriesEver" type="bool" />
-	<setting label="12. Site-Plugin" type="lsep" />
+	<setting label="SzeneStreams" type="lsep" />
 	<setting default="false" id="plugin_szene-streams_com" label="SzeneStreams" type="bool" />
 </category>
   <category label="Views">

@@ -8,13 +8,13 @@
   <string id="30004">Use metahandler</string>
   <string id="30005">Hoster selection</string>
   <string id="30006">Cachetime for websites in seconds</string>
-  <string id="30007">Maximum number of hosters</string>
+  <string id="30007">Maximum number in hosterlist</string>
   <string id="30008">Metahandler replaces information of websites</string>
-  <string id="30009">Pre-validate and sort hosterlist (not for weak systems)</string>
-  <string id="30010">AutoUpdate source</string>
+  <string id="30009">Pre-validate and sort hosterlist (slow on weak systems)</string>
+  <string id="30010">Auto-Update source</string>
   <string id="30011">Global Search at first position</string>
   <string id="30012">Show centralized Settings</string>
-  <string id="30013">Prefered quality for AutoPlay function</string>
+  <string id="30013">Prefered Auto-Play quality (if available)</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">General</string>
