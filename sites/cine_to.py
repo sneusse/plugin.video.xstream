@@ -25,9 +25,45 @@ def load():
     logger.info("Load %s" % SITE_NAME)
 
     oGui = cGui()
-    params = ParameterHandler()
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'searchRequest'), params)
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMovieMenu'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+    oGui.setEndOfDirectory()
+
+def showMovieMenu():
+    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    pattern = '<input[^>]*name="kind"[^>]*value="(.*?)"[^>]*>' # kind
+    aResult = cParser().parse(sHtmlContent, pattern)
+
+    if not aResult[0]:
+        return
+
+    oGui = cGui()
+    params = ParameterHandler()
+    for sKind in aResult[1]:
+        params.setParam('kind', sKind)
+        oGui.addFolder(cGuiElement(sKind.title(), SITE_IDENTIFIER, 'searchRequest'), params)
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenresMenu'))
+    oGui.setEndOfDirectory()
+
+def showGenresMenu():
+    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    pattern = '<ul[^>]*id="genres"[^>]*>(.*?)</ul>' # genre-ul
+    aResult = cParser().parse(sHtmlContent, pattern)
+
+    if not aResult[0]:
+        return
+
+    pattern = '<a[^>]*data-id="(\d+)"[^>]*href="[^"]*"[^>]*>([^<]*)<s' # id / title
+    aResult = cParser().parse(aResult[1][0], pattern)
+
+    if not aResult[0]:
+        return
+
+    oGui = cGui()
+    params = ParameterHandler()
+    for sGenreId, sTitle in aResult[1]:
+        params.setParam('genre', sGenreId)
+        oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'searchRequest'), params)
     oGui.setEndOfDirectory()
 
 def searchRequest(dictFilter = False, sGui = False):
