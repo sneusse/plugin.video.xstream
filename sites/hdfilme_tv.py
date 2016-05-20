@@ -311,7 +311,7 @@ def getHosters(sUrl = False):
         aMatches = re.compile("episode=(\d+)&").findall(sUrl)
 
         # gewünsche Episode ermitteln wenn möglich
-        sEpisode = "1" if not aMatches else aMatches[0]
+        sEpisode = "\d+" if not aMatches else aMatches[0]
 
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult[1]:
