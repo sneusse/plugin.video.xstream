@@ -19,7 +19,7 @@ URL_LINKS = URL_PROTOCOL + '//cine.to/request/links'
 URL_OUT = URL_PROTOCOL + '//cine.to/out/%s'
 
 SEARCH_DICT = {'kind':'all', 'genre':'0', 'rating':'1', 'year[]': ['1913', '2016'], 'term':'', 'page':'1', 'count' : '25'}
-QUALITY_ENUM = {'SD':3,'HD':4}
+QUALITY_ENUM = {'LD':0,'SD':3,'HD':4}
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -40,17 +40,15 @@ def searchRequest(dictFilter = False, sGui = False):
         dictFilter[prop] = parmVal if parmVal else val
         params.setParam(prop, val)
 
-    oRequest = _getRequestHandler(URL_SEARCH)
-    for (prop, val) in dictFilter.items():
-        oRequest.addParameters(prop,val)
-    oResponse = json.loads(oRequest.request())
-
+    oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
+    
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     total = len (oResponse['entries'])
     for aEntry in oResponse['entries']:
+        aLang = re.compile('(\w+)-').findall(aEntry['language'])
         oGuiElement = cGuiElement()
         oGuiElement.setSiteName(SITE_IDENTIFIER)
         oGuiElement.setFunction('showHosters')
@@ -58,8 +56,12 @@ def searchRequest(dictFilter = False, sGui = False):
         oGuiElement.setMediaType('movie')
         oGuiElement.setThumbnail(URL_PROTOCOL + aEntry['cover'])
         oGuiElement.setYear(aEntry['year'])
+        oGuiElement.setLanguage( ', '.join(map(str, aLang)))
+        if oGui.isMetaOn:
+            oGuiElement.addItemValue('imdb_id','tt'+aEntry['imdb'])
         oOutParms = ParameterHandler()
-        oOutParms.setParam('imdbID', aEntry['imdb'])
+        oOutParms.setParam('itemID', aEntry['imdb'])
+        oOutParms.setParam('lang', aEntry['language'])
         oGui.addFolder(oGuiElement, oOutParms, False, total)
 
     if int(oResponse['current']) < int(oResponse['pages']):
@@ -72,29 +74,27 @@ def searchRequest(dictFilter = False, sGui = False):
 
 def showHosters():
     params = ParameterHandler()
-    imdbID = params.getValue('imdbID')
-
-    if not imdbID: return
-
-    oRequest = _getRequestHandler(URL_LINKS)
-    oRequest.addParameters('ID', imdbID)
-    oRequest.addParameters('lang','de')
-    oResponse = json.loads(oRequest.request())
-
-    if 'links' not in oResponse or len(oResponse['links']) == 0:
-        return
+    imdbID = params.getValue('itemID')
+    lang = params.getValue('lang')
+    if not imdbID or not lang: return
 
     hosters = []
-    for aEntry in oResponse['links']:
-        hoster = dict()
-        if oResponse['links'][aEntry][0].upper() in QUALITY_ENUM:
-            hoster['quality'] = QUALITY_ENUM[oResponse['links'][aEntry][0]]
-        hoster['link'] = URL_OUT % oResponse['links'][aEntry][1]
-        hoster['name'] = aEntry
-        hoster['displayedName'] = '%s - Quality: %s' % (aEntry, oResponse['links'][aEntry][0])
-        hosters.append(hoster)
+    for sLang in re.compile('(\w+)-').findall(lang):
+        oResponse = _getJSonResponse(URL_LINKS, {'ID':imdbID,'lang':sLang} )
+        if 'links' not in oResponse or len(oResponse['links']) == 0:
+            return
 
+        for aEntry in oResponse['links']:
+            hoster = dict()
+            if oResponse['links'][aEntry][0].upper() in QUALITY_ENUM:
+                hoster['quality'] = QUALITY_ENUM[oResponse['links'][aEntry][0]]
+            hoster['link'] = URL_OUT % oResponse['links'][aEntry][1]
+            hoster['name'] = aEntry
+            hoster['displayedName'] = '%s (%s) - Quality: %s' % (aEntry, sLang, oResponse['links'][aEntry][0])
+            hosters.append(hoster)
+ 
     if hosters:
+        hosters = sorted(hosters, key=lambda k: k['name']) #sort by hostername
         hosters.append('play')
     return hosters
 
@@ -112,11 +112,13 @@ def play(sUrl = False):
     results.append(result)
     return results
 
-def _getRequestHandler(sUrl):
+def _getJSonResponse(sUrl, parmDict):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('X-Requested-With','XMLHttpRequest')
     oRequest.addHeaderEntry('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-    return oRequest
+    for (prop, val) in parmDict.items():
+        oRequest.addParameters(prop,val)
+    return json.loads(oRequest.request())
 
 def showSearch():
     oGui = cGui()
@@ -130,4 +132,3 @@ def _search(oGui, sSearchText):
     dictSearch = SEARCH_DICT
     dictSearch['term'] = sSearchText.strip()
     searchRequest(dictSearch, oGui)
-
