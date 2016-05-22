@@ -89,7 +89,7 @@ Alternativ könnte die xStream-Repository ebenfalls über das _SuperRepo_ gelade
 
 **WICHTIG:**Jedoch muss an dieser Stelle klar darauf hingewiesen werden, dass unter der alternativen Bezugsquelle nicht für den aktuellsten Stand der Software garantiert werden kann!
 
-**WICHTIG**Um AnimeLoads.org zu verwenden wird ein Update des URL resolvers benötigt, den ihr hier herunterladen könnt:
+**WICHTIG:**Um AnimeLoads.org zu verwenden wird ein Update des URL resolvers benötigt, den ihr hier herunterladen könnt:
 
 - [Master-Branch bei GitHub] (https://github.com/tknorris/script.module.urlresolver/archive/master.zip)
 
