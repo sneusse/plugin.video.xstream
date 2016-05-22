@@ -83,7 +83,7 @@ class cRequestHandler:
         except Exception as e:
             logger.info(e)
 
-        sParameters = urllib.urlencode(self.__aParameters)
+        sParameters = urllib.urlencode(self.__aParameters, True)
 
         handlers = [SmartRedirectHandler,
                     mechanize.HTTPEquivProcessor,
