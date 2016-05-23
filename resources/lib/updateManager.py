@@ -40,8 +40,9 @@ def checkforupdates():
                     json.loads(nightlycommitsXML)['sha']:
                 update(REMOTE_URL_NIGHTLY)
                 open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
-        except:
+        except Exception as e:
             logger.info("Ratelimit reached")
+            logger.info(e)
 
     elif cConfig().getSetting('UpdateSetting') == "Stable":
         oLocalVer = getLocalVersion()
