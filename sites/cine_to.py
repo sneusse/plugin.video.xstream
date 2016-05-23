@@ -10,7 +10,7 @@ import re, json
 from datetime import datetime
 
 SITE_IDENTIFIER = 'cine_to'
-SITE_NAME = 'Cine'
+SITE_NAME = 'Cine.to'
 SITE_ICON = 'cine_to.png'
 
 URL_PROTOCOL = 'https:'
@@ -80,7 +80,7 @@ def searchRequest(dictFilter = False, sGui = False):
         params.setParam(prop, val)
 
     oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
-    
+
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
@@ -131,7 +131,7 @@ def showHosters():
             hoster['name'] = aEntry
             hoster['displayedName'] = '%s (%s) - Quality: %s' % (aEntry, sLang, oResponse['links'][aEntry][0])
             hosters.append(hoster)
- 
+
     if hosters:
         hosters = sorted(hosters, key=lambda k: k['name']) #sort by hostername
         hosters.append('play')
@@ -172,14 +172,16 @@ def _search(oGui, sSearchText):
     dictSearch['term'] = sSearchText.strip()
     searchRequest(dictSearch, oGui)
 
+
 def showYearSearch():
     oGui = cGui()
     dictSearch = SEARCH_DICT
-    beginYear = correctWrongYearEntry(oGui.showNumpad(defaultNum=1913, numPadTitle="Beginn Year"))
+    beginYear = correctWrongYearEntry(oGui.showNumpad(defaultNum=1913, numPadTitle="Begin Year"))
     endYear = correctWrongYearEntry(oGui.showNumpad(defaultNum=datetime.now().year, numPadTitle="End Year"))
     dictSearch['year[]'] = [beginYear, endYear]
     searchRequest(dictSearch, oGui)
     oGui.setEndOfDirectory()
+
 
 def correctWrongYearEntry(year):
     if int(year) < 1913:
@@ -187,6 +189,7 @@ def correctWrongYearEntry(year):
     elif int(year) > datetime.now().year:
         year = datetime.now().year
     return year
+
 
 def showRatingSearch():
     oGui = cGui()
