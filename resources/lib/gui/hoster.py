@@ -277,7 +277,7 @@ class cHosterGui:
                 siteResult = siteResult[:self.maxHoster-1]
             if len(siteResult)>1:
                 #choose hoster
-                if cConfig().getSetting('hosterSelect')=='list':
+                if cConfig().getSetting('hosterSelect')=='List':
                     self.showHosterFolder(siteResult, siteName, functionName)
                     return
                 siteResult = self._chooseHoster(siteResult)

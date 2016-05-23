@@ -17,13 +17,12 @@ TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
-REMOTE_URL_MASTER = "https://github.com/Lynx187/plugin.video.xstream/archive/master.zip"
-REMOTE_URL_BETA = "https://api.github.com/repos/StoneOffStones/plugin.video.xstream/git/refs/tags/"
+REMOTE_URL_MASTER = "https://api.github.com/repos/Lynx187/plugin.video.xstream/git/refs/tags/"
+REMOTE_URL_BETA = "https://github.com/Lynx187/plugin.video.xstream/archive/master.zip"
 REMOTE_URL_NIGHTLY = "https://github.com/StoneOffStones/plugin.video.xstream/archive/nightly.zip"
 
 ## Full path of the remote file version.
 REMOTE_VERSION_FILE_MASTER = "https://raw.githubusercontent.com/Lynx187/plugin.video.xstream/master/addon.xml"
-
 
 ## Filename of the update File.
 LOCAL_FILE_NAME = "xStream_update.zip"
@@ -37,37 +36,42 @@ def checkforupdates():
         nightlycommitsXML = urllib.urlopen("https://api.github.com/repos/StoneOffStones/plugin.video.xstream/commits/nightly").read()
 
         try:
-            if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != json.loads(nightlycommitsXML)['sha']:
-                    update(REMOTE_URL_NIGHTLY)
-                    open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
-        except:
+            if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != \
+                    json.loads(nightlycommitsXML)['sha']:
+                update(REMOTE_URL_NIGHTLY)
+                open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
+        except Exception as e:
             logger.info("Ratelimit reached")
-
-    elif cConfig().getSetting('UpdateSetting') == "Beta":
-        oLocalVer = getLocalVersion()
-
-        oRemoteVer = getLastBetaVersion()
-        
-        if oLocalVer is not None and oRemoteVer is not None and oRemoteVer > oLocalVer:
-            update(getLastBetaDownloadUrl())
+            logger.info(e)
 
     elif cConfig().getSetting('UpdateSetting') == "Stable":
         oLocalVer = getLocalVersion()
-        oRemoteVer = getRemoteVersion(REMOTE_VERSION_FILE_MASTER)
-        
+
+        oRemoteVer = getLastMasterVersion()
+
         if oLocalVer is not None and oRemoteVer is not None and oRemoteVer > oLocalVer:
-            update(REMOTE_URL_MASTER)
+            update(getLastMasterDownloadUrl())
 
-def getLastBetaVersion():
-    lastUrl = getLastBetaDownloadUrl()
-    return V(lastUrl.split('/')[-1])
+    elif cConfig().getSetting('UpdateSetting') == "Beta":
+        oLocalVer = getLocalVersion()
+        oRemoteVer = getRemoteVersion(REMOTE_VERSION_FILE_MASTER)
 
-def getLastBetaDownloadUrl():
-    apiJson = urllib.urlopen(REMOTE_URL_BETA).read()
+        if oLocalVer is not None and oRemoteVer is not None and oRemoteVer > oLocalVer:
+            update(REMOTE_URL_BETA)
+
+
+def getLastMasterVersion():
+    lastUrl = getLastMasterDownloadUrl()
+    return V(lastUrl.split('/')[-1][1:])
+
+
+def getLastMasterDownloadUrl():
+    apiJson = urllib.urlopen(REMOTE_URL_MASTER).read()
     oJson = json.loads(apiJson)
 
-    lastVersionUrl = next(x['url'] for x in reversed(oJson) if 'beta' in x['url'])
-    return lastVersionUrl.replace('git/','zipball/')
+    lastVersionUrl = next(x['url'] for x in reversed(oJson))
+    return lastVersionUrl.replace('git/', 'zipball/')
+
 
 def getLocalVersion():
     xml = open(os.path.join(ROOT_DIR, "addon.xml")).read()
@@ -75,11 +79,13 @@ def getLocalVersion():
     logger.info("xStream Localversion: " + (version.vstring if version is not None else "Unbekannt"))
     return version
 
+
 def getRemoteVersion(REMOTE_VERSION_URL):
     xml = urllib.urlopen(REMOTE_VERSION_URL).read()
     version = getVersionFromXML(xml);
     logger.info("xStream Remoteversion: " + (version.vstring if version is not None else "Unbekannt"))
     return version
+
 
 def getVersionFromXML(sXML):
     oEle = getElementTreeFromString(sXML)
@@ -88,6 +94,7 @@ def getVersionFromXML(sXML):
         version = V(oEle.attrib['version'])
         return version
 
+
 def getElementTreeFromString(sXML):
     try:
         tree = ET.fromstring(sXML)
@@ -95,8 +102,8 @@ def getElementTreeFromString(sXML):
     except ET.ParseError:
         pass
 
-def update(REMOTE_PATH):
 
+def update(REMOTE_PATH):
     logger.info("xStream Update URL: " + REMOTE_PATH)
 
     download.cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
