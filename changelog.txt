@@ -1,4 +1,20 @@
-﻿- Version 2.2.0 - 30.04.2016
+﻿- Version 2.2.1 - 06.06.2016
+================================================================================
+    - fix:
+       - hdfilme search support wildcards [thx Viper2k4]
+       - hdfilme episode/hoster pattern more general [thx Viper2k4]
+       - m4k no fake search results [thx Viper2k4]
+       - pyload support (was accidentially broken by last update)
+       - gutefilme genre [thx Viper2k4]
+       - anime-loads hoster [thx fwolle30]
+       - szene-streams non-collection movies
+       - kkiste hoster selection
+    - add:
+       - update Auto-Update sources [thx sraedler]
+       - hdfilme more menu options [thx StoneOfStones]
+For more details see commit log on GitHub
+
+- Version 2.2.0 - 30.04.2016
 ================================================================================
     - fix:
        - M4K fix hoster detection for a few cases
@@ -11,7 +27,6 @@
         
     - add:
        - BS add movies
-       - BS add genre filter
        - BS add random selection
        - Filmpalast
        - Hdfilme.tv
