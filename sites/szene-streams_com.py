@@ -91,7 +91,7 @@ def showEntries(sContent = False, sGui = False):
         oGuiElement.setMediaType('movie')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc.strip())
-        params.setParam('entryUrl', sUrl)
+        params.setParam('entryUrl', URL_MAIN + sUrl)
         oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
     pattern = '<a class="swchItem" href="([^"]+)".*?><span>(\d+)</span></a>'
