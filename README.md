@@ -3,6 +3,9 @@
 ![xStream logo](https://github.com/StoneOffStones/plugin.video.xstream/blob/wiki/graphics/website/logo/logo_512.png?raw=true)
 
 
+[![Join the chat at https://gitter.im/StoneOffStones/plugin.video.xstream](https://badges.gitter.im/StoneOffStones/plugin.video.xstream.svg)](https://gitter.im/StoneOffStones/plugin.video.xstream?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 
 ## Inhaltsverzeichnis
 - [1. Allgemeines zum Addon](#1-allgemeines-zum-addon)
@@ -51,6 +54,8 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 |:-------------- |:----------------- | :--------------------- | :--------- |
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
+| Cine           | cine.to           | funktioniert           | 25.05.2016 |
+| Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
