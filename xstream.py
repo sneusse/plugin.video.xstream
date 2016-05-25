@@ -117,7 +117,7 @@ def updateMeta(params):
 
 def parseUrl():
     params = ParameterHandler()
-
+    logger.info(params.getAllParameters())
     # If no function is set, we set it to the default "load" function
     if params.exist('function'):
         sFunction = params.getValue('function')
@@ -152,7 +152,6 @@ def parseUrl():
         showMainMenu(sFunction)
         return
     sSiteName = params.getValue('site')
-    logger.info (params.getAllParameters())
     if params.exist('playMode'):
         from resources.lib.gui.hoster import cHosterGui
         url = False
@@ -207,7 +206,7 @@ def showMainMenu(sFunction):
     oPluginHandler = cPluginHandler()
     aPlugins = oPluginHandler.getAvailablePlugins()
     if not aPlugins:
-        logger.info("No Plugins found")
+        logger.info("No (activated) Plugins found")
         # Open the settings dialog to choose a plugin that could be enabled
         oGui.openSettings()
         oGui.updateDirectory()

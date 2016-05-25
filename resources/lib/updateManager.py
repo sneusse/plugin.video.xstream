@@ -36,11 +36,13 @@ def checkforupdates():
         nightlycommitsXML = urllib.urlopen("https://api.github.com/repos/StoneOffStones/plugin.video.xstream/commits/nightly").read()
 
         try:
-            if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != json.loads(nightlycommitsXML)['sha']:
-                    update(REMOTE_URL_NIGHTLY)
-                    open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
-        except:
+            if not os.path.exists(LOCAL_NIGHTLY_VERSION) or open(LOCAL_NIGHTLY_VERSION).read() != \
+                    json.loads(nightlycommitsXML)['sha']:
+                update(REMOTE_URL_NIGHTLY)
+                open(LOCAL_NIGHTLY_VERSION, 'w').write(json.loads(nightlycommitsXML)['sha'])
+        except Exception as e:
             logger.info("Ratelimit reached")
+            logger.info(e)
 
     elif cConfig().getSetting('UpdateSetting') == "Stable":
         oLocalVer = getLocalVersion()
