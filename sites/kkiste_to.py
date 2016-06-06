@@ -222,7 +222,7 @@ def showEpisodes():
     oRequest.addHeaderEntry("X-Requested-With","XMLHttpRequest")
     oRequest.addHeaderEntry('Referer', sUrl)
     oRequest.addHeaderEntry('Accept', '*/*')
-    oRequest.addHeaderEntry('Host', SITE_NAME.lower())
+    oRequest.addHeaderEntry('Host', 'kkiste.to')
     sHtmlContent = oRequest.request()
     aData = sorted(loads(sHtmlContent)['episodes'])
     for aEntry in aData:
@@ -299,7 +299,7 @@ def showHosters():
     request.add_header("X-Requested-With","XMLHttpRequest")
     request.add_header('Referer', sUrl)
     request.add_header('Accept', '*/*')
-    request.add_header('Host', SITE_NAME.lower())
+    request.add_header('Host', 'kkiste.to')
     request.add_header('Content-Length',len(aResult[1][0]))
     request.add_header('Content-Type','text/plain')
     resp = mechanize.urlopen(request)
