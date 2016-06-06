@@ -89,6 +89,7 @@ Alternativ könnte die xStream-Repository ebenfalls über das _SuperRepo_ gelade
 **WICHTIG:**Jedoch muss an dieser Stelle klar darauf hingewiesen werden, dass unter der alternativen Bezugsquelle nicht für den aktuellsten Stand der Software garantiert werden kann!
 
 
+
 xStream-Repository aus Forum:
 
 - [xStream-Forum] (http://xstream-addon.square7.ch/showthread.php?tid=1)
@@ -194,9 +195,9 @@ Falls noch nicht bekannt dann bitte die Seite im Browser aufrufen, auf Funktion 
 
 ### 3.4 Fehler bei Verwendung einiger Hoster
 
-Sollte dies der Fall sein, bitte den aktuellste Version des "URLResolver" über eine der folgenden Bezugsquellen beziehen:
+Sollte dies der Fall sein, bitte ggf. eine aktuellere Version des "URLResolver" über eine der folgenden Bezugsquellen beziehen:
 
-- URLResolver über die TVA Repo laden welches Bestandteil der offiziellen xStream-Repo ist
+- TVA Repo, kann über das offizielle xStream-Repo installiert werden
 
 - https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/zips/script.module.urlresolver/
 
@@ -328,4 +329,3 @@ In folgenden Ordnern sind die Kodi-Addons abgelegt:
 
 Das Addon xStream wird in aller Regel unter plugin.video.xstream istalliert.
 Im Verzeichnis `sites/` sind die .py Daten und im Ordner `resources/art/sites/` die jeweiligen Artworks bzw. Site-Icons der einzelnen Webseiten abgelegt.
-
