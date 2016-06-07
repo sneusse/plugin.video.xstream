@@ -285,10 +285,10 @@ class cGui:
         return False
         
 
-    def showNumpad(self, defaultNum = ""):
+    def showNumpad(self, defaultNum = "", numPadTitle="Choose page"):
         defaultNum = str(defaultNum)
         dialog = xbmcgui.Dialog()
-        num = dialog.numeric(0,'Choose page')
+        num = dialog.numeric(0, numPadTitle, defaultNum)
         return num
         
 
