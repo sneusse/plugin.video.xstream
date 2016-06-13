@@ -10,7 +10,7 @@ import re, json
 from datetime import datetime
 
 SITE_IDENTIFIER = 'cine_to'
-SITE_NAME = 'Cine.to'
+SITE_NAME = 'Cine'
 SITE_ICON = 'cine_to.png'
 
 URL_PROTOCOL = 'https:'
