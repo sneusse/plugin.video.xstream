@@ -67,8 +67,9 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
 
 
-Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der eingereichten Seiten ist nicht selbsverständlich und folgt daraufhin nicht automatisch. Sowohl das Potenzial der vorgeschlagenen Seite als auch der erforderliche Mehrwert wird geprüft und entscheidet über die Entwicklung eines neuen Site-Plugins.
-Grundsätzlich ist jedoch zu erwähnen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
+Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der gewünschten Seiten ist nicht selbsverständlich und erfolgt nicht automatisch!
+Alle Vorschläge werden in der [Site-Plugin Wunschliste](https://docs.google.com/spreadsheets/d/1b_9C6BONlpWcugMgocFbKxe7nFp99HfvVUJznxTzT4I/edit?usp=sharing) ([Forumbeitrag](http://xstream-addon.square7.ch/showthread.php?tid=663)) gesammelt und auf ihren tatsächlichen Mehrwert untersucht. Daraufhin folgt bei den interessanten Content-Anbieter eine Priorisierung bzw. Entwicklung eines neuen Site-Plugins für xStream.
+Grundsätzlich ist jedoch zu betonen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
 
 
 ### 1.2 Rechtliche Konsequenzen bei Nutzung
