@@ -3,6 +3,9 @@
 ![xStream logo](https://github.com/StoneOffStones/plugin.video.xstream/blob/wiki/graphics/website/logo/logo_512.png?raw=true)
 
 
+[![Join the chat at https://gitter.im/StoneOffStones/plugin.video.xstream](https://badges.gitter.im/StoneOffStones/plugin.video.xstream.svg)](https://gitter.im/StoneOffStones/plugin.video.xstream?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 
 ## Inhaltsverzeichnis
 - [1. Allgemeines zum Addon](#1-allgemeines-zum-addon)
@@ -24,11 +27,11 @@
     - [3.3 Fehler bei Verwendung einzelner Webseiten](#33-fehler-bei-verwendung-einzelner-webseiten)
     - [3.4 Fehler bei Verwendung einiger Hoster](#34-fehler-bei-verwendung-einiger-hoster)
   
+  
 - [4. Fehlerbericht über Log-Datei](#4-fehlerbericht-über-log-datei)
     - [4.1 Allgemeines zur Log-Datei](#41-allgemeines-zur-log-datei)
     - [4.2 Erstellen, bearbeiten und hochladen der Log-Datei](#43-erstellen-bearbeiten-und-hochladen-der-log-datei)
     - [4.3 Speicherort der Log Datei](#42-speicherort-der-log-datei)
-    
 
     
 - [5. Phyton Dateien](#5-phyton-dateien)
@@ -50,6 +53,8 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 |:-------------- |:----------------- | :--------------------- | :--------- |
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
+| Cine           | cine.to           | funktioniert           | 25.05.2016 |
+| Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
@@ -62,8 +67,9 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
 
 
-Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der eingereichten Seiten ist nicht selbsverständlich und folgt daraufhin nicht automatisch. Sowohl das Potenzial der vorgeschlagenen Seite als auch der erforderliche Mehrwert wird geprüft und entscheidet über die Entwicklung eines neuen Site-Plugins.
-Grundsätzlich ist jedoch zu erwähnen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
+Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der gewünschten Seiten ist nicht selbsverständlich und erfolgt nicht automatisch!
+Alle Vorschläge werden in der [Site-Plugin Wunschliste](https://docs.google.com/spreadsheets/d/1b_9C6BONlpWcugMgocFbKxe7nFp99HfvVUJznxTzT4I/edit?usp=sharing) ([Forumbeitrag](http://xstream-addon.square7.ch/showthread.php?tid=663)) gesammelt und auf ihren tatsächlichen Mehrwert untersucht. Daraufhin folgt bei den interessanten Content-Anbieter eine Priorisierung bzw. Entwicklung eines neuen Site-Plugins für xStream.
+Grundsätzlich ist jedoch zu betonen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
 
 
 ### 1.2 Rechtliche Konsequenzen bei Nutzung
@@ -93,7 +99,6 @@ Alternativ könnte die xStream-Repository ebenfalls über das _SuperRepo_ gelade
 xStream-Repository aus Forum:
 
 - [xStream-Forum] (http://xstream-addon.square7.ch/showthread.php?tid=1)
-
 
 
 xStream-Repository aus SuperRepo:
@@ -162,6 +167,14 @@ Für schwache Systeme ist dieses Feature nur bedingt zu empfehlen und muss vom j
 
 
 ## 3. Bekannte Probleme
+
+In diesem Kapitel wird auf mögliche Fehlermeldungen sowohl beim Installationsvorgang als auch im eigentlichen Betireb eingegangen. Darüber hinaus wird auch im Forum im Bereich [Support - Skriptfehler, Bugs, etc.](http://xstream-addon.square7.ch/forumdisplay.php?fid=8) auf aktuelle Probelme eingegangen. Hervorzugheben sind die sogenannten wichtigen Themen, welche im Forum zuerst dargestellt werden und auf häufig gestellte Fragen (FAQs: Frequently Asked Questions) bzw. auf bereits bekannte Problematiken eingehen und den aktuellen Arbeitsstand dazu aufzeigen.
+
+- [[Bugs] Bekannte Probleme](http://xstream-addon.square7.ch/showthread.php?tid=619)
+
+- [[FAQs] - Bugs, Scriptfehler, usw.](http://xstream-addon.square7.ch/showthread.php?tid=3)
+
+- [[FAQs] - Einstellungen](http://xstream-addon.square7.ch/showthread.php?tid=2)
 
 
 ### 3.1 Fehler bei der Installation
