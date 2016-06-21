@@ -47,7 +47,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     sHtmlContent = cRequestHandler(entryUrl).request()
     aResult = cParser().parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
-    if aResult[0]: 
+    if aResult[0]:
         sHtmlContent = aResult[1][0]
 
     pattern = '<div[^>]*class="thumbnail">.*?' # container
