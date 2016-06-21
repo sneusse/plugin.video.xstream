@@ -10,16 +10,19 @@ from resources.lib.util import cUtil
 import re
 
 SITE_IDENTIFIER = 'cine-dream_net'
-SITE_NAME = 'Cine-Dream'
+SITE_NAME = 'CineDream'
 SITE_ICON = 'cine-dream_net.png'
 
 URL_MAIN = 'http://www.cine-dream.net/'
+URL_KINO = 'http://www.cine-dream.net/category/aktuelle-kinofilme'
 URL_SEARCH =  URL_MAIN + '?s=%s'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
+    params.setParam('sUrl', URL_KINO)
+    oGui.addFolder(cGuiElement('Aktuelle Kinofilme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
     oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Kategorien', SITE_IDENTIFIER, 'showCategory'))
@@ -84,7 +87,7 @@ def showHosters():
     hosters = []
     if aResult[1]:
         for sName, sUrl in aResult[1]:
-            hoster = {} 
+            hoster = {}
             hoster['link'] = sUrl
             hoster['name'] = sName
             hosters.append(hoster)
