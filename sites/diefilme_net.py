@@ -9,7 +9,7 @@ from resources.lib.util import cUtil
 import re
 
 SITE_IDENTIFIER = 'diefilme_net'
-SITE_NAME = 'DieFilme'
+SITE_NAME = 'Die Filme'
 SITE_ICON = 'diefilme_net.png'
 
 URL_MAIN = 'http://diefilme.net'
