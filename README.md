@@ -54,6 +54,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
 | Cine           | cine.to           | funktioniert           | 25.05.2016 |
+| CineDream      | cine-dream.net    | funktioniert           | 21.06.2016 |
 | Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
