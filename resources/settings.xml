@@ -30,6 +30,8 @@
 	<setting default="false" id="plugin_diefilme_net" label="Die Filme" type="bool" />
 	<setting label="FilmPalast" type="lsep" />
 	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast" type="bool" />
+	<setting label="Goldstream" type="lsep" />
+	<setting default="false" id="plugin_goldstream_org" label="Goldstream" type="bool" />
 	<setting label="Gute Filme" type="lsep" />
 	<setting default="false" id="plugin_gute-filme_to" label="Gute Filme" type="bool" />
 	<setting label="HDfilme" type="lsep" />
