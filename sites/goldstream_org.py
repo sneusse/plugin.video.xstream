@@ -34,17 +34,17 @@ def load():
     params.setParam('sUrl', URL_Filme)
     oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenresList'), params)
-    if xxx():
+    if showAdult():
         params.setParam('sUrl', URL_XXX)
         oGui.addFolder(cGuiElement('XXX', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
-def xxx():
+def showAdult():
     oConfig = cConfig()
     if oConfig.getSetting('showAdult')=='true':    
         return True
-    return False 
+    return False
 
 def showGenresList():
     oGui = cGui()
@@ -59,9 +59,8 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = 'class="entry-title">' # container
-    pattern += '<a[^>]*href="([^"]+).*?.*?title="Direkter[^>]*Link[^>]*zu([^"]+)">.*?' # link / title
-    pattern += '<p><p>([^"<]+)' # Description
+    pattern = '<h2[^>]*class="entry-title"[^>]*><a[^>]*href="([^"]+)[^>]*rel="bookmark"[^>]*>(.*?)</a></h2>.*?' # link / title
+    pattern += '<p><p>(.*?)</p>' # Description
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if not aResult[0]:
@@ -75,7 +74,8 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
-    pattern = '<div[^>]class="right"><a[^>]href="([^"]+)">'
+
+    pattern = '<div[^>]*class="right"><a[^>]*href="([^"]+)"[^>]*>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', aResult[1][0])
