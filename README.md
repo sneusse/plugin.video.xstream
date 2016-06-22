@@ -58,6 +58,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
+| Goldstream     | goldstream.org    | funktioniert           | 23.06.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
 | HDfilme        | hdfilme.tv        | funktioniert           | 09.04.2016 |
 | KinoX          | kinox.to          | funktioniert           | 09.04.2016 |
