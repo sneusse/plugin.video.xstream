@@ -22,7 +22,7 @@ URL_SERIES = URL_MAIN + 'serien/'
 URL_GENRES_LIST = {'Abenteuer' : 'Stream/filme/abenteuer', 'Action' : 'Stream/filme/action', 'Animation' : 'Stream/filme/animation', 'Dokumentation' : 'Stream/filme/dokumentation',
                  'Drama' : 'Stream/filme/drama',  'Family' : 'Stream/filme/family',  'Historie' : 'Stream/filme/historie',  'Horror' : 'Stream/filme/horror',
                  'Komödie' : 'Stream/filme/komoedie',  'Krimi' : 'Stream/filme/krimi',  'Lovestory' : 'Stream/filme/lovestory',  'Musical' : 'Stream/filme/musical',
-                 'Science Fiction' : 'Stream/filme/science-fiction', 'Thriller' : 'Stream/filme/thriller', 'Western' : 'Stream/filme/western', 'Erotik' : 'Stream/filme/erotik'}
+                 'Science Fiction' : 'Stream/filme/science-fiction', 'Thriller' : 'Stream/filme/thriller', 'Western' : 'Stream/filme/western'}
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -48,6 +48,8 @@ def showAdult():
 
 def showGenresList():
     oGui = cGui()
+    if not showAdult():
+        del URL_GENRES_LIST['Erotik']
     for key in sorted(URL_GENRES_LIST):
         params = ParameterHandler()
         params.setParam('sUrl', (URL_MAIN + URL_GENRES_LIST[key]))
