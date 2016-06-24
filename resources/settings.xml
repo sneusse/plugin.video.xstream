@@ -26,10 +26,12 @@
 	<setting label="DirectDownLoad" type="lsep" />
 	<setting default="false" id="plugin_ddl_me" label="DirectDownLoad" type="bool" />
 	<setting default="de.ddl.me" enable="!eq(-1,false)" id="ddl_me-domain" label="DirectDownLoad domain" type="labelenum" values="de.ddl.me|en.ddl.me" />
-	<setting label="DieFilme" type="lsep" />
-	<setting default="false" id="plugin_diefilme_net" label="DieFilme" type="bool" />
+	<setting label="Die Filme" type="lsep" />
+	<setting default="false" id="plugin_diefilme_net" label="Die Filme" type="bool" />
 	<setting label="FilmPalast" type="lsep" />
 	<setting default="false" id="plugin_filmpalast_to" label="FilmPalast" type="bool" />
+	<setting label="Goldstream" type="lsep" />
+	<setting default="false" id="plugin_goldstream_org" label="Goldstream" type="bool" />
 	<setting label="Gute Filme" type="lsep" />
 	<setting default="false" id="plugin_gute-filme_to" label="Gute Filme" type="bool" />
 	<setting label="HDfilme" type="lsep" />
