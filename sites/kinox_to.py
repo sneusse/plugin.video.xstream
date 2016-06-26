@@ -580,7 +580,7 @@ def parseSerieSite(sHtmlContent):
         aSeriesUrls = aResult[1][0].split("&amp;")
         sSeriesUrl = '&' + str(aSeriesUrls[0]) + '&' + str(aSeriesUrls[1])
 
-    sPattern = '<option.*?value="([^"]+)".*?>Staffel.*?</option>'
+    sPattern = '<option\svalue="([^"]+)".*?>Staffel.*?</option>'
     return oParser.parse(sHtmlContent, sPattern)
 
 def parseSerieEpisodes(sHtmlContent, seasonNum):
