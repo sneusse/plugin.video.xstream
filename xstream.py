@@ -117,7 +117,7 @@ def updateMeta(params):
 
 def parseUrl():
     params = ParameterHandler()
-
+    logger.info(params.getAllParameters())
     # If no function is set, we set it to the default "load" function
     if params.exist('function'):
         sFunction = params.getValue('function')
@@ -152,7 +152,6 @@ def parseUrl():
         showMainMenu(sFunction)
         return
     sSiteName = params.getValue('site')
-    logger.info (params.getAllParameters())
     if params.exist('playMode'):
         from resources.lib.gui.hoster import cHosterGui
         url = False
@@ -160,7 +159,7 @@ def parseUrl():
         isHoster = params.getValue('isHoster')
         url = params.getValue('url')
         manual = params.exist('manual')
-        if cConfig().getSetting('hosterSelect')=='auto' and playMode != 'jd' and playMode != 'pyload' and not manual:
+        if cConfig().getSetting('hosterSelect')=='Auto' and playMode != 'jd' and playMode != 'pyload' and not manual:
             cHosterGui().streamAuto(playMode, sSiteName, sFunction)
         else:
             cHosterGui().stream(playMode, sSiteName, sFunction, url)
@@ -207,7 +206,7 @@ def showMainMenu(sFunction):
     oPluginHandler = cPluginHandler()
     aPlugins = oPluginHandler.getAvailablePlugins()
     if not aPlugins:
-        logger.info("No Plugins found")
+        logger.info("No (activated) Plugins found")
         # Open the settings dialog to choose a plugin that could be enabled
         oGui.openSettings()
         oGui.updateDirectory()
@@ -315,7 +314,7 @@ def searchGlobal():
     threads = []
     for count, pluginEntry in enumerate(aPlugins):
         dialog.update((count+1)*50/numPlugins,'Searching: '+str(pluginEntry['name'])+'...')
-        logger.info('Searching for %s at %s' % (sSearchText, pluginEntry['id']))
+        logger.info('Searching for %s at %s' % (sSearchText.decode('utf-8'), pluginEntry['id']))
         t = threading.Thread(target=_pluginSearch, args=(pluginEntry,sSearchText,oGui), name =pluginEntry['name'])
         threads += [t]
         t.start()

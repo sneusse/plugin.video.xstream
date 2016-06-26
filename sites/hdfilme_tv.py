@@ -22,8 +22,16 @@ URL_SEARCH = URL_MAIN + 'movie/search?key=%s'
 # Parameter für die Sortierung
 URL_PARMS_ORDER_ID = 'order_f=id'
 URL_PARMS_ORDER_ID_ASC = URL_PARMS_ORDER_ID +'&order_d=asc'
+URL_PARMS_ORDER_YEAR = 'order_f=year'
+URL_PARMS_ORDER_YEAR_ASC = URL_PARMS_ORDER_YEAR +'&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
 URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
+URL_PARMS_ORDER_VIEWS = 'order_f=view'
+URL_PARMS_ORDER_VIEWS_ASC = URL_PARMS_ORDER_VIEWS +'&order_d=asc'
+URL_PARMS_ORDER_IMDB = 'order_f=imdb'
+URL_PARMS_ORDER_IMDB_ASC = URL_PARMS_ORDER_IMDB +'&order_d=asc'
+URL_PARMS_ORDER_HDRATE = 'order_f=rate'
+URL_PARMS_ORDER_HDRATE_ASC = URL_PARMS_ORDER_HDRATE +'&order_d=asc'
 
 QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
 
@@ -60,10 +68,18 @@ def showContentMenu():
     # Einträge anlegen
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_ID)
     oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_YEAR_ASC)
+    oGui.addFolder(cGuiElement('Herstellungsjahr', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Alphabetisch', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_VIEWS_ASC)
+    oGui.addFolder(cGuiElement('Top Aufrufe', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_IMDB_ASC)
+    oGui.addFolder(cGuiElement('IMDB Punkt', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_HDRATE_ASC)
+    oGui.addFolder(cGuiElement('Bewertung HDFilme.tv', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_NAME_ASC)
-    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)   
+    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)  
 
     # Liste abschließen
     oGui.setEndOfDirectory() 
@@ -311,7 +327,7 @@ def getHosters(sUrl = False):
         aMatches = re.compile("episode=(\d+)&").findall(sUrl)
 
         # gewünsche Episode ermitteln wenn möglich
-        sEpisode = "1" if not aMatches else aMatches[0]
+        sEpisode = "\d+" if not aMatches else aMatches[0]
 
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult[1]:

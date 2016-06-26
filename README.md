@@ -3,6 +3,9 @@
 ![xStream logo](https://github.com/StoneOffStones/plugin.video.xstream/blob/wiki/graphics/website/logo/logo_512.png?raw=true)
 
 
+[![Join the chat at https://gitter.im/StoneOffStones/plugin.video.xstream](https://badges.gitter.im/StoneOffStones/plugin.video.xstream.svg)](https://gitter.im/StoneOffStones/plugin.video.xstream?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 
 ## Inhaltsverzeichnis
 - [1. Allgemeines zum Addon](#1-allgemeines-zum-addon)
@@ -23,13 +26,12 @@
     - [3.2 Fehler bei Verwendung der Globalen Suche](#32-fehler-bei-verwendung-der-globalen-suche)
     - [3.3 Fehler bei Verwendung einzelner Webseiten](#33-fehler-bei-verwendung-einzelner-webseiten)
     - [3.4 Fehler bei Verwendung einiger Hoster](#34-fehler-bei-verwendung-einiger-hoster)
-    - [3.5 Fehlermeldungen im Betrieb](#35-fehlermeldungen-im-betrieb)
+  
   
 - [4. Fehlerbericht über Log-Datei](#4-fehlerbericht-über-log-datei)
     - [4.1 Allgemeines zur Log-Datei](#41-allgemeines-zur-log-datei)
     - [4.2 Erstellen, bearbeiten und hochladen der Log-Datei](#43-erstellen-bearbeiten-und-hochladen-der-log-datei)
     - [4.3 Speicherort der Log Datei](#42-speicherort-der-log-datei)
-    
 
     
 - [5. Phyton Dateien](#5-phyton-dateien)
@@ -51,6 +53,8 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 |:-------------- |:----------------- | :--------------------- | :--------- |
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
+| Cine           | cine.to           | funktioniert           | 25.05.2016 |
+| Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
@@ -63,8 +67,9 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
 
 
-Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der eingereichten Seiten ist nicht selbsverständlich und folgt daraufhin nicht automatisch. Sowohl das Potenzial der vorgeschlagenen Seite als auch der erforderliche Mehrwert wird geprüft und entscheidet über die Entwicklung eines neuen Site-Plugins.
-Grundsätzlich ist jedoch zu erwähnen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
+Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der gewünschten Seiten ist nicht selbsverständlich und erfolgt nicht automatisch!
+Alle Vorschläge werden in der [Site-Plugin Wunschliste](https://docs.google.com/spreadsheets/d/1b_9C6BONlpWcugMgocFbKxe7nFp99HfvVUJznxTzT4I/edit?usp=sharing) ([Forumbeitrag](http://xstream-addon.square7.ch/showthread.php?tid=663)) gesammelt und auf ihren tatsächlichen Mehrwert untersucht. Daraufhin folgt bei den interessanten Content-Anbieter eine Priorisierung bzw. Entwicklung eines neuen Site-Plugins für xStream.
+Grundsätzlich ist jedoch zu betonen, dass stätig an der Weiterentwicklung von xStream und deren Site-Plugins gearbeitet wird.
 
 
 ### 1.2 Rechtliche Konsequenzen bei Nutzung
@@ -90,10 +95,10 @@ Alternativ könnte die xStream-Repository ebenfalls über das _SuperRepo_ gelade
 **WICHTIG:**Jedoch muss an dieser Stelle klar darauf hingewiesen werden, dass unter der alternativen Bezugsquelle nicht für den aktuellsten Stand der Software garantiert werden kann!
 
 
+
 xStream-Repository aus Forum:
 
 - [xStream-Forum] (http://xstream-addon.square7.ch/showthread.php?tid=1)
-
 
 
 xStream-Repository aus SuperRepo:
@@ -163,6 +168,14 @@ Für schwache Systeme ist dieses Feature nur bedingt zu empfehlen und muss vom j
 
 ## 3. Bekannte Probleme
 
+In diesem Kapitel wird auf mögliche Fehlermeldungen sowohl beim Installationsvorgang als auch im eigentlichen Betireb eingegangen. Darüber hinaus wird auch im Forum im Bereich [Support - Skriptfehler, Bugs, etc.](http://xstream-addon.square7.ch/forumdisplay.php?fid=8) auf aktuelle Probelme eingegangen. Hervorzugheben sind die sogenannten wichtigen Themen, welche im Forum zuerst dargestellt werden und auf häufig gestellte Fragen (FAQs: Frequently Asked Questions) bzw. auf bereits bekannte Problematiken eingehen und den aktuellen Arbeitsstand dazu aufzeigen.
+
+- [[Bugs] Bekannte Probleme](http://xstream-addon.square7.ch/showthread.php?tid=619)
+
+- [[FAQs] - Bugs, Scriptfehler, usw.](http://xstream-addon.square7.ch/showthread.php?tid=3)
+
+- [[FAQs] - Einstellungen](http://xstream-addon.square7.ch/showthread.php?tid=2)
+
 
 ### 3.1 Fehler bei der Installation
 
@@ -195,88 +208,13 @@ Falls noch nicht bekannt dann bitte die Seite im Browser aufrufen, auf Funktion 
 
 ### 3.4 Fehler bei Verwendung einiger Hoster
 
-Sollte dies der Fall sein, bitte den aktuellste Version des "URLResolver" über eine der folgenden Bezugsquellen beziehen:
+Sollte dies der Fall sein, bitte ggf. eine aktuellere Version des "URLResolver" über eine der folgenden Bezugsquellen beziehen:
 
-- URLResolver über die TVA Repo laden welches Bestandteil der offiziellen xStream-Repo ist
+- TVA Repo, kann über das offizielle xStream-Repo installiert werden
 
 - https://offshoregit.com/tvaresolvers/tva-common-repository/raw/master/zips/script.module.urlresolver/
 
 Bitte den gewünschten Film auf der Homepage erneut auf Funktion prüfen.
-
-
-### 3.5 Fehlermeldungen im Betrieb
-
-- **ImportError:** Bad magic number in bs_finalizer.pyo
-
-	- Status: Problem behoben (Master)
-
-	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=505)
-
-- **TypeError:** string indices must be integers
-
-	- Status: Problem behoben (Master)
-
-	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=608)
-
-- **AttributeError:** "...Resolver" object has no attribute "priority"
-
-	- Status: Problem behoben (Master)
-
-	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=604)
-
-- **KeyError:**'TVShowTitle'
-
-	- Status: Problem behoben (Master)
-
-- **Movie4k funktioniert nicht**
-
-	- Status: Problem behoben (Beta)
-
-	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=610)
-
-- **Metahandler funktioniert nicht**
-
-	- Status: Problem bekannt, ist in Arbeit
-
-Angaben in (...) = Aktueller "Ort"
-
-- Master  =>  Ist im aktuellen Master Branch, fix kommt in der nächsten Version
-
-- Beta    =>  Ist im Beta Branch  [(siehe: xStream Beta/Nightly)](http://xstream-addon.square7.ch/showthread.php?tid=584)
-- Nightly =>  Ist im Nightly Branch [(siehe: xStream Beta/Nightly)](http://xstream-addon.square7.ch/showthread.php?tid=584)
-
-- **Beim Starten von xStream kommt folgende Fehlermeldung**
-
-	- "IOError: [Errno socket error] [SSL:
-CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:590)
-File "/Users/Shared/jenkins/workspace/TVOS/tools/depends/xbmc line 579, in __init__
-
-	- Lösung: in den xStream-Settings die Suche nach Updates ausschalten, dann läuft es wieder
-Updates von Git muss man dann manuell einspielen oder auf Updates über das offizielle xStreamRepo warten
-
-	- Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=618)
-
-- **Fehler beim Öffnen von BurningSeries**
-	- [SSL:CERTIFICATE_VERIFY_FAILED] certificate failed (sl.c:590)
-
-		und danach kommt eine Fehlermeldung:
-
-		ValueError MO JSON object could be decoded File 
-"/Users/Shared/xbmc-depends/appletvos9.1_arm64-target/lib 
-line 366, in decode
-	- Lösung: Folgende Datei downloaden:
-
-		https://github.com/Lynx187/plugin.video....master.zip
-
-	- die Datei in "plugin.video.xstream.zip" umbenennen (quasi das "-master" entfernen)
-	- öffne (nicht entpacken) die Datei mit 7-Zip (oder einem anderen Packer)
-	
-	- dort solltest du einen orderner sehen der "plugin.video.xstream-master" heißt => auch hier das "-master" entfernen
-
-
-Die Zip dann installieren. Damit sollte das SSL-Problem gefixt sein. 
-
- - Thread: [Link](http://xstream-addon.square7.ch/showthread.php?tid=627)
  
 
 
@@ -404,4 +342,3 @@ In folgenden Ordnern sind die Kodi-Addons abgelegt:
 
 Das Addon xStream wird in aller Regel unter plugin.video.xstream istalliert.
 Im Verzeichnis `sites/` sind die .py Daten und im Ordner `resources/art/sites/` die jeweiligen Artworks bzw. Site-Icons der einzelnen Webseiten abgelegt.
-
