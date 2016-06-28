@@ -262,14 +262,16 @@ def _decryptLink(enc, ud):
             response = _sendEnc(enc, ud, token)
 
     hosters = []
-    for entry in response['content']:
-        for item in entry['links']:
-            hoster ={}
-            hoster['link'] = item['link']
-            hoster['name'] = entry['hoster_name']
-            if 'part' in item:
-                hoster['displayedName'] = '%s - Part %s' % (entry['hoster_name'],item['part'])
-            hosters.append(hoster)
+    if 'content' in response:
+        for entry in response['content']:
+            for item in entry['links']:
+                hoster ={}
+                hoster['link'] = item['link']
+                hoster['name'] = entry['hoster_name']
+                if 'part' in item:
+                    hoster['displayedName'] = '%s - Part %s' % (entry['hoster_name'],item['part'])
+                hosters.append(hoster)
+
     if len(hosters) > 0:
         hosters.append('getHosterUrl')
     return hosters
@@ -300,9 +302,11 @@ def _sendEnc(enc, ud, response = None):
 
 def _uncaptcha():
     try:
-        from urlresolver.plugins.lib import recaptcha_v2
-        token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(_getSiteKey(), lang='de')
-        return token
+        siteKey=_getSiteKey()
+        if siteKey:
+            from urlresolver.plugins.lib import recaptcha_v2
+            token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(siteKey, lang='de,en-US;q=0.7,en;q=0.3')
+            return token
     except ImportError:
         pass
 
