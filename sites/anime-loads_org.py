@@ -306,7 +306,8 @@ def _uncaptcha():
         if siteKey:
             from urlresolver.plugins.lib import recaptcha_v2
             token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(siteKey, lang='de,en-US;q=0.7,en;q=0.3')
-            return token
+            if token:
+                return token
     except ImportError:
         pass
 
