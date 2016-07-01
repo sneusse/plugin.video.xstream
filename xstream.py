@@ -327,10 +327,8 @@ def searchGlobal():
     total=len(oGui.searchResults)
     dialog = xbmcgui.DialogProgress()
     dialog.create('xStream',"Gathering info...")
-    count=0
-    for result in sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()):
+    for count,result in enumerate(sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()),1):
         oGui.addFolder(result['guiElement'],result['params'],bIsFolder=result['isFolder'],iTotal=total)
-        count = count + 1
         dialog.update((count)*100/total, str(count)+' of '+str(total)+': '+result['guiElement'].getTitle())
     dialog.close()
     oGui.setView()
