@@ -100,7 +100,7 @@ class cPluginHandler:
             if elem.attrib['label']=='30022':
                 pluginElem = elem
                 break
-        if not pluginElem:
+        if pluginElem is not None:
             logger.info('could not update settings, pluginElement not found')
             return False
         pluginElements = pluginElem.findall('setting')
