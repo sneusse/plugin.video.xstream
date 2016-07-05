@@ -18,7 +18,7 @@
 	<setting label="AnimeLoads" type="lsep" />
 	<setting default="false" id="plugin_anime-loads_org" label="AnimeLoads" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
-	<setting default="false" id="plugin_bs_to" label="BurningSeries" type="bool" />
+	<setting default="false" id="plugin_burning_series_org" label="BurningSeries" type="bool" />
 	<setting label="CineDream" type="lsep" />
 	<setting default="false" id="plugin_cine-dream_net" label="CineDream" type="bool" />
 	<setting label="Cine" type="lsep" />

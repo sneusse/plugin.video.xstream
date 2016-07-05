@@ -7,7 +7,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib.util import cUtil
 from resources.lib.config import cConfig
-import json, time, re
+import json, time, re, xbmcgui
 
 SITE_IDENTIFIER = 'anime-loads_org'
 SITE_NAME = 'AnimeLoads'
@@ -262,14 +262,16 @@ def _decryptLink(enc, ud):
             response = _sendEnc(enc, ud, token)
 
     hosters = []
-    for entry in response['content']:
-        for item in entry['links']:
-            hoster ={}
-            hoster['link'] = item['link']
-            hoster['name'] = entry['hoster_name']
-            if 'part' in item:
-                hoster['displayedName'] = '%s - Part %s' % (entry['hoster_name'],item['part'])
-            hosters.append(hoster)
+    if 'content' in response:
+        for entry in response['content']:
+            for item in entry['links']:
+                hoster ={}
+                hoster['link'] = item['link']
+                hoster['name'] = entry['hoster_name']
+                if 'part' in item:
+                    hoster['displayedName'] = '%s - Part %s' % (entry['hoster_name'],item['part'])
+                hosters.append(hoster)
+
     if len(hosters) > 0:
         hosters.append('getHosterUrl')
     return hosters
@@ -278,7 +280,15 @@ def _resolveLeaveLink(link):
     sHtmlContent = _getRequestHandler(URL_MAIN + 'leave/' + link).request()
     aResult = cParser().parse(sHtmlContent, "link\s+=\s'(.*?)',")
     if aResult[0]:
-        time.sleep(15) # this is needed for the leave-page
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('xStream',"Waiting for Redirect...")
+        secToWait = 15 # this is needed for the leave-page
+        for count in range(0, secToWait+1):
+            if dialog.iscanceled():
+                break
+            dialog.update((count)*100/secToWait, 'waiting for redirect: '+ str(secToWait-count)+'sec remaining')
+            time.sleep(1)
+        dialog.close()
         oRequestHandler = _getRequestHandler(aResult[1][0])
         oRequestHandler.request()
         return oRequestHandler.getRealUrl()
@@ -292,9 +302,12 @@ def _sendEnc(enc, ud, response = None):
 
 def _uncaptcha():
     try:
-        from urlresolver.plugins.lib import recaptcha_v2
-        token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(_getSiteKey(), lang='de')
-        return token
+        siteKey=_getSiteKey()
+        if siteKey:
+            from urlresolver.plugins.lib import recaptcha_v2
+            token = recaptcha_v2.UnCaptchaReCaptcha().processCaptcha(siteKey, lang='de,en-US;q=0.7,en;q=0.3')
+            if token:
+                return token
     except ImportError:
         pass
 
