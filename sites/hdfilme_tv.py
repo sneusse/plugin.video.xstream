@@ -356,7 +356,7 @@ def _getHostFromUrl(sUrl, sServername):
     # Nichts gefunden? => Raus hier
     if not aResult[0] or not aResult[1][0]: 
         logger.info("hoster pattern did not match")
-        return False
+        return []
 
     # hosterliste initialisieren
     hosters = []
