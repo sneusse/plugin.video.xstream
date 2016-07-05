@@ -15,6 +15,7 @@
   <string id="30011">Global Search at first position</string>
   <string id="30012">Show centralized Settings</string>
   <string id="30013">Prefered Auto-Play quality (if available)</string>
+  <string id="30015">Enable</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">General</string>
