@@ -100,7 +100,7 @@ class cPluginHandler:
             if elem.attrib['label']=='30022':
                 pluginElem = elem
                 break
-        if pluginElem is not None:
+        if pluginElem is None:
             logger.info('could not update settings, pluginElement not found')
             return False
         pluginElements = pluginElem.findall('setting')
@@ -113,7 +113,7 @@ class cPluginHandler:
             subEl.tail = '\n\t'
             attrib = {'default': 'false', 'type': 'bool'}
             attrib['id'] = 'plugin_%s' % pluginID
-            attrib['label'] = plugin['name']
+            attrib['label'] = '30014'
             subEl = ET.SubElement(pluginElem, 'setting', attrib)
             subEl.tail = '\n\t'
             if 'settings' in plugin:
