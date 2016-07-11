@@ -17,7 +17,7 @@ URL_CINEMA2014 = URL_MAIN + 'filme_2014/'
 URL_CINEMA2013 = URL_MAIN + 'filme_2013/'
 URL_SEARCH = URL_MAIN + 'index.php?story='
 
-URL_GENRES_LIST = {'Abenteuer' : 'abenteuer/', 'Action' : 'action/', 'Animation' : 'animation/', 'Drama' : 'drama/', 'Fantasy' : 'fantasy/', 'Horror' : 'horror/', 'Krieg' : 'krieg/', 'Kriminal' : 'kriminal/', 'Kom�die' : 'komoedie/', 'Romanze' : 'romanze/', 'Sci-Fi' : 'sci-fi/', 'Sport' : 'sport/', 'Thriller' : 'thriller/', 'Western' : 'western/'}
+URL_GENRES_LIST = {'Abenteuer' : 'abenteuer/', 'Action' : 'action/', 'Animation' : 'animation/', 'Drama' : 'drama/', 'Fantasy' : 'fantasy/', 'Horror' : 'horror/', 'Krieg' : 'krieg/', 'Kriminal' : 'kriminal/', 'Komödie' : 'komoedie/', 'Romanze' : 'romanze/', 'Sci-Fi' : 'sci-fi/', 'Sport' : 'sport/', 'Thriller' : 'thriller/', 'Western' : 'western/'}
 AZ_LIST = {'0-9' : '/catalog/0-9/', 'A' : '/catalog/A/', 'B' : '/catalog/B/', 'C' : '/catalog/C/', 'D' : '/catalog/D/', 'E' : '/catalog/E/', 'F' : '/catalog/F/', 'G' : '/catalog/G/', 'H' : '/catalog/H/', 'I' : '/catalog/I/', 'J' : '/catalog/J/', 'K' : '/catalog/K/', 'L' : '/catalog/L/', 'M' : '/catalog/M/', 'N' : '/catalog/N/', 'O' : '/catalog/O/', 'P' : '/catalog/P/', 'Q' : '/catalog/Q/', 'R' : '/catalog/R/', 'S' : '/catalog/S/', 'T' : '/catalog/T/', 'U' : '/catalog/U/', 'V' : '/catalog/V/', 'W' : '/catalog/W/', 'X' : '/catalog/X/', 'Y' : '/catalog/Y/', 'Z' : '/catalog/Z/'}
 
 def load():
@@ -36,11 +36,11 @@ def MoviesByYear():
     oGui = cGui()
     params = ParameterHandler()
     params.setParam('sUrl', URL_CINEMA2015)
-    oGui.addFolder(cGuiElement('Filme 2015', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Filme aus 2015', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_CINEMA2014)
-    oGui.addFolder(cGuiElement('Filme 2014', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Filme aus 2014', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_CINEMA2013)
-    oGui.addFolder(cGuiElement('Filme 2013', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Filme aus 2013', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
 def showAZ():
