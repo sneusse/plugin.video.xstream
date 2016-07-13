@@ -1,11 +1,15 @@
-- Version 2.3.0 - xx.xx.2016
+﻿- Version 2.3.0 - xx.07.2016
 ================================================================================
     - fix:
        - global search for queries containing non-ascii chars
-       - m4k search
+       - m4k search and tvshow alphabetical list
+       - kinox Tvshows with many seaason/episodes [thx sraedler]
     - add:
        - DieFilme.net [thx Viper2k4]
        - Cine.to [thx Viper2k4]
+       - Cine-dream.net [thx anis3]
+       - goldstream.org [thx anis3]
+       - ProgressDialog for creation of GlobalSearch results list [thx Kabooom]
 Thx to all contributos,for more details see commit log on GitHub
 
 - Version 2.2.1 - 06.06.2016
