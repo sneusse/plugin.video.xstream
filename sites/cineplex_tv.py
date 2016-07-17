@@ -6,17 +6,14 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-
 SITE_IDENTIFIER = 'cineplex_tv'
 SITE_NAME = 'Cineplex'
 SITE_ICON = 'cineplex.png'
-
 URL_MAIN = 'http://cineplex.tv/'
 URL_CINEMA2015 = URL_MAIN + 'filme_2015/'
 URL_CINEMA2014 = URL_MAIN + 'filme_2014/'
 URL_CINEMA2013 = URL_MAIN + 'filme_2013/'
 URL_SEARCH = URL_MAIN + 'index.php?story='
-
 URL_GENRES_LIST = {'Abenteuer' : 'abenteuer/', 'Action' : 'action/', 'Animation' : 'animation/', 'Drama' : 'drama/', 'Fantasy' : 'fantasy/', 'Horror' : 'horror/', 'Krieg' : 'krieg/', 'Kriminal' : 'kriminal/', 'Komödie' : 'komoedie/', 'Romanze' : 'romanze/', 'Sci-Fi' : 'sci-fi/', 'Sport' : 'sport/', 'Thriller' : 'thriller/', 'Western' : 'western/'}
 AZ_LIST = {'0-9' : '/catalog/0-9/', 'A' : '/catalog/A/', 'B' : '/catalog/B/', 'C' : '/catalog/C/', 'D' : '/catalog/D/', 'E' : '/catalog/E/', 'F' : '/catalog/F/', 'G' : '/catalog/G/', 'H' : '/catalog/H/', 'I' : '/catalog/I/', 'J' : '/catalog/J/', 'K' : '/catalog/K/', 'L' : '/catalog/L/', 'M' : '/catalog/M/', 'N' : '/catalog/N/', 'O' : '/catalog/O/', 'P' : '/catalog/P/', 'Q' : '/catalog/Q/', 'R' : '/catalog/R/', 'S' : '/catalog/S/', 'T' : '/catalog/T/', 'U' : '/catalog/U/', 'V' : '/catalog/V/', 'W' : '/catalog/W/', 'X' : '/catalog/X/', 'Y' : '/catalog/Y/', 'Z' : '/catalog/Z/'}
 
@@ -64,7 +61,7 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = 'li_block_title"><img\ssrc="(.+?(?=")).+?<a\shref="(.+?)">(.+?)\</a>.*?class="blockstory".*?>([^"<]+)'
+    pattern = 'li_block_title"><img\ssrc="(.+?(?=")).+?<a\shref="(.+?)">([^"(]+)[^>]([^")]+).*?class="blockstory".*?>([^"<]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if not aResult[0]:
@@ -73,10 +70,11 @@ def showEntries(entryUrl = False, sGui = False):
 
     total = len (aResult[1])
 
-    for sThumbnail, sEntryUrl, sName, sDescription in aResult[1]:
+    for sThumbnail, sEntryUrl, sName, sYear, sDescription in aResult[1]:
         oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
         oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
@@ -96,17 +94,18 @@ def showSearchEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = 'class="short">.*?href="([^"]+)" class="title">([^<]+)</a>.*?<img src="([^"]+)".*?>([^<]+)</p>'
+    pattern = 'class="short">.*?href="([^"]+)"[^>]class="title">([^<(]+)[^>]([^")]+).*?<img[^>]src="([^"]+)".*?>([^<]+)</p>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0]:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
     total = len (aResult[1])
 
-    for sEntryUrl, sName, sThumbnail, sDescription in aResult[1]:
+    for sEntryUrl, sName, sYear, sThumbnail, sDescription in aResult[1]:
         oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
         oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setYear(sYear)
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
     return
