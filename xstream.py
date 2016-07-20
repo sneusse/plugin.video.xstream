@@ -325,8 +325,12 @@ def searchGlobal():
     # deactivate collectMode attribute because now we want the elements really added
     oGui._collectMode = False
     total=len(oGui.searchResults)
-    for result in sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()):
+    dialog = xbmcgui.DialogProgress()
+    dialog.create('xStream',"Gathering info...")
+    for count,result in enumerate(sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()),1):
         oGui.addFolder(result['guiElement'],result['params'],bIsFolder=result['isFolder'],iTotal=total)
+        dialog.update((count)*100/total, str(count)+' of '+str(total)+': '+result['guiElement'].getTitle())
+    dialog.close()
     oGui.setView()
     oGui.setEndOfDirectory()
     return True
