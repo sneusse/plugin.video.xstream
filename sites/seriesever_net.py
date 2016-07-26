@@ -38,7 +38,9 @@ def load():
     oGui.addFolder(cGuiElement('Neue Episoden', SITE_IDENTIFIER, 'showNewEpisodesMenu'), oParams)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'), oParams)
     oGui.addFolder(cGuiElement('Animes', SITE_IDENTIFIER, 'showAnimesMenu'), oParams)
+    oParams.setParam('mediaType', 'movies')
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMoviesMenu'), oParams)
+    oParams.setParam('mediaType', 'series')
     oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenresMenu'), oParams)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'), oParams)
     oGui.setEndOfDirectory()
@@ -211,7 +213,10 @@ def showSeriesPage(oGui, sUrl, iPage, dupeCheck):
     if aResult[0]:
         for link, img, title in aResult[1]:
             if title in dupeCheck: continue
-            guiElement = cGuiElement(title, SITE_IDENTIFIER, 'showSeasons')
+            if 'movies' in oParams.getValue('mediaType'):
+                guiElement = cGuiElement(title, SITE_IDENTIFIER, 'showMovie')
+            else:
+                guiElement = cGuiElement(title, SITE_IDENTIFIER, 'showSeasons')
             guiElement.setMediaType('tvshow')
             guiElement.setThumbnail(img)
             oParams.addParams({'sUrl': link, 'Title': title})
