@@ -61,7 +61,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     total = len (aResult[1])
     for sEntryUrl, sName, sThumbnail in aResult[1]:
-        if sName == "FAQ": break
+        if "stream" not in sEntryUrl: continue
         oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('movie')
