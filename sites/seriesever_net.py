@@ -36,7 +36,7 @@ def load():
     oGui = cGui()
     oParams.setParam('mediaType', 'series')
     oGui.addFolder(cGuiElement('Neue Episoden', SITE_IDENTIFIER, 'showNewEpisodesMenu'), oParams)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showSeriesMenu'), oParams)
+    oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, 'showSeriesMenu'), oParams)
     oGui.addFolder(cGuiElement('Animes', SITE_IDENTIFIER, 'showAnimesMenu'), oParams)
     oParams.setParam('mediaType', 'movies')
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showMoviesMenu'), oParams)
