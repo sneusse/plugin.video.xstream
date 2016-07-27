@@ -116,19 +116,47 @@ def showHosters():
     params = ParameterHandler()
     oRequest = cRequestHandler(params.getValue('entryUrl'))
     sHtmlContent = oRequest.request()
-    pattern = '<p[^>]*class="hostName"[^>]*>([^<>]+)</p>.*?'
-    pattern += '<a[^>]*class="[^"]*stream-src[^"]*"[^>]*data-id="([^"]+)"[^>]*>'
+
+    pattern = 'class="hostName"[^>]*>([^<>]+)(.+?)currentStreamLinks'
     aResult = cParser().parse(sHtmlContent, pattern)
-    if not aResult[0]:
-        return
-    hosters = []
-    for sHost, iId in aResult[1]:
-        hoster = dict()
-        if not iId: continue
-        hoster['link'] = iId
-        hoster['name'] = sHost
-        hoster['displayedName'] = sHost
-        hosters.append(hoster)
+
+    if cParser().parse(aResult[1][0][1], 'small')[0]:
+        linkPattern = 'data-id="(\d*).*?small>(.*?)<'
+
+        aResults = []
+        for host in aResult[1]:
+            aHost = []
+            aHost.append(host[0])
+            aHost.append(cParser().parse(host[1], linkPattern))
+            aResults.append(aHost)
+
+        if not aResults[0]:
+            return
+
+        hosters = []
+        for aHosters in aResults:
+            for parts in aHosters[1][1]:
+                hoster = dict()
+                if not parts[0]: continue
+                hoster['link'] = parts[0]
+                hoster['name'] = aHosters[0]
+                hoster['displayedName'] = aHosters[0] + ' - ' + parts[1]
+                hosters.append(hoster)
+
+    else:
+        pattern = '<p[^>]*class="hostName"[^>]*>([^<>]+)</p>.*?'
+        pattern += '<a[^>]*class="[^"]*stream-src[^"]*"[^>]*data-id="([^"]+)"[^>]*>'
+        aResult = cParser().parse(sHtmlContent, pattern)
+        hosters = []
+
+        for sHost, iId in aResult[1]:
+            hoster = dict()
+            if not iId: continue
+            hoster['link'] = iId
+            hoster['name'] = sHost
+            hoster['displayedName'] = sHost
+            hosters.append(hoster)
+
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
