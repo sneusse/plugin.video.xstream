@@ -92,6 +92,7 @@ def showSearchEntries(entryUrl = False, sGui = False):
     
     total = len (aResult[1])
     for sEntryUrl, sName in aResult[1]:
+        if "stuff" not in sEntryUrl: continue
         oGuiElement = cGuiElement(cUtil().unescape(stripHtmlTags(sName).decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
