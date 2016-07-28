@@ -62,7 +62,6 @@ def showEntries(entryUrl=False, sGui=False):
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
                                       'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
-            oGuiElement.setDescription(sThumbnail)
             oGuiElement.setYear(sJahr)
             params.setParam('sName', sName)
             params.setParam('entryUrl', URL_MAIN + sUrl)
@@ -70,7 +69,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     pattern = '"><a href="([^"]+)"([^>]+)?>&raquo;'
     aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
+    if aResult[0] and aResult[1][0] and 'void' not in aResult[1][0][0]:
         params.setParam('sUrl', URL_MAIN + aResult[1][0][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
     if not sGui:
