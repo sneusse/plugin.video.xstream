@@ -300,7 +300,7 @@ class cHosterGui:
         if len(siteResult)>1:
             siteResult = self._choosePart(siteResult)
             if not siteResult:
-                self.dialog.close()
+                #self.dialog.close()
                 return
         else:
             siteResult = siteResult[0]
