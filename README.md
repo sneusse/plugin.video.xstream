@@ -55,9 +55,11 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
 | Cine           | cine.to           | funktioniert           | 25.05.2016 |
 | CineDream      | cine-dream.net    | funktioniert           | 21.06.2016 |
+| Cineplex       | cineplex.tv       | funktioniert           | 29.07.2016 |
 | Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
+| FilmeStreamz   | filme-streamz.com | funktioniert           | 29.07.2016 |
 | Goldstream     | goldstream.org    | funktioniert           | 23.06.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
 | HDfilme        | hdfilme.tv        | funktioniert           | 09.04.2016 |
@@ -66,6 +68,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | Movie4k        | movie4k.to        | funktioniert           | 09.04.2016 |
 | MoviesEver     | moviesever.com    | funktioniert teilweise | 09.04.2016 |
 | SeriesEver     | seriesever.net    | funktioniert           | 09.04.2016 |
+| StreamTausch   | streamtausch.tv   | funktioniert           | 29.07.2016 |
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
 
 
@@ -94,8 +97,8 @@ Das Addon kann direkt über das xStream-Repository bezogen werden. Empfohlen wir
 
 Alternativ könnte die xStream-Repository ebenfalls über das _SuperRepo_ geladen werden. Bei _SuperRepo_ handelt es sich um eine Ansammlung verschiedenster Addons, Skripte, Repos und Weiteres rund um Kodi.
 
-**WICHTIG:**Jedoch muss an dieser Stelle klar darauf hingewiesen werden, dass unter der alternativen Bezugsquelle nicht für den aktuellsten Stand der Software garantiert werden kann!
-
+***WICHTIG:***
+*Jedoch muss an dieser Stelle klar darauf hingewiesen werden, dass unter der alternativen Bezugsquelle nicht für den aktuellsten Stand der Software garantiert werden kann!*
 
 
 xStream-Repository aus Forum:
@@ -115,7 +118,8 @@ GitHub:
 - [Nightly-Branch bei GitHub](https://github.com/StoneOffStones/plugin.video.xstream/tree/nightly)
 
 
-**ACHTUNG!** *Die Beta und Nightly Versionen gelten als Experimentell und werden nicht offiziell unterstützt!*
+***ACHTUNG:*** 
+*Die Beta und Nightly Versionen gelten als Experimentell und werden nicht offiziell unterstützt!*
 
 Außerdem ist beim Download der Addon-Daten von Github gilt es folgendes zu Beachten: 
 
