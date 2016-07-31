@@ -25,7 +25,6 @@ URL_MOVIES_GENRE = URL_MAIN + '/genres-movies.html'
 
 URL_SERIES = URL_MAIN + '/tvshows_featured.php'
 URL_SERIES_ALL = URL_MAIN + '/tvshows-all'
-URL_SERIES_TOP = URL_MAIN + '/tvshows-top.html'
 URL_SERIES_GENRE = URL_MAIN + '/genres-tvshows.html'
 
 URL_XXX = URL_MAIN + '/xxx-updates.html'
@@ -56,7 +55,6 @@ def showSeriesMenu():
     oGui = cGui()
     __createMainMenuItem(oGui, 'Featured', URL_SERIES, 'showFeaturedSeries')
     __createMainMenuItem(oGui, 'Alle Serien', URL_SERIES_ALL, 'showCharacters')
-    __createMainMenuItem(oGui, 'Top Serien', URL_SERIES_TOP, 'parseMovieSimpleList')
     __createMainMenuItem(oGui, 'Genre', URL_SERIES_GENRE, 'showGenre')
     oGui.setEndOfDirectory()
     
@@ -324,7 +322,7 @@ def parseMovieSimpleList():
         sUrl = params.getValue('sUrl')
         logger.info(sUrl)
         if (sUrl.find('tvshows-season-') != -1):
-            sPattern = '<TR>\s*<TD.*?id="tdmovies".*?<a href="([^"]+)">(.*?)\s*</a>.*?<img border=0 src="http://[^/]+/img/([^"]+)".*?</TR>'
+            sPattern = '<TR[^>]*>\s*<TD[^>]*id="tdmovies"[^>]*>\s*<a href="([^"]+)">(.*?)</a>.*?<img[^>]*border=0[^>]*src="/img/([^"]+)"[^>]*>.*?</TR>'
             if params.exist('sLanguageToken'):
                 sLanguageToken = params.getValue('sLanguageToken')
                 oRequest = cRequestHandler(sUrl)

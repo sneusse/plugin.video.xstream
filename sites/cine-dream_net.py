@@ -55,12 +55,13 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<img[^>]*src="([^"]*)"' # image
     aResult = cParser().parse(sHtmlContent, pattern)
 
-    if not aResult[0]: 
+    if not aResult[0]:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     total = len (aResult[1])
     for sEntryUrl, sName, sThumbnail in aResult[1]:
+        if "stream" not in sEntryUrl: continue
         oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('movie')
