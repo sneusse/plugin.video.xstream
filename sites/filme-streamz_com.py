@@ -9,7 +9,8 @@ from resources.lib.util import cUtil
 
 
 SITE_IDENTIFIER = 'filme-streamz_com'
-SITE_NAME = 'Filme-streamz'
+SITE_NAME = 'FilmeStreamz'
+SITE_ICON = 'filme-streamz.png'
 
 URL_MAIN = 'http://www.filme-streamz.com/'
 URL_Filme = URL_MAIN + 'categorie/2/filme-im-stream-stream-p1.html'
