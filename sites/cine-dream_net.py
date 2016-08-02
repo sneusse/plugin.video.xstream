@@ -44,32 +44,33 @@ def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-
+	
     sHtmlContent = cRequestHandler(entryUrl).request()
-    aResult = cParser().parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
+    parser = cParser()
+    aResult = parser.parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
     if aResult[0]:
         sHtmlContent = aResult[1][0]
 
     pattern = '<div[^>]*class="thumbnail">.*?' # container
     pattern += '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>.*?' # linke / title
     pattern += '<img[^>]*src="([^"]*)"' # image
-    aResult = cParser().parse(sHtmlContent, pattern)
+    aResult = parser.parse(sHtmlContent, pattern)
 
     if not aResult[0]:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
-
+    util = cUtil()
     total = len (aResult[1])
     for sEntryUrl, sName, sThumbnail in aResult[1]:
         if "stream" not in sEntryUrl: continue
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
     pattern = '<a[^>]*class="nextpostslink"[^>]*href="([^"]+)"'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    aResult = parser.parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
         params.setParam('sUrl', aResult[1][0])
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
@@ -83,7 +84,7 @@ def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = '>Stream:.*?([^" ]+).*?<center><a href="([^"]+)' # hostername / url
+    sPattern = '>Stream:\s([^\s]+)\s.*?<center><a href="([^"]+)' # hostername / url
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
