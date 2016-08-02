@@ -332,9 +332,9 @@ def showHosters():
         parts = re.findall('class="changePart" data-part="(.*?)">', sHtmlContent)
         if len(parts) == 1:
             part_name = parts[0]
-
-        if oParams.exist('from_moviesever') and len(parts) == 2:
-            part_name = parts[1]
+        # last part is usually 1080p which is premium only
+        #if oParams.exist('from_moviesever') and len(parts) == 2:
+        #    part_name = parts[1]
 
         app = re.findall('<script src="(%sassets/js/app.js.*?)"></script>' % URL_MAIN, sHtmlContent)
 
