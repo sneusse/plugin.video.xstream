@@ -383,13 +383,19 @@ def __parseMovieSimpleList(sUrl, iPage, oGui, sHtmlContent = False):
     for set in result:
         id, thumb = set.groups()
         thumbs.update({id:thumb})
-    if (aResult[0] == True):
+    if aResult[0]:
+        util = cUtil()
         total = len(aResult[1])
         for aEntry in aResult[1]:
             newUrl = aEntry[0].strip()
             if not (newUrl.startswith('http')):
                 newUrl = URL_MAIN +'/'+ newUrl
-            sMovieTitle = cUtil().unescape(aEntry[1].strip().decode('utf-8')).encode('utf-8')
+            #quick fix to avoid errors due to fucking other encodings
+            try:
+                sMovieTitle = util.unescape(aEntry[1].strip().decode('utf-8')).encode('utf-8')
+            except UnicodeDecodeError as e:
+                logger.error(e)
+                continue
             sMovieTitle = ' '.join(sMovieTitle.split())
             sMovieTitle = ' '.join(sMovieTitle.split())
             sLanguageToken = aEntry[2]
