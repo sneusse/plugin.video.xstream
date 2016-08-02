@@ -38,9 +38,10 @@ def showGenresList():
     aResult = cParser().parse(sHtmlContent, '<a[^>]*href="([^"]*)"[^>]*class="catName"[^>]*>(.*?)</a>')
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
+        util = cUtil()
         for sUrl, sName in aResult[1]:      
             params.setParam('sUrl', sUrl)
-            oGui.addFolder(cGuiElement(cUtil().removeHtmlTags(sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
+            oGui.addFolder(cGuiElement(util.removeHtmlTags(sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
@@ -57,13 +58,13 @@ def showEntries(entryUrl = False, sGui = False):
 
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
+        util = cUtil()
         for sUrl, sName, sThumbnail, sJahr in aResult[1]:
-            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+            oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setSiteName(SITE_IDENTIFIER)
             oGuiElement.setThumbnail(sThumbnail if sThumbnail.startswith("http") else 'http:' + sThumbnail) 
             oGuiElement.setMediaType('movie')
             oGuiElement.setYear(sJahr)
-            params.setParam('sName', sName)
             params.setParam('entryUrl', sUrl if sUrl.startswith("http") else URL_MAIN + sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
@@ -91,9 +92,10 @@ def showSearchEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult[1])
+    util = cUtil()
     for sEntryUrl, sName in aResult[1]:
         if "stuff" not in sEntryUrl: continue
-        oGuiElement = cGuiElement(cUtil().unescape(cUtil().removeHtmlTags(sName).decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(util.unescape(util.removeHtmlTags(sName).decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
@@ -128,7 +130,7 @@ def getHosterUrl(sUrl = False):
         oRequestHandler = cRequestHandler(URL_MAIN + sUrl)
         oRequestHandler.request()
         sUrl = oRequestHandler.getRealUrl()
-        result['streamUrl'] = sUrl
+    result['streamUrl'] = sUrl
     result['resolved'] = False
     results.append(result)
     return results
