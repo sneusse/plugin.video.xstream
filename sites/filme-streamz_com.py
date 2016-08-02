@@ -59,12 +59,13 @@ def showEntries(entryUrl=False, sGui=False):
 
     if aResult[0] and aResult[1][0]:
         total = len(aResult[1])
+        util = cUtil()
         for sThumbnail, sUrl, sName, sJahr in aResult[1]:
-            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
+            oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
                                       'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setYear(sJahr)
-            params.setParam('sName', sName)
+            oGuiElement.setMediaType('movie')
             params.setParam('entryUrl', URL_MAIN + sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
