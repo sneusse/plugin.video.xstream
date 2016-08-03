@@ -42,16 +42,16 @@ def MoviesByYear():
 
 def showAZ():
     oGui = cGui()
+    params = ParameterHandler()
     for key in sorted(AZ_LIST):
-        params = ParameterHandler()
         params.setParam('sUrl', (URL_MAIN + AZ_LIST[key]))
         oGui.addFolder(cGuiElement(key, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
 def showGenres():
     oGui = cGui()
-    for key in sorted(URL_GENRES_LIST):
-        params = ParameterHandler()
+    params = ParameterHandler()
+    for key in sorted(URL_GENRES_LIST):    
         params.setParam('sUrl', (URL_MAIN + URL_GENRES_LIST[key]))
         oGui.addFolder(cGuiElement(key, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
@@ -69,11 +69,11 @@ def showEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult[1])
-
+    util = cUtil()
     for sThumbnail, sEntryUrl, sName, sYear, sDescription in aResult[1]:
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
-        oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(util.unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sEntryUrl)
@@ -100,12 +100,13 @@ def showSearchEntries(entryUrl = False, sGui = False):
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
     total = len (aResult[1])
-
+    util = cUtil()
     for sEntryUrl, sName, sYear, sThumbnail, sDescription in aResult[1]:
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
-        oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(util.unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
+        oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
     return
@@ -114,20 +115,22 @@ def showHosters():
     params = ParameterHandler()
     sUrl = params.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = '<div[^>]*role="tabpanel"[^>]*id="([^"]*)"[^>]*>\s+<span(.*?)</div>'
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    sPattern = '<div[^>]+role="tabpanel"[^>]*id="([^"]+)"[^>]*>\s+(?:<span|<a)(.*?)</div>'
+    parser = cParser()
+    aResult = parser.parse(sHtmlContent, sPattern)
     hosters = []
-    if len(aResult[1]) > 0:
-        for entry in aResult[1]:
-            Pattern = '<a[^>]*href="([^"]*)"[^>]*>'
-            lResult = cParser().parse(entry[1], Pattern)
-            if len(lResult[1]) > 0:
-                for link in lResult[1]:
-                    temphoster = {}
-                    temphoster['name'] = entry[0]
-                    temphoster['link'] = link
-                    hosters.append(temphoster)
-    if len(hosters) > 0:
+    if not aResult[1]: return hosters
+    for entry in aResult[1]:
+        Pattern = 'href="([^"]+)"'
+        lResult = parser.parse(entry[1], Pattern)
+        if not lResult[1]: continue
+        for i, link in enumerate(lResult[1],1):
+            temphoster = {}
+            temphoster['name'] = entry[0]
+            temphoster['link'] = link
+            temphoster['displayedName'] = '%s  Mirror %s' % (entry[0], i)
+            hosters.append(temphoster)
+    if hosters:
         hosters.append('getHosterUrl')
     return hosters
 

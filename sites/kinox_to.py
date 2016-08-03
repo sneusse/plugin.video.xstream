@@ -811,7 +811,7 @@ def showHosters(sHtmlContent='', sTitle=False):
                 mirrorName = ""
                 if mirrors > 1:
                     mirrorName = "  Mirror " + str(i)
-                    sUrl = re.sub(r'Mirror=[1-9]', 'Mirror=' + str(i), sUrl)
+                    sUrl = re.sub(r'Mirror=[0-9]+', 'Mirror=' + str(i), sUrl)
                 hoster = {}
                 hoster['name'] = sHoster
                 hoster['link'] = sUrl

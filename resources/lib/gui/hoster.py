@@ -300,7 +300,7 @@ class cHosterGui:
         if len(siteResult)>1:
             siteResult = self._choosePart(siteResult)
             if not siteResult:
-                #self.dialog.close()
+                logger.info('no part selected')
                 return
         else:
             siteResult = siteResult[0]
@@ -333,6 +333,7 @@ class cHosterGui:
             siteResult = siteResult[index]
             return siteResult
         else:
+            logger.info('no hoster selected')
             return False
 
     def showHosterFolder(self, siteResult, siteName, functionName):
