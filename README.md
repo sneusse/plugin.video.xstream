@@ -49,7 +49,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 
 ### 1.1 Verfügbare Webseiten
 
-| Name           | Domain            | Verfügbarkeit          | Stand      |
+| Name           | Domain            | Status                 | Stand      |
 |:-------------- |:----------------- | :--------------------- | :--------- |
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
