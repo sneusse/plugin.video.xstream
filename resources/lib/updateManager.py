@@ -106,7 +106,7 @@ def getElementTreeFromString(sXML):
 def update(REMOTE_PATH):
     logger.info("xStream Update URL: " + REMOTE_PATH)
 
-    cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False)
+    cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False, "Updating xStream")
 
     updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
 
