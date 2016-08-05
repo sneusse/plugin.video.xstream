@@ -27,11 +27,11 @@
    <assets>
      <icon>icon.png</icon>
      <fanart>fanart.jpg</fanart>
-     <screenshot>resources/art/screenshots/01.jpg</screenshot>
-     <screenshot>resources/art/screenshots/02.jpg</screenshot>
-     <screenshot>resources/art/screenshots/03.jpg</screenshot>
-     <screenshot>resources/art/screenshots/04.jpg</screenshot>
-     <screenshot>resources/art/screenshots/05.jpg</screenshot>
+     <screenshot>resources/art/screenshot-01.png</screenshot>
+     <screenshot>resources/art/screenshot-02.png</screenshot>
+     <screenshot>resources/art/screenshot-03.png</screenshot>
+     <screenshot>resources/art/screenshot-04.png</screenshot>
+     <screenshot>resources/art/screenshot-05.png</screenshot>
    </assets>
  </extension>
 </addon>
