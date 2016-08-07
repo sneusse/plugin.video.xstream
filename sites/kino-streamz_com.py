@@ -8,7 +8,8 @@ from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'kino-streamz_com'
-SITE_NAME = 'Kino-Streamz'
+SITE_NAME = 'KinoStreamz'
+SITE_ICON = 'kino-streamz.png'
 
 URL_MAIN = 'http://kino-streamz.com/'
 URL_Filme = URL_MAIN + 'categorie/2/filme-stream-p1.html'
