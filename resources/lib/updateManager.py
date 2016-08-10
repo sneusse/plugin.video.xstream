@@ -7,7 +7,10 @@ import logger
 import xbmc
 import xbmcgui
 from resources.lib.config import cConfig
-from distutils.version import LooseVersion as V
+try:
+    from distutils.version import LooseVersion as V
+except:
+    from resources.lib.version import LooseVersion as V
 from resources.lib.common import addonPath
 from resources.lib.download import cDownload
 
