@@ -49,7 +49,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 
 ### 1.1 Verfügbare Webseiten
 
-| Name           | Domain            | Status                 | Stand      |
+| Name           | Domain            | Verfügbarkeit          | Stand      |
 |:-------------- |:----------------- | :--------------------- | :--------- |
 | AnimeLoads     | anime-loads.org   | funktioniert           | 09.04.2016 |
 | BurningSeries  | bs.to             | funktioniert           | 09.04.2016 |
@@ -64,8 +64,9 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | Goldstream     | goldstream.org    | funktioniert           | 23.06.2016 |
 | Gute Filme     | gute-filme.to     | funktioniert           | 09.04.2016 |
 | HDfilme        | hdfilme.tv        | funktioniert           | 09.04.2016 |
-| KinoX          | kinox.to          | funktioniert           | 09.04.2016 |
 | KinoKiste      | kkiste.to         | funktioniert teilweise | 09.04.2016 |
+| KinoStreamz    | kino-streamz.com  | funktioniert           | 07.08.2016 |
+| KinoX          | kinox.to          | funktioniert           | 09.04.2016 |
 | Movie4k        | movie4k.to        | funktioniert           | 09.04.2016 |
 | MoviesEver     | moviesever.com    | funktioniert teilweise | 09.04.2016 |
 | SeriesEver     | seriesever.net    | funktioniert           | 09.04.2016 |
