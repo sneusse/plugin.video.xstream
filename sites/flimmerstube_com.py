@@ -9,6 +9,7 @@ from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'flimmerstube_com'
 SITE_NAME = 'Flimmerstube'
+SITE_ICON = 'flimmerstube.png'
 
 URL_MAIN = 'http://flimmerstube.com/video/'
 

@@ -9,6 +9,7 @@ from resources.lib.util import cUtil
 SITE_IDENTIFIER = 'cineplex_tv'
 SITE_NAME = 'Cineplex'
 SITE_ICON = 'cineplex.png'
+
 URL_MAIN = 'http://cineplex.tv/'
 URL_CINEMA2015 = URL_MAIN + 'filme_2015/'
 URL_CINEMA2014 = URL_MAIN + 'filme_2014/'
