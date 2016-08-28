@@ -9,6 +9,7 @@ from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'dokustreamer_de'
 SITE_NAME = 'Dokustreamer'
+SITE_ICON = 'dokustreamer.png'
 
 URL_MAIN = 'https://dokustreamer.de/'
 URL_HDDOKU = URL_MAIN + 'category/doku/dokus/hd-doku-stream'
