@@ -6,7 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-from resources.lib.cfscrape import CloudflareScraper
+import cfscrape
 import re, json
 
 # Plugin-Eigenschaften
@@ -36,6 +36,9 @@ URL_PARMS_ORDER_HDRATE_ASC = URL_PARMS_ORDER_HDRATE +'&order_d=asc'
 
 QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
 
+# User-Agent für HTTP-Requests
+HD_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0'
+
 def load():
     # Logger-Eintrag
     logger.info("Load %s" % SITE_NAME)
@@ -45,6 +48,13 @@ def load():
 
     # ParameterHandler erzeugen
     params = ParameterHandler()
+    
+    # Cloudflare-Cookie ermitteln
+    scrapper = cfscrape.CloudflareScraper()
+    cookie_value, user_agent = scrapper.get_cookie_string(URL_MAIN,HD_USER_AGENT)
+
+    # Cloudflare-Cookie speichern
+    params.setParam('cfCookie', cookie_value)
 
     # Einträge anlegen
     params.setParam('sUrl', URL_MOVIES)
@@ -96,7 +106,7 @@ def showGenreList():
     entryUrl = params.getValue('sUrl')
 
     # Movie-Seite laden
-    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl).content
+    sHtmlContent = _getRequestHandler(entryUrl, params.getValue('cfCookie')).request()
 
     # Select für Generes Laden
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
@@ -140,7 +150,7 @@ def showEntries(entryUrl = False, sGui = False):
     iPage = int(params.getValue('page'))
 
     # Daten ermitteln
-    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl).content
+    sHtmlContent = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, params.getValue('cfCookie')).request()
     
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
@@ -252,7 +262,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl).content
+    sHtmlContent = _getRequestHandler(entryUrl, params.getValue('cfCookie')).request()
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
@@ -309,9 +319,12 @@ def getHosters(sUrl = False):
 
     # URL und Name ermitteln falls nicht übergeben
     sUrl = sUrl if sUrl else params.getValue('sUrl')
+    
+    # Cookie für Cloudflare ermitteln
+    sCfCookie = params.getValue('cfCookie')
 
     # Seite abrufen
-    sHtmlContent = CloudflareScraper.create_scraper().get(sUrl).content
+    sHtmlContent = _getRequestHandler(sUrl, sCfCookie).request()
 
     # Servername und Episoden pro Server ermitteln
     pattern = "[^>]*>([a-zA-Z0-9_ ]+)</div>\s+<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>(.*?)</ul>"
@@ -337,7 +350,7 @@ def getHosters(sUrl = False):
 
             # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
             if aResultLinks[0]:
-                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername))
+                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername,sCfCookie))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
@@ -345,9 +358,9 @@ def getHosters(sUrl = False):
 
     return hosters
 
-def _getHostFromUrl(sUrl, sServername):
+def _getHostFromUrl(sUrl, sServername, sCfCookie):
     # Seite abrufen
-    sHtmlContent = CloudflareScraper.create_scraper().get(sUrl).content
+    sHtmlContent = _getRequestHandler(sUrl, sCfCookie).request()
 
     # JSon mit den Links ermitteln
     pattern = '(\[{".*?}\])'
@@ -426,3 +439,9 @@ def _search(oGui, sSearchText):
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
+
+def _getRequestHandler(sUrl, cookie):
+    oRequest = cRequestHandler(sUrl)
+    oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
+    oRequest.addHeaderEntry('Cookie', cookie)
+    return oRequest
