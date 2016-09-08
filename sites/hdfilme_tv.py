@@ -49,12 +49,8 @@ def load():
     # ParameterHandler erzeugen
     params = ParameterHandler()
     
-    # Cloudflare-Cookie ermitteln
-    scrapper = cfscrape.CloudflareScraper()
-    cookie_value, user_agent = scrapper.get_cookie_string(URL_MAIN,HD_USER_AGENT)
-
     # Cloudflare-Cookie speichern
-    params.setParam('cfCookie', cookie_value)
+    params.setParam('cfCookie', _getCfCookie())
 
     # Einträge anlegen
     params.setParam('sUrl', URL_MOVIES)
@@ -149,8 +145,16 @@ def showEntries(entryUrl = False, sGui = False):
     # Aktuelle Seite ermitteln und ggf. URL anpassen
     iPage = int(params.getValue('page'))
 
+    # Cookie für Cloudflare ermitteln
+    sCfCookie = params.getValue('cfCookie')
+
+    # Cookie setzen falls noch nicht passiert (z.b Suche)
+    if not sCfCookie:
+        sCfCookie = _getCfCookie()
+        params.setParam('cfCookie', sCfCookie)
+
     # Daten ermitteln
-    sHtmlContent = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, params.getValue('cfCookie')).request()
+    sHtmlContent = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, sCfCookie).request()
     
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
@@ -226,6 +230,8 @@ def showEntries(entryUrl = False, sGui = False):
         # Falls vorhanden Jahr ergänzen
         if iYear:
             oGuiElement.setYear(iYear)
+        
+        logger.info(sThumbnail)
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
         oGuiElement.setThumbnail(sThumbnail)
@@ -439,6 +445,11 @@ def _search(oGui, sSearchText):
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
+
+def _getCfCookie():
+    scrapper = cfscrape.CloudflareScraper()
+    cookie_value, user_agent = scrapper.get_cookie_string(URL_MAIN,HD_USER_AGENT)
+    return cookie_value
 
 def _getRequestHandler(sUrl, cookie):
     oRequest = cRequestHandler(sUrl)
