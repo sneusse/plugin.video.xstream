@@ -252,7 +252,7 @@ def Property(type, kind, key, computed, value, method, shorthand):
 def UnaryExpression(type, operator, argument, prefix):
     a = trans(argument, standard=True) # unary involve some complex operations so we cant use line shorteners here
     if operator=='delete':
-        if argument['type'] in {'Identifier', 'MemberExpression'}:
+        if argument['type'] in ['Identifier', 'MemberExpression']:
             # means that operation is valid
             return js_delete(a)
         return 'PyJsComma(%s, Js(True))' % a   # otherwise not valid, just perform expression and return true.
@@ -552,7 +552,7 @@ def FunctionDeclaration(type, id, params, defaults, body, generator, expression)
     # transfer names from Py scope to Js scope
     arg_map = dict(zip(vars, used_vars))
     arg_map.update({'this':'this', 'arguments':'arguments'})
-    arg_conv = 'var = Scope({%s}, var)\n' % ', '.join(repr(k)+':'+v for k,v in six.iteritems(arg_map))
+    arg_conv = 'var = Scope({%s}, var)\n' % ', '.join([repr(k)+':'+v for k,v in six.iteritems(arg_map)])
     # and finally set the name of the function to its real name:
     footer = '%s.func_name = %s\n' % (PyName, repr(JsName))
     footer+= 'var.put(%s, %s)\n' % (repr(JsName), PyName)

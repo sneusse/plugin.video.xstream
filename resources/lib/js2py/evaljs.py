@@ -10,15 +10,10 @@ import os
 import hashlib
 import codecs
 
-
-
 __all__  = ['EvalJs', 'translate_js', 'import_js', 'eval_js', 'translate_file', 'run_file']
 DEBUG = False
 
 def path_as_local(path):
-    if os.path.isabs(path):
-        return path
-    # relative to cwd
     return os.path.join(os.getcwd(), path)
 
 def import_js(path, lib_name, globals):
@@ -40,39 +35,8 @@ def get_file_contents(path_or_file):
             js = f.read()
     return js
 
-
-def write_file_contents(path_or_file, contents):
-    if hasattr(path_or_file, 'write'):
-        path_or_file.write(contents)
-    else:
-        with open(path_as_local(path_or_file), 'w') as f:
-            f.write(contents)
-
-def translate_file(input_path, output_path):
-    '''
-    Translates input JS file to python and saves the it to the output path.
-    It appends some convenience code at the end so that it is easy to import JS objects.
-
-    For example we have a file 'example.js' with:   var a = function(x) {return x}
-    translate_file('example.js', 'example.py')
-
-    Now example.py can be easily importend and used:
-    >>> from example import example
-    >>> example.a(30)
-    30
-    '''
-    js = get_file_contents(input_path)
-
-    py_code = translate_js(js)
-    lib_name = os.path.basename(output_path).split('.')[0]
-    head = '__all__ = [%s]\n\n# Don\'t look below, you will not understand this Python code :) I don\'t.\n\n' % repr(lib_name)
-    tail = '\n\n# Add lib to the module scope\n%s = var.to_python()' % lib_name
-    out = head + py_code + tail
-    write_file_contents(output_path, out)
-
-
-
-
+def translate_file(path_or_file):
+    return translate_js(get_file_contents(path_or_file))
 
 
 def run_file(path_or_file, context=None):
