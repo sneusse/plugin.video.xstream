@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+from resources.lib.cfscrape import CloudflareScraper
 import re, json
 
 # Plugin-Eigenschaften
@@ -95,7 +96,7 @@ def showGenreList():
     entryUrl = params.getValue('sUrl')
 
     # Movie-Seite laden
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl).content
 
     # Select für Generes Laden
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
@@ -137,10 +138,9 @@ def showEntries(entryUrl = False, sGui = False):
 
     # Aktuelle Seite ermitteln und ggf. URL anpassen
     iPage = int(params.getValue('page'))
-    oRequest = cRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl)
 
     # Daten ermitteln
-    sHtmlContent = oRequest.request()
+    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl).content
     
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
@@ -252,7 +252,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = CloudflareScraper.create_scraper().get(entryUrl).content
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
@@ -311,7 +311,7 @@ def getHosters(sUrl = False):
     sUrl = sUrl if sUrl else params.getValue('sUrl')
 
     # Seite abrufen
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = CloudflareScraper.create_scraper().get(sUrl).content
 
     # Servername und Episoden pro Server ermitteln
     pattern = "[^>]*>([a-zA-Z0-9_ ]+)</div>\s+<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>(.*?)</ul>"
@@ -347,7 +347,7 @@ def getHosters(sUrl = False):
 
 def _getHostFromUrl(sUrl, sServername):
     # Seite abrufen
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = CloudflareScraper.create_scraper().get(sUrl).content
 
     # JSon mit den Links ermitteln
     pattern = '(\[{".*?}\])'
