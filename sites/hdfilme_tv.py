@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 import cfscrape
-import re, json
+import re, json, datetime, calendar
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
@@ -48,9 +48,6 @@ def load():
 
     # ParameterHandler erzeugen
     params = ParameterHandler()
-    
-    # Cloudflare-Cookie speichern
-    params.setParam('cfCookie', _getCfCookie())
 
     # Einträge anlegen
     params.setParam('sUrl', URL_MOVIES)
@@ -102,7 +99,7 @@ def showGenreList():
     entryUrl = params.getValue('sUrl')
 
     # Movie-Seite laden
-    sHtmlContent = _getRequestHandler(entryUrl, params.getValue('cfCookie')).request()
+    sHtmlContent = _getRequestHandler(entryUrl).request()
 
     # Select für Generes Laden
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
@@ -145,16 +142,8 @@ def showEntries(entryUrl = False, sGui = False):
     # Aktuelle Seite ermitteln und ggf. URL anpassen
     iPage = int(params.getValue('page'))
 
-    # Cookie für Cloudflare ermitteln
-    sCfCookie = params.getValue('cfCookie')
-
-    # Cookie setzen falls noch nicht passiert (z.b Suche)
-    if not sCfCookie:
-        sCfCookie = _getCfCookie()
-        params.setParam('cfCookie', sCfCookie)
-
     # Daten ermitteln
-    sHtmlContent = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, sCfCookie).request()
+    sHtmlContent = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl).request()
     
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
@@ -268,7 +257,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(entryUrl, params.getValue('cfCookie')).request()
+    sHtmlContent = _getRequestHandler(entryUrl).request()
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
@@ -325,12 +314,9 @@ def getHosters(sUrl = False):
 
     # URL und Name ermitteln falls nicht übergeben
     sUrl = sUrl if sUrl else params.getValue('sUrl')
-    
-    # Cookie für Cloudflare ermitteln
-    sCfCookie = params.getValue('cfCookie')
 
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(sUrl, sCfCookie).request()
+    sHtmlContent = _getRequestHandler(sUrl).request()
 
     # Servername und Episoden pro Server ermitteln
     pattern = "[^>]*>([a-zA-Z0-9_ ]+)</div>\s+<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>(.*?)</ul>"
@@ -356,7 +342,7 @@ def getHosters(sUrl = False):
 
             # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
             if aResultLinks[0]:
-                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername,sCfCookie))
+                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
@@ -364,9 +350,9 @@ def getHosters(sUrl = False):
 
     return hosters
 
-def _getHostFromUrl(sUrl, sServername, sCfCookie):
+def _getHostFromUrl(sUrl, sServername):
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(sUrl, sCfCookie).request()
+    sHtmlContent = _getRequestHandler(sUrl).request()
 
     # JSon mit den Links ermitteln
     pattern = '(\[{".*?}\])'
@@ -446,13 +432,22 @@ def _search(oGui, sSearchText):
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
 
-def _getCfCookie():
-    scrapper = cfscrape.CloudflareScraper()
-    cookie_value, user_agent = scrapper.get_cookie_string(URL_MAIN,HD_USER_AGENT)
-    return cookie_value
-
-def _getRequestHandler(sUrl, cookie):
+def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
-    oRequest.addHeaderEntry('Cookie', cookie)
+
+    # Prüfen ob ein Cloudflare-Cookie vorliege
+    if not oRequest.getCookie('__cfduid') and not oRequest.getCookie('cf_clearance'):
+        # Cloudflare-Cookie ermitteln
+        scrapper = cfscrape.CloudflareScraper()
+        tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
+
+        # Ablauf-Datum errechen (nach 1 Stunden zur sicherheit)
+        expiresTime  = datetime.datetime.now() + datetime.timedelta(hours=1)
+        unix_time = calendar.timegm(expiresTime.timetuple())
+        
+        # CloudFlare cookies setzen
+        oRequest.setCookie(oRequest.createCookie('__cfduid',tokens['__cfduid'],domain='hdfilme.tv', expires=unix_time, discard=False))
+        oRequest.setCookie(oRequest.createCookie('cf_clearance',tokens['cf_clearance'],domain='hdfilme.tv', expires=unix_time, discard=False))
+
     return oRequest
