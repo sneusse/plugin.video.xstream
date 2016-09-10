@@ -437,7 +437,10 @@ def _getRequestHandler(sUrl):
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
 
     # Prüfen ob ein Cloudflare-Cookie vorliege
-    if not oRequest.getCookie('__cfduid') and not oRequest.getCookie('cf_clearance'):
+    if not oRequest.getCookie('__cfduid') or not oRequest.getCookie('cf_clearance'):
+        # Jus for Info ;)
+        logger.info("CloudFlare Cookie is missing")
+
         # Cloudflare-Cookie ermitteln
         scrapper = cfscrape.CloudflareScraper()
         tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
