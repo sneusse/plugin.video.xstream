@@ -436,21 +436,21 @@ def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
 
-    # Prüfen ob ein Cloudflare-Cookie vorliege
+    # Prüfen ob ein Cloudflare-Cookie vorliegt
     if not oRequest.getCookie('__cfduid') or not oRequest.getCookie('cf_clearance'):
-        # Jus for Info ;)
+        # Just for Info ;)
         logger.info("CloudFlare Cookie is missing")
 
         # Cloudflare-Cookie ermitteln
         scrapper = cfscrape.CloudflareScraper()
         tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
 
-        # Ablauf-Datum errechen (nach 1 Stunden zur sicherheit)
-        expiresTime  = datetime.datetime.now() + datetime.timedelta(hours=1)
-        unix_time = calendar.timegm(expiresTime.timetuple())
-        
-        # CloudFlare cookies setzen
-        oRequest.setCookie(oRequest.createCookie('__cfduid',tokens['__cfduid'],domain='hdfilme.tv', expires=unix_time, discard=False))
-        oRequest.setCookie(oRequest.createCookie('cf_clearance',tokens['cf_clearance'],domain='hdfilme.tv', expires=unix_time, discard=False))
+        # Ablauf-Datum errechnen (Original-Werte)
+        expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(years=1)
+        expiresTimeCfClearance = datetime.datetime.now() + datetime.timedelta(hours=1)
+
+        # Cloudflare-Cookies setzen
+        oRequest.setCookie(oRequest.createCookie('__cfduid',tokens['__cfduid'],domain='.hdfilme.tv', expires=calendar.timegm(expiresTimeCfduid.timetuple()), discard=False))
+        oRequest.setCookie(oRequest.createCookie('cf_clearance',tokens['cf_clearance'],domain='.hdfilme.tv', expires=calendar.timegm(expiresTimeCfClearance.timetuple()), discard=False))
 
     return oRequest
