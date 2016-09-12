@@ -446,7 +446,7 @@ def _getRequestHandler(sUrl):
         tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
 
         # Ablauf-Datum errechnen (Original-Werte)
-        expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(years=1)
+        expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(days=365)
         expiresTimeCfClearance = datetime.datetime.now() + datetime.timedelta(hours=1)
 
         # Cloudflare-Cookies setzen
