@@ -301,6 +301,8 @@ def showHosters():
         hoster = dict()
         hoster['link'] = URL_MAIN + 'watch/' + link['id']
         hoster['name'] = link['hoster']
+        if hoster['name'] == "OpenLoadHD":
+            hoster['name'] = "OpenLoad";
         hoster['displayedName'] = link['hoster']
         hosters.append(hoster)
     if hosters:
@@ -321,6 +323,8 @@ def getHosterUrl(sUrl = False):
     else:
         result['streamID'] = data['url']
         result['host'] = data['hoster']
+        if result['host'] == "OpenLoadHD":
+            result['host'] = "OpenLoad";
     result['resolved'] = False
     results.append(result)
     return results
