@@ -435,15 +435,19 @@ def _search(oGui, sSearchText):
 def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
+    
+    # Relevanten Cookies ermitteln
+    cfId = oRequest.getCookie('__cfduid')
+    cfClear = oRequest.getCookie('cf_clearance')
 
-    # Prüfen ob ein Cloudflare-Cookie vorliegt
-    if not oRequest.getCookie('__cfduid') or not oRequest.getCookie('cf_clearance'):
+    # Prüfen ob ein Cloudflare-Cookie vorliegt und ob ggf. cf_clearance abgelaufen ist
+    if (not cfId or not cfClear) or cfClear.expires >= calendar.timegm(datetime.datetime.now().timetuple()):
         # Just for Info ;)
         logger.info("CloudFlare Cookie is missing")
 
         # Cloudflare-Cookie ermitteln
         scrapper = cfscrape.CloudflareScraper()
-        tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
+        tokens, user_agent = cfscrape.get_tokens(sUrl, HD_USER_AGENT)
 
         # Ablauf-Datum errechnen (Original-Werte)
         expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(days=365)
