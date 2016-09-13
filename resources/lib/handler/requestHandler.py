@@ -208,7 +208,7 @@ class cRequestHandler:
 
         return mechanize.Cookie(**result)
 
-    def getCookie(self, sCookieName):
+    def getCookie(self, sCookieName, sDomain = ''):
         cookieJar = mechanize.LWPCookieJar()
         try: #TODO ohne try evtl.
             cookieJar.load(self._cookiePath, self.__bIgnoreDiscard, self.__bIgnoreExpired)
@@ -217,7 +217,10 @@ class cRequestHandler:
 
         for entry in cookieJar:
             if entry.name == sCookieName:
-                return entry
+                if sDomain == '':
+                    return entry
+                elif entry.domain == sDomain:
+                    return entry
 
         return False
 
