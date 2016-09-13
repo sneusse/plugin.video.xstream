@@ -219,8 +219,6 @@ def showEntries(entryUrl = False, sGui = False):
         # Falls vorhanden Jahr ergänzen
         if iYear:
             oGuiElement.setYear(iYear)
-        
-        logger.info(sThumbnail)
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
         oGuiElement.setThumbnail(sThumbnail)
@@ -437,17 +435,17 @@ def _getRequestHandler(sUrl):
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
     
     # Relevanten Cookies ermitteln
-    cfId = oRequest.getCookie('__cfduid')
-    cfClear = oRequest.getCookie('cf_clearance')
+    cfId = oRequest.getCookie('__cfduid', '.hdfilme.tv')
+    cfClear = oRequest.getCookie('cf_clearance', '.hdfilme.tv')
 
     # Prüfen ob ein Cloudflare-Cookie vorliegt und ob ggf. cf_clearance abgelaufen ist
-    if (not cfId or not cfClear) or cfClear.expires >= calendar.timegm(datetime.datetime.now().timetuple()):
+    if (not cfId or not cfClear) or cfClear.expires <= calendar.timegm(datetime.datetime.now().timetuple()):
         # Just for Info ;)
         logger.info("CloudFlare Cookie is missing")
 
         # Cloudflare-Cookie ermitteln
         scrapper = cfscrape.CloudflareScraper()
-        tokens, user_agent = cfscrape.get_tokens(sUrl, HD_USER_AGENT)
+        tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
 
         # Ablauf-Datum errechnen (Original-Werte)
         expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(days=365)
