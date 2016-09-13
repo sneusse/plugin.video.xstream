@@ -335,7 +335,7 @@ def getHosters(sUrl = False):
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult[1]:
             # Nur Links für die gewünschte Episode ermitteln
-            pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\s+(?:%s|HD|SD)\s+</a>" % sEpisode
+            pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\s+(?:%s|HD|SD|Audio Mic)\s+</a>" % sEpisode
             aResultLinks = parser.parse(sInnerHtml, pattern, ignoreCase = True)
 
             # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
