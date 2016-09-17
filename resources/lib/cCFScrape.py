@@ -21,7 +21,7 @@ class cCFScrape:
             params["jschl_vc"] = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
             params["pass"] = re.search(r'name="pass" value="(.+?)"', body).group(1)
 
-            js = self.extract_js(body)
+            js = self._extract_js(body)
         except:
             raise
 
@@ -42,7 +42,7 @@ class cCFScrape:
 
         return response, cookieJar
 
-    def extract_js(self, body):
+    def _extract_js(self, body):
         js = re.search(r"setTimeout\(function\(\){\s+(var "
                            "s,t,o,p,b,r,e,a,k,i,n,g,f.+?\r?\n[\s\S]+?a\.value =.+?)\r?\n", body).group(1)
         js = re.sub(r"a\.value = (parseInt\(.+?\)).+", r"\1", js)
@@ -63,17 +63,17 @@ class cCFScrape:
 
         for item in result:
             if item[0] == '+':
-                val += self.decode(item[2:])
+                val += self._decode(item[2:])
             elif item[0] == '-':
-                val -= self.decode(item[2:])
+                val -= self._decode(item[2:])
             elif item[0] == '*':
-                val *= self.decode(item[2:])
+                val *= self._decode(item[2:])
             elif item[0] == '/':
-                val /= self.decode(item[2:])
+                val /= self._decode(item[2:])
 
         return val
 
-    def decode(self, inp):
+    def _decode(self, inp):
         sign = '+'
         if inp[0] == '+' or inp[0] == '-':
             sign = inp[0]
@@ -96,3 +96,19 @@ class cCFScrape:
             number = -number
 
         return number
+
+    def createUrl(self, sUrl, oRequest):
+        parsed_url = urlparse(sUrl)
+
+        cfId = oRequest.getCookie('__cfduid', '.'+parsed_url.netloc)
+        cfClear = oRequest.getCookie('cf_clearance', '.'+parsed_url.netloc)
+
+        if cfId and cfClear and 'Cookie=Cookie:' not in sUrl:
+            delimiter = '&' if '|' in sUrl else '|'
+            sUrl = sUrl + delimiter + "Cookie=Cookie: __cfduid=" + cfId.value + "; cf_clearance=" + cfClear.value
+
+        if 'User-Agent=' not in sUrl:
+            delimiter = '&' if '|' in sUrl else '|'
+            sUrl += delimiter + "User-Agent=" + oRequest.getHeaderEntry('User-Agent')
+
+        return sUrl

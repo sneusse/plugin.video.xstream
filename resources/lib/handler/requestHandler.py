@@ -54,6 +54,10 @@ class cRequestHandler:
     def addHeaderEntry(self, sHeaderKey, sHeaderValue):
         self.__headerEntries[sHeaderKey] = sHeaderValue
 
+    def getHeaderEntry(self, sHeaderKey):
+        if sHeaderKey in self.__headerEntries:
+            return self.__headerEntries[sHeaderKey]
+
     def addParameters(self, key, value, quote = False):
         if not quote:
             self.__aParameters[key] = value

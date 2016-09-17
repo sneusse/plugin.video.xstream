@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+from cCFScrape import cCFScrape
 import re, json, datetime, calendar
 
 # Plugin-Eigenschaften
@@ -221,7 +222,7 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement.setYear(iYear)
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
-        oGuiElement.setThumbnail(_creatCfUrl(sThumbnail, oRequest))
+        oGuiElement.setThumbnail(cCFScrape().createUrl(sThumbnail, oRequest))
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
@@ -429,24 +430,6 @@ def _search(oGui, sSearchText):
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
-
-def _creatCfUrl(sUrl, oRequest):
-    # CloudFlare Cookies ermitteln
-    cfId = oRequest.getCookie('__cfduid', '.hdfilme.tv')
-    cfClear = oRequest.getCookie('cf_clearance', '.hdfilme.tv')
-
-    # Liegen die Cookies vor? => Cookie ergänzen
-    if cfId and cfClear and 'Cookie=Cookie:' not in sUrl:
-        delimiter = '&' if '|' in sUrl else '|'
-        sUrl = sUrl + delimiter + "Cookie=Cookie: __cfduid=" + cfId.value + "; cf_clearance=" + cfClear.value
-
-    # User-Agent ergänzen
-    if 'User-Agent=' not in sUrl:
-        delimiter = '&' if '|' in sUrl else '|'
-        sUrl += delimiter + "User-Agent=" + HD_USER_AGENT
-
-    # Rückgabe
-    return sUrl
 
 def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
