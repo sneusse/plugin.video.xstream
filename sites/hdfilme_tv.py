@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 from cCFScrape import cCFScrape
-import re, json, datetime, calendar
+import re, json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
@@ -432,6 +432,7 @@ def _search(oGui, sSearchText):
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
 
+# RequestHandler mit passenden User-Agent erzeugen
 def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
