@@ -100,8 +100,10 @@ class cCFScrape:
     def createUrl(self, sUrl, oRequest):
         parsed_url = urlparse(sUrl)
 
-        cfId = oRequest.getCookie('__cfduid', '.'+parsed_url.netloc)
-        cfClear = oRequest.getCookie('cf_clearance', '.'+parsed_url.netloc)
+        netloc = parsed_url.netloc[4:] if parsed_url.netloc.startswith('www.') else parsed_url.netloc
+
+        cfId = oRequest.getCookie('__cfduid', '.'+ netloc)
+        cfClear = oRequest.getCookie('cf_clearance', '.'+ netloc)
 
         if cfId and cfClear and 'Cookie=Cookie:' not in sUrl:
             delimiter = '&' if '|' in sUrl else '|'
