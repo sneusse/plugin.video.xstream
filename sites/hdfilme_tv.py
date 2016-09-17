@@ -6,7 +6,6 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-import cfscrape
 import re, json, datetime, calendar
 
 # Plugin-Eigenschaften
@@ -452,26 +451,4 @@ def _creatCfUrl(sUrl, oRequest):
 def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
-    
-    # Relevanten Cookies ermitteln
-    cfId = oRequest.getCookie('__cfduid', '.hdfilme.tv')
-    cfClear = oRequest.getCookie('cf_clearance', '.hdfilme.tv')
-
-    # Prüfen ob ein Cloudflare-Cookie vorliegt und ob ggf. cf_clearance abgelaufen ist
-    if (not cfId or not cfClear) or cfClear.expires <= calendar.timegm(datetime.datetime.now().timetuple()):
-        # Just for Info ;)
-        logger.info("CloudFlare Cookie is missing")
-
-        # Cloudflare-Cookie ermitteln
-        scrapper = cfscrape.CloudflareScraper()
-        tokens, user_agent = cfscrape.get_tokens(URL_MAIN, HD_USER_AGENT)
-
-        # Ablauf-Datum errechnen (Original-Werte)
-        expiresTimeCfduid = datetime.datetime.now() + datetime.timedelta(days=365)
-        expiresTimeCfClearance = datetime.datetime.now() + datetime.timedelta(hours=1)
-
-        # Cloudflare-Cookies setzen
-        oRequest.setCookie(oRequest.createCookie('__cfduid',tokens['__cfduid'],domain='.hdfilme.tv', expires=calendar.timegm(expiresTimeCfduid.timetuple()), discard=False))
-        oRequest.setCookie(oRequest.createCookie('cf_clearance',tokens['cf_clearance'],domain='.hdfilme.tv', expires=calendar.timegm(expiresTimeCfClearance.timetuple()), discard=False))
-
     return oRequest

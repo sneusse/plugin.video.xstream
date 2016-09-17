@@ -14,6 +14,9 @@ from resources.lib.config import cConfig
 from resources.lib import common
 from resources.lib import logger
 
+from resources.lib import logger
+from cCFScrape import cCFScrape
+
 class cRequestHandler:
     REQUEST_TYPE_GET = 0
     REQUEST_TYPE_POST = 1
@@ -107,7 +110,9 @@ class cRequestHandler:
         try:
             oResponse = opener.open(oRequest,timeout = 60)
         except mechanize.HTTPError, e:
-            if not self.ignoreErrors:
+            if e.code == 503 and e.headers.get("Server") == 'cloudflare-nginx':
+                oResponse, cookieJar = cCFScrape().resolve(oRequest, e, cookieJar)
+            elif not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xStream','Fehler beim Abrufen der Url:',self.__sUrl, str(e))
                 logger.error("HTTPError "+str(e)+" Url: "+self.__sUrl)
                 return ''
