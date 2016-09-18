@@ -81,7 +81,7 @@ def showEntries(entryUrl = False, sGui = False):
     for sUrl, sQuality, sThumbnail, sSeason, sName, sDesc in aResult[1]:
         isTvshow = True if sSeason else False
 
-        sName = cUtil().removeHtmlTags(sName).strip()
+        sName = cUtil().removeHtmlTags(sName.strip())
         sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
         sDesc = cUtil().removeHtmlTags(sDesc).strip()
@@ -91,7 +91,6 @@ def showEntries(entryUrl = False, sGui = False):
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if isTvshow:
-            res = re.search('(.*?)\s(?:Staffel \d+ Folge \d+\s+)?', sName, re.I)
             if res:
                 sName = res.group(1)
             oGuiElement.setTVShowTitle(sName)
