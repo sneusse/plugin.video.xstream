@@ -81,9 +81,10 @@ def showEntries(entryUrl = False, sGui = False):
     for sUrl, sQuality, sThumbnail, sSeason, sName, sDesc in aResult[1]:
         isTvshow = True if sSeason else False
 
-        sName = cUtil().unescape(sName).strip()
+        sName = cUtil().removeHtmlTags(sName).strip()
         sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+        sDesc = cUtil().removeHtmlTags(sDesc).strip()
         
         sUrl = sUrl.replace('https:','http:')
         sThumbnail = sThumbnail.replace('https:','http:')
