@@ -91,7 +91,7 @@ def showEntries(entryUrl = False, sGui = False):
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if isTvshow:
-            res = re.search('(.*?) Staffel \d+ Folge \d+', sName, re.I)
+            res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
             if res:
                 sName = res.group(1)
             oGuiElement.setTVShowTitle(sName)
