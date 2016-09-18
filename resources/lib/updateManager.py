@@ -113,6 +113,8 @@ def update(REMOTE_PATH):
 
     updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
 
+    removeFilesNotInRepo(updateFile)
+
     for index, n in enumerate(updateFile.namelist()):
         if n[-1] != "/":
             dest = os.path.join(ROOT_DIR, "/".join(n.split("/")[1:]))
@@ -126,4 +128,16 @@ def update(REMOTE_PATH):
             f.write(data)
             f.close()
     updateFile.close()
+
     logger.info("Update Successful")
+
+def removeFilesNotInRepo(updateFile):
+    updateFileNameList = [i.split("/")[-1] for i in updateFile.namelist()]
+
+    for root, dirs, files in os.walk(ROOT_DIR):
+        if "TEMP" in root or ".git" in root or "pydev" in root or ".idea" in root:
+            continue
+        else:
+            for file in files:
+                if file not in updateFileNameList:
+                    os.remove(os.path.join(root, file))
