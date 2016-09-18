@@ -84,6 +84,9 @@ def showEntries(entryUrl = False, sGui = False):
         sName = cUtil().unescape(sName).strip()
         sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+        
+        sUrl = sThumbnail.replace('https:','http:')
+        sThumbnail = sThumbnail.replace('https:','http:')
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         if isTvshow:
@@ -105,7 +108,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     aResult = parser.parse(sHtmlContent, '<li[^>]*class="active".*?<a[^>]*href="([^"]*)"[^>]*>\d+</a>')
     if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', aResult[1][0])
+        params.setParam('sUrl', aResult[1][0].replace('https:','http:'))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
@@ -160,7 +163,7 @@ def getHosters(sUrl = False):
     hosters = []
     if aResult[0] and aResult[1][0]:
         hoster = dict()
-        hoster['link'] = aResult[1][0]
+        hoster['link'] = aResult[1][0].replace('https:','http:')
         hoster['name'] = SITE_NAME
         hoster['resolveable'] = True
         hosters.append(hoster)
