@@ -13,7 +13,7 @@ SITE_IDENTIFIER = 'tata_to'
 SITE_NAME = 'Tata'
 SITE_ICON = 'tata.png'
 
-URL_MAIN = 'https://www.tata.to/'
+URL_MAIN = 'http://www.tata.to/'
 URL_MOVIES = URL_MAIN + 'filme?type=filme'
 URL_SHOWS = URL_MAIN + 'filme?type=tv'
 URL_SEARCH = URL_MAIN + 'filme?suche=%s&type=alle'
