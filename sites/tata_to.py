@@ -85,7 +85,7 @@ def showEntries(entryUrl = False, sGui = False):
         sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
         
-        sUrl = sThumbnail.replace('https:','http:')
+        sUrl = sUrl.replace('https:','http:')
         sThumbnail = sThumbnail.replace('https:','http:')
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
