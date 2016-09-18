@@ -54,7 +54,7 @@ class cDownload:
                     self.__prepareDownload(url, header, sDownloadPath, downloadDialogTitle)
 
         elif self.__sTitle != False:
-            temp_dir = os.path.join(common.addonPath, "TEMP")
+            temp_dir = os.path.join(common.profilePath)
 
             if not os.path.isdir(temp_dir):
                 os.makedirs(os.path.join(temp_dir))

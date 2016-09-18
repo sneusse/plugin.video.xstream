@@ -11,12 +11,11 @@ try:
     from distutils.version import LooseVersion as V
 except:
     from resources.lib.version import LooseVersion as V
-from resources.lib.common import addonPath
+from resources.lib.common import addonPath, profilePath
 from resources.lib.download import cDownload
 
 ## Installation path.
 ROOT_DIR = addonPath
-TEMP_DIR = os.path.join(ROOT_DIR, "TEMP")
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 ## Remote path to download plugin.zip and version file.
@@ -29,7 +28,7 @@ REMOTE_VERSION_FILE_MASTER = "https://raw.githubusercontent.com/Lynx187/plugin.v
 
 ## Filename of the update File.
 LOCAL_FILE_NAME = "xStream_update.zip"
-LOCAL_NIGHTLY_VERSION = os.path.join(TEMP_DIR, "nightly_commit_sha")
+LOCAL_NIGHTLY_VERSION = os.path.join(profilePath, "nightly_commit_sha")
 
 
 def checkforupdates():
@@ -108,10 +107,9 @@ def getElementTreeFromString(sXML):
 
 def update(REMOTE_PATH):
     logger.info("xStream Update URL: " + REMOTE_PATH)
-
     cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False, "Updating xStream")
 
-    updateFile = zipfile.ZipFile(os.path.join(TEMP_DIR, LOCAL_FILE_NAME))
+    updateFile = zipfile.ZipFile(os.path.join(profilePath, LOCAL_FILE_NAME))
 
     removeFilesNotInRepo(updateFile)
 
@@ -135,7 +133,7 @@ def removeFilesNotInRepo(updateFile):
     updateFileNameList = [i.split("/")[-1] for i in updateFile.namelist()]
 
     for root, dirs, files in os.walk(ROOT_DIR):
-        if "TEMP" in root or ".git" in root or "pydev" in root or ".idea" in root:
+        if ".git" in root or "pydev" in root or ".idea" in root:
             continue
         else:
             for file in files:
