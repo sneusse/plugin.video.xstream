@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 from cCFScrape import cCFScrape
-import re, json, datetime, calendar
+import re, json
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
@@ -215,6 +215,7 @@ def showEntries(entryUrl = False, sGui = False):
 
         # Thumbnail und Beschreibung für Anzeige anpassen
         sThumbnail = sThumbnail.replace('_thumb', '')
+        sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
         sDesc = cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
 
         # Falls vorhanden Jahr ergänzen
@@ -222,7 +223,7 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement.setYear(iYear)
 
         # Eigenschaften setzen und Listeneintrag hinzufügen
-        oGuiElement.setThumbnail(cCFScrape().createUrl(sThumbnail, oRequest))
+        oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
         params.setParam('entryUrl', sUrl)
@@ -431,6 +432,7 @@ def _search(oGui, sSearchText):
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
 
+# RequestHandler mit passenden User-Agent erzeugen
 def _getRequestHandler(sUrl):
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
