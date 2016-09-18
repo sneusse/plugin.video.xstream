@@ -145,7 +145,7 @@ def showEpisodes(aResult, params):
         oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(iEpisode)
         oGuiElement.setThumbnail(sThumbnail)
-        params.setParam('sUrl', sUrl)
+        params.setParam('sUrl', sUrl.replace('https:','http:'))
         params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, False, total)
 
