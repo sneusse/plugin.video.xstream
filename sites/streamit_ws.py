@@ -11,6 +11,7 @@ from cCFScrape import cCFScrape
 
 SITE_IDENTIFIER = 'streamit_ws'
 SITE_NAME = 'Stream It'
+SITE_ICON = 'streamit.png'
 
 URL_MAIN = 'http://streamit.ws'
 URL_SERIELINKS = 'http://streamit.ws/lade_episode.php'
