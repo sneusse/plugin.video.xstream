@@ -10,7 +10,7 @@ from cCFScrape import cCFScrape
 
 
 SITE_IDENTIFIER = 'streamit_ws'
-SITE_NAME = 'Stream It'
+SITE_NAME = 'StreamIt'
 SITE_ICON = 'streamit.png'
 
 URL_MAIN = 'http://streamit.ws'
