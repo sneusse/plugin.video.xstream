@@ -18,6 +18,7 @@ URL_MOVIES = URL_MAIN + 'filme?type=filme'
 URL_SHOWS = URL_MAIN + 'filme?type=tv'
 URL_SEARCH = URL_MAIN + 'filme?suche=%s&type=alle'
 
+URL_PARMS_ORDER_ALL = '&order=alle'
 URL_PARMS_ORDER_ID = '&order=neueste'
 URL_PARMS_ORDER_MOSTVIEWED = '&order=ansichten'
 URL_PARMS_ORDER_MOSTRATED = '&order=ratingen'
@@ -52,6 +53,34 @@ def showContentMenu():
     oGui.addFolder(cGuiElement('Top IMDb', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_RELEASEDATE)
     oGui.addFolder(cGuiElement('Veröffentlichungsdatum', SITE_IDENTIFIER, 'showEntries'), params) 
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'genre')
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showValueList'), params)
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'land')
+    oGui.addFolder(cGuiElement('Land', SITE_IDENTIFIER, 'showValueList'), params)
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'veröffentlichung')
+    oGui.addFolder(cGuiElement('Veröffentlichung', SITE_IDENTIFIER, 'showValueList'), params) 
+
+    oGui.setEndOfDirectory()
+
+def showValueList():
+    oGui = cGui()
+    params = ParameterHandler()
+    entryUrl = params.getValue('sUrl')
+    valueType = params.getValue('valueType')
+
+    sHtmlContent = cRequestHandler(entryUrl).request()
+    pattern = '<input[^>]*name="%s[[]]"[^>]*value="(.*?)"[^>]*>(.*?)</' % valueType
+    aResult = cParser().parse(sHtmlContent, pattern)
+
+    if not aResult[0]:
+        return
+
+    for sID, sName in aResult[1]:
+        params.setParam('sUrl',entryUrl + '&' + valueType +'[]=' + sID)
+        oGui.addFolder(cGuiElement(sName.strip(), SITE_IDENTIFIER, 'showEntries'), params)  
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
