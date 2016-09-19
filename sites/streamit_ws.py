@@ -13,6 +13,7 @@ SITE_IDENTIFIER = 'streamit_ws'
 SITE_NAME = 'Stream It'
 
 URL_MAIN = 'http://streamit.ws'
+URL_SERIELINKS = 'http://streamit.ws/lade_episode.php'
 URL_Kinofilme = URL_MAIN + '/kino'
 URL_Filme = URL_MAIN + '/film'
 URL_HDFilme = URL_MAIN + '/film-hd'
@@ -64,7 +65,6 @@ def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-
     oRequestHandler = cRequestHandler(entryUrl)
     sHtmlContent = oRequestHandler.request()
     pattern = '<div class="cover"><a[^>]*href="([^"]+)" title="([^"]+).*?data-src="([^"]+)'
@@ -75,12 +75,13 @@ def showEntries(entryUrl=False, sGui=False):
             sFunction = "showHosters" if not "serie" in sUrl else "showSeason"
             oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, sFunction)
             oGuiElement.setSiteName(SITE_IDENTIFIER)
-            oGuiElement.setThumbnail(cCFScrape().createUrl(URL_MAIN + sThumbnail, oRequestHandler))
+            sThumbnail = cCFScrape().createUrl(URL_MAIN + sThumbnail, oRequestHandler)
+            oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setMediaType('serie' if 'serie' in sUrl else 'movie')
             params.setParam('entryUrl', URL_MAIN + sUrl)
             params.setParam('sName', sName)
-            oGui.addFolder(oGuiElement, params, bIsFolder="serie" in sUrl)
-            oGui.setView('movies')
+            params.setParam('Thumbnail', sThumbnail)
+            oGui.addFolder(oGuiElement, params, bIsFolder="serie" in sUrl, iTotal=len(aResult))
 
     pattern = '<a[^>]href=[^>]([^">]+)[^>]>Next'
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -91,8 +92,8 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.setEndOfDirectory()
     return
 
-def showSeason():
-    oGui = cGui()
+def showSeason(sGui=False):
+    oGui = sGui if sGui else cGui()
     oParams = ParameterHandler()
 
     sUrl = oParams.getValue('entryUrl')
@@ -112,13 +113,13 @@ def showSeason():
                     sFullName = sName + " - " + sEpisodeTitle
                     oGuiElement = cGuiElement(sFullName, SITE_IDENTIFIER, "showHosters")
                     oGuiElement.setSiteName(SITE_IDENTIFIER)
-                    #oGuiElement.setThumbnail(oParams.getValue("Thumbnail"))
+                    oGuiElement.setThumbnail(oParams.getValue("Thumbnail"))
                     oGuiElement.setMediaType('episode')
                     oParams.setParam('entryUrl', sUrl)
                     oParams.setParam('val', sEpisodeUrl)
                     oParams.setParam('IMDB', IMDB)
                     oParams.setParam('sName', sFullName)
-                    oGui.addFolder(oGuiElement, oParams, bIsFolder=False)
+                    oGui.addFolder(oGuiElement, oParams, bIsFolder=False, iTotal=len(aEpisodeResult[1]))
                     oGui.setView('episode')
     oGui.setEndOfDirectory()
     return
@@ -128,8 +129,7 @@ def showHosters():
     sUrl = oParams.getValue('entryUrl')
     oRequestHandler = cRequestHandler(sUrl)
     if oParams.getValue('val'):
-        sUrl = 'http://streamit.ws/lade_episode.php'
-        oRequestHandler = cRequestHandler(sUrl)
+        oRequestHandler = cRequestHandler(URL_SERIELINKS)
         oRequestHandler.addParameters('val', oParams.getValue('val'))
         oRequestHandler.addParameters('IMDB', oParams.getValue('IMDB'))
         oRequestHandler.setRequestType(1)
@@ -138,7 +138,7 @@ def showHosters():
     if aResult[0]:
         sHtmlContent = aResult[1][0]
 
-    sPattern = '<a href="([^"]+).*?name="save"[^>]value="([^"[1-9]+)'  # url / hostername
+    sPattern = '<a href="([^"]+).*?name="save"[^>]value="(.*?)"'  # url / hostername
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
@@ -151,7 +151,7 @@ def showHosters():
                 for Url in bResult[1]:
                     hoster = {}
                     hoster['name'] = sName.strip()
-                    hoster['link'] = Url.lower()
+                    hoster['link'] = Url
                     hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
