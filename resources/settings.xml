@@ -58,10 +58,14 @@
 	<setting default="false" id="plugin_moviesever_com" label="30014" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
 	<setting default="false" id="plugin_seriesever_net" label="30014" type="bool" />
+	<setting label="Stream It" type="lsep" />
+	<setting default="false" id="plugin_streamit_ws" label="30014" type="bool" />
 	<setting label="StreamTausch" type="lsep" />
 	<setting default="false" id="plugin_streamtausch_tv" label="30014" type="bool" />
 	<setting label="SzeneStreams" type="lsep" />
 	<setting default="false" id="plugin_szene-streams_com" label="30014" type="bool" />
+	<setting label="Tata" type="lsep" />
+	<setting default="false" id="plugin_tata_to" label="30014" type="bool" />
 </category>
   <category label="Views">
     <setting default="false" id="auto-view" label="Automatische Views aktivieren" type="bool" />
