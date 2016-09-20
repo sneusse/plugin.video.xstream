@@ -194,7 +194,7 @@ def showHosters():
 
     sHtmlContent = oRequestHandler.request()
     parser = cParser()
-    isMatch, strContainer = parser.parse(sHtmlContent, '<div[^>]class="mirrors.*?<div[^>]id="content">')  # filter main content if needed
+    isMatch, strContainer = parser.parseSingleResult(sHtmlContent, '<div[^>]class="mirrors.*?<div[^>]id="content">')  # filter main content if needed
 
     if isMatch:
         sHtmlContent = strContainer
