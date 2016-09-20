@@ -71,10 +71,16 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
+
+    iPage = int(params.getValue('page'))
+    if iPage > 0:
+        entryUrl = entryUrl + ('&' if '?' in entryUrl else '?') + 'page=' + str(iPage)
+
     oRequestHandler = cRequestHandler(entryUrl)
     sHtmlContent = oRequestHandler.request()
     pattern = '<div class="cover"><a[^>]*href="([^"]+)" title="([^"]+).*?data-src="([^"]+)'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    parser = cParser()
+    aResult = parser.parse(sHtmlContent, pattern)
 
     if not aResult[0]: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -93,9 +99,9 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('Thumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, bIsFolder="serie" in sUrl, iTotal=total)
 
-    aResult = cParser().parse(sHtmlContent, '<a[^>]href=[^>]([^">]+)[^>]>Next')
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', entryUrl + aResult[1][0])
+    result, strPage = parser.parseSingleResult(sHtmlContent, "<a[^>]class='current'.*?<a[^>]href='[^']*'[^>]*>(\d+)<[^>]*>")
+    if result:
+        params.setParam('page', int(strPage))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
