@@ -51,15 +51,16 @@ def showGenre():
     params = ParameterHandler()
     entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    aResult = cParser().parse(sHtmlContent, '<h1>Genre.*?</h1>.*?</div>')
+    parser = cParser()
+    isMatch, aResult = parser.parse(sHtmlContent, '<h1>Genre.*?</h1>.*?</div>')
 
-    if aResult[0]:
-        sHtmlContent = aResult[1][0]
+    if isMatch:
+        sHtmlContent = aResult[0]
 
     pattern = '<li><a[^>]href="([^"]+)">([^"<]+)'  # url / title
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
-    for sUrl, sTitle in aResult[1]:
+    for sUrl, sTitle in aResult:
         params.setParam('sUrl', URL_MAIN + '/' + sUrl)
         oGui.addFolder(cGuiElement(cUtil().unescape(sTitle.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showEntries'), params)
 
@@ -80,14 +81,14 @@ def showEntries(entryUrl=False, sGui=False):
     sHtmlContent = oRequestHandler.request()
     pattern = '<div class="cover"><a[^>]*href="([^"]+)" title="([^"]+).*?data-src="([^"]+)'
     parser = cParser()
-    aResult = parser.parse(sHtmlContent, pattern)
+    isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
-    if not aResult[0]: 
+    if not isMatch: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
-    for sUrl, sName, sThumbnail in aResult[1]:
+    for sUrl, sName, sThumbnail in aResult:
         sFunction = "showHosters" if not "serie" in sUrl else "showSeasons"
         sThumbnail = cCFScrape().createUrl(URL_MAIN + sThumbnail, oRequestHandler)
 
@@ -99,8 +100,8 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('Thumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, bIsFolder="serie" in sUrl, iTotal=total)
 
-    result, strPage = parser.parseSingleResult(sHtmlContent, "<a[^>]class='current'.*?<a[^>]href='[^']*'[^>]*>(\d+)<[^>]*>")
-    if result:
+    isMatch, strPage = parser.parseSingleResult(sHtmlContent, "<a[^>]class='current'.*?<a[^>]href='[^']*'[^>]*>(\d+)<[^>]*>")
+    if isMatch:
         params.setParam('page', int(strPage))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
@@ -118,18 +119,19 @@ def showSeasons():
     sHtmlContent = cRequestHandler(sUrl).request()
 
     sPattern = '<select[^>]*class="staffelauswahl"[^>]*>(.*?)</select>' # container
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    parser = cParser()
+    isMatch, strContainer = parser.parseSingleResult(sHtmlContent, sPattern)
 
-    if aResult[0]: 
+    if isMatch: 
         sPattern = '<option[^>]*value="(.*?)"[^>]*>(.*?)</option>' # container
-        aResult = cParser().parse(aResult[1][0], sPattern)
+        isMatch, aResult = parser.parse(strContainer, sPattern)
 
-    if not aResult[0]: 
+    if not isMatch: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
-    total = len(aResult[1])
-    for iSeason, sTitle in aResult[1]:
+    total = len(aResult)
+    for iSeason, sTitle in aResult:
         oGuiElement = cGuiElement("Staffel " + str(iSeason),SITE_IDENTIFIER, 'showEpisodes')
         oGuiElement.setTVShowTitle(sName)
         oGuiElement.setSeason(iSeason)
@@ -152,16 +154,16 @@ def showEpisodes():
 
     parser = cParser()
     sPattern = '<a[^>]*href="#(s%se(\d+))"[^>]*>(.*?)</a>' % sSeason
-    aResult = parser.parse(sHtmlContent, sPattern)
+    isMatch, aResult = parser.parse(sHtmlContent, sPattern)
 
-    if not aResult[0]: 
+    if not isMatch: 
         oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     result, imdb = parser.parseSingleResult(sHtmlContent,'IMDB\s?=\s?\'(\d+)')
     
-    total = len(aResult[1])
-    for sEpisodeUrl, sEpisodeNr, sEpisodeTitle in aResult[1]:
+    total = len(aResult)
+    for sEpisodeUrl, sEpisodeNr, sEpisodeTitle in aResult:
         res = re.search('%s (.*)' % sEpisodeNr, sEpisodeTitle)
         if res:
             sEpisodeTitle = '%s - %s' % (sEpisodeNr, res.group(1))
@@ -191,22 +193,23 @@ def showHosters():
         oRequestHandler.setRequestType(1)
 
     sHtmlContent = oRequestHandler.request()
-    aResult = cParser().parse(sHtmlContent, '<div[^>]class="mirrors.*?<div[^>]id="content">')  # filter main content if needed
+    parser = cParser()
+    isMatch, strContainer = parser.parse(sHtmlContent, '<div[^>]class="mirrors.*?<div[^>]id="content">')  # filter main content if needed
 
-    if aResult[0]:
-        sHtmlContent = aResult[1][0]
+    if isMatch:
+        sHtmlContent = strContainer
 
     sPattern = '<a href="([^"]+).*?name="save"[^>]value="(.*?)"'  # url / hostername
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    isMatch, aResult = parser.parse(sHtmlContent, sPattern)
     hosters = []
-    if aResult[1]:
-        for sUrl, sName in aResult[1]:
+    if isMatch:
+        for sUrl, sName in aResult:
             oRequestHandler = cRequestHandler(sUrl)
             sHtmlContent = oRequestHandler.request()
             Pattern = 'none"><a[^>]*href="([^"]+)'
-            bResult = cParser().parse(sHtmlContent, Pattern)
-            if bResult[1]:
-                for Url in bResult[1]:
+            isMatch, bResult = parser.parse(sHtmlContent, Pattern)
+            if isMatch:
+                for Url in bResult:
                     hoster = {}
                     hoster['name'] = sName.strip()
                     hoster['link'] = Url
