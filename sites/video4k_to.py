@@ -5,13 +5,11 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
-
 SITE_IDENTIFIER = 'video4k_to'
 SITE_NAME = 'Video4k'
 SITE_ICON = 'video4k.png'
 
 URL_REQUEST = 'http://video4k.to/request'
-
 
 DEFAULT_REQUEST_PARAMS = dict(sEcho=1, iColumns=1, sColumns="", iDisplayStart=0, iDisplayLength=50, mDataProp_0=0,
                               mDataProp_1=1, mDataProp_2=2, mDataProp_3=3, mDataProp_4=4, sSearch="", bRegex="false",
@@ -27,50 +25,39 @@ def load():
     oGui = cGui()
     params = ParameterHandler()
 
-    params.setParam('sUrl', URL_REQUEST)
-
     params.setParam('type', 'movies')
     oGui.addFolder(cGuiElement('Alle Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('type', 'cinema')
     oGui.addFolder(cGuiElement('Kino Filme', SITE_IDENTIFIER, 'showEntries'), params)
-
-    params.setParam('sUrl', URL_REQUEST)
     params.setParam('type', 'series')
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
-def showEntries(entryUrl = False, sGui = False, sSearchText = None):
+def showEntries(sGui = False, sSearchText = None):
     oGui = sGui if sGui else cGui()
     oParams = ParameterHandler()
 
-    if not entryUrl: entryUrl = oParams.getValue('sUrl')
-
-    oRequest = cRequestHandler(entryUrl)
-
+    oRequest = cRequestHandler(URL_REQUEST)
     for key in DEFAULT_REQUEST_PARAMS:
         oRequest.addParameters(key, DEFAULT_REQUEST_PARAMS[key])
-
     oRequest.addParameters('type', oParams.getValue('type'))
-
     if sSearchText:
         oRequest.addParameters('sSearch', sSearchText)
         oRequest.addParameters('type', '')
-
     oRequest.setRequestType(1)
     sHtmlContent = oRequest.request()
 
-    aResult = cParser().parse(sHtmlContent, '#tt(\d*).*?">(.*?)<')
+    isMatch, aResult = cParser().parse(sHtmlContent, '#tt(\d*).*?">(.*?)<')
 
-    if aResult[0]:
-        for id, sName in aResult[1]:
-            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+    if not isMatch:
+        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        return
 
-            oParams.setParam('entryUrl', URL_REQUEST)
-            oParams.setParam('sName', sName)
-            oParams.setParam('id', id)
-            oGui.addFolder(oGuiElement, oParams, False, isHoster=True)
+    for id, sName in aResult:
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        oParams.setParam('id', id)
+        oGui.addFolder(oGuiElement, oParams, False, isHoster=True)
 
     oGui.setEndOfDirectory()
 
@@ -84,11 +71,13 @@ def showHosters():
     oRequest.addParameters('language', 'en')
 
     sHtmlContent = oRequest.request()
-
-    aResult = cParser().parse(sHtmlContent, 'name":"(.*?)".*?URL":"(.*?)"')
+    isMatch, aResult = cParser().parse(sHtmlContent, 'name":"(.*?)".*?URL":"(.*?)"')
 
     hosters = []
-    for sName, sUrl in aResult[1]:
+    if not isMatch:
+        return hosters
+
+    for sName, sUrl in aResult:
         hoster = dict()
         hoster['link'] = sUrl.replace('\\', '')
         hoster['name'] = sName
@@ -117,4 +106,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showEntries(URL_REQUEST, oGui, sSearchText)
+    showEntries(oGui, sSearchText)
