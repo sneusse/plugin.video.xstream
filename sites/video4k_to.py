@@ -77,7 +77,8 @@ def showEntries(sGui = False, sSearchText = None):
         oParams.setParam('iDisplayStart', int(oParams.getValue('iDisplayStart')) + 50)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', oParams)
 
-    oGui.setEndOfDirectory()
+    if not sGui:
+        oGui.setEndOfDirectory()
 
 def _addEntry(oGui, sName, mId):
     oParams = ParameterHandler()
