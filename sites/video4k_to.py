@@ -146,7 +146,7 @@ def loadInformation(mID = None):
     return [jContent[0]['plot'],
             jContent[0]['cover'],
             jContent[0]['year'],
-            jContent[0]['languages'][0]['symbol'],
+            jContent[0]['languages'][0]['symbol'] if jContent[0]['languages'] else '',
             jContent[0]['seasons'] if 'seasons' in jContent[0] else False]
 
 def showHosters():
