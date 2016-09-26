@@ -82,48 +82,66 @@ def showEntries(sGui = False, sSearchText = None):
 
 def _addEntry(oGui, sName, mId):
     oParams = ParameterHandler()
-
     oParams.setParam('id', mId)
     info = loadInformation(mId)
-
-    oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if info[4] else 'showHosters')
 
     isFolder = False
 
     if info:
+        isFolder = info[4] is not False
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if info[4] else 'showHosters')
+        oGuiElement.setFunction('showSeasons' if info[4] else 'showHosters')
+        oGuiElement.setTitle(info[5])
         oGuiElement.setDescription(info[0])
         oGuiElement.setLanguage(info[3])
-        oGuiElement.setThumbnail('http:' + info[1])
+        oGuiElement.setThumbnail(info[1])
         oGuiElement.setYear(info[2])
         oParams.setParam('lang', info[3])
-        isFolder = info[4] is not False
+        oGui.addFolder(oGuiElement, oParams, isFolder, isHoster=not isFolder)
 
-    oGui.addFolder(oGuiElement, oParams, isFolder, isHoster=not isFolder)
-
-def showSeasons(sGui = None):
-    oGui = sGui if sGui else cGui()
+def showSeasons():
+    oGui = cGui()
     oParams = ParameterHandler()
 
     info = loadInformation(oParams.getValue('id'))
 
-    for sSeason in info[4]:
-        oGuiElement = cGuiElement('Staffel ' + sSeason, SITE_IDENTIFIER, 'showEpisode')
-        oParams.setParam('season', sSeason)
-        oGui.addFolder(oGuiElement, oParams)
+    if info and info[4]is not False:
+        for sSeason in info[4]:
+            oGuiElement = cGuiElement('Staffel ' + sSeason, SITE_IDENTIFIER, 'showEpisode')
+            oGuiElement.setTVShowTitle(info[5])
+            oGuiElement.setSeason(sSeason)
+            oGuiElement.setMediaType('season')
+            oGuiElement.setDescription(info[0])
+            oGuiElement.setLanguage(info[3])
+            oGuiElement.setThumbnail(info[1])
+            oGuiElement.setYear(info[2])
+            oParams.setParam('season', sSeason)
+            oGui.addFolder(oGuiElement, oParams)
 
+    oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
-def showEpisode(sGui = None):
-    oGui = sGui if sGui else cGui()
+def showEpisode():
+    oGui = cGui()
     oParams = ParameterHandler()
-
+    sSeason = oParams.getValue('season')
     info = loadInformation(oParams.getValue('id'))
 
-    for sEpisode in info[4][oParams.getValue('season')]:
-        oGuiElement = cGuiElement('Episode ' + str(sEpisode), SITE_IDENTIFIER, 'showHosters')
-        oParams.setParam('episode', sEpisode)
-        oGui.addFolder(oGuiElement, oParams, False, True)
+    if info and info[4]is not False:
+        for sEpisode in info[4][sSeason]:
+            oGuiElement = cGuiElement('Episode ' + str(sEpisode), SITE_IDENTIFIER, 'showHosters')
+            oGuiElement.setTVShowTitle(info[5])
+            oGuiElement.setSeason(sSeason)
+            oGuiElement.setEpisode(sEpisode)
+            oGuiElement.setMediaType('episode')
+            oGuiElement.setDescription(info[0])
+            oGuiElement.setLanguage(info[3])
+            oGuiElement.setThumbnail(info[1])
+            oGuiElement.setYear(info[2])
+            oParams.setParam('episode', sEpisode)
+            oGui.addFolder(oGuiElement, oParams, False, True)
 
+    oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
 
@@ -145,22 +163,22 @@ def loadInformation(mID = None):
     jContent = json.loads(sHtmlContent)
 
     return [jContent[0]['plot'],
-            jContent[0]['cover'],
+            'http:' + jContent[0]['cover'],
             jContent[0]['year'],
             jContent[0]['languages'][0]['symbol'] if jContent[0]['languages'] else '',
-            jContent[0]['seasons'] if 'seasons' in jContent[0] else False]
+            jContent[0]['seasons'] if 'seasons' in jContent[0] else False,
+            jContent[0]['name'].encode('utf-8')]
 
 def showHosters():
     oParams = ParameterHandler()
-    oRequest = cRequestHandler(URL_REQUEST)
 
+    oRequest = cRequestHandler(URL_REQUEST)
     oRequest.addParameters('mID', oParams.getValue('id'))
     oRequest.addParameters('raw', 'true')
     oRequest.addParameters('language', oParams.getValue('lang'))
     if oParams.getValue('season'):
         oRequest.addParameters('season', oParams.getValue('season'))
         oRequest.addParameters('episode', oParams.getValue('episode'))
-
     sHtmlContent = oRequest.request()
 
     jContent = json.loads(sHtmlContent)
