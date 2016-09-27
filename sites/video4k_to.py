@@ -90,14 +90,13 @@ def _addEntry(oGui, sName, mId):
     if info:
         isFolder = info[4] is not False
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if info[4] else 'showHosters')
-        oGuiElement.setFunction('showSeasons' if info[4] else 'showHosters')
         oGuiElement.setTitle(info[5])
         oGuiElement.setDescription(info[0])
         oGuiElement.setLanguage(info[3])
         oGuiElement.setThumbnail(info[1])
         oGuiElement.setYear(info[2])
         oParams.setParam('lang', info[3])
-        oGui.addFolder(oGuiElement, oParams, isFolder, isHoster=not isFolder)
+        oGui.addFolder(oGuiElement, oParams, bIsFolder=isFolder, isHoster=not isFolder)
 
 def showSeasons():
     oGui = cGui()
@@ -106,6 +105,7 @@ def showSeasons():
     info = loadInformation(oParams.getValue('id'))
 
     if info and info[4]is not False:
+        total = len (info[4])
         for sSeason in info[4]:
             oGuiElement = cGuiElement('Staffel ' + sSeason, SITE_IDENTIFIER, 'showEpisode')
             oGuiElement.setTVShowTitle(info[5])
@@ -116,7 +116,7 @@ def showSeasons():
             oGuiElement.setThumbnail(info[1])
             oGuiElement.setYear(info[2])
             oParams.setParam('season', sSeason)
-            oGui.addFolder(oGuiElement, oParams)
+            oGui.addFolder(oGuiElement, oParams, bIsFolder=True, iTotal=total)
 
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
@@ -128,6 +128,7 @@ def showEpisode():
     info = loadInformation(oParams.getValue('id'))
 
     if info and info[4]is not False:
+        total = len (info[4][sSeason])
         for sEpisode in info[4][sSeason]:
             oGuiElement = cGuiElement('Episode ' + str(sEpisode), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setTVShowTitle(info[5])
@@ -139,7 +140,7 @@ def showEpisode():
             oGuiElement.setThumbnail(info[1])
             oGuiElement.setYear(info[2])
             oParams.setParam('episode', sEpisode)
-            oGui.addFolder(oGuiElement, oParams, False, True)
+            oGui.addFolder(oGuiElement, oParams, bIsFolder=False, iTotal=total)
 
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
@@ -161,13 +162,15 @@ def loadInformation(mID = None):
         return
 
     jContent = json.loads(sHtmlContent)
+    
+    plot = jContent[0]['plot']
+    year = jContent[0]['year']
+    name = jContent[0]['name'].encode('utf-8')
+    cover = '' if jContent[0]['cover'] == '//static.video4k.to/covers/' else ('http:' + jContent[0]['cover'])
+    language = jContent[0]['languages'][0]['symbol'] if jContent[0]['languages'] else '' # later fix this because if there are two lang we should pick the correct one
+    seasons = jContent[0]['seasons'] if 'seasons' in jContent[0] else False
 
-    return [jContent[0]['plot'],
-            'http:' + jContent[0]['cover'],
-            jContent[0]['year'],
-            jContent[0]['languages'][0]['symbol'] if jContent[0]['languages'] else '',
-            jContent[0]['seasons'] if 'seasons' in jContent[0] else False,
-            jContent[0]['name'].encode('utf-8')]
+    return [plot, cover, year, language, seasons, name]
 
 def showHosters():
     oParams = ParameterHandler()
