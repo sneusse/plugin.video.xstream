@@ -66,6 +66,8 @@
 	<setting default="false" id="plugin_szene-streams_com" label="30014" type="bool" />
 	<setting label="Tata" type="lsep" />
 	<setting default="false" id="plugin_tata_to" label="30014" type="bool" />
+	<setting label="Video2k" type="lsep" />
+	<setting default="false" id="plugin_video2k_is" label="30014" type="bool" />
 	<setting label="Video4k" type="lsep" />
 	<setting default="false" id="plugin_video4k_to" label="30014" type="bool" />
 </category>
