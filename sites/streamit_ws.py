@@ -194,26 +194,30 @@ def showHosters():
 
     sHtmlContent = oRequestHandler.request()
     parser = cParser()
-    isMatch, strContainer = parser.parseSingleResult(sHtmlContent, '<div[^>]class="mirrors.*?<div[^>]id="content">')  # filter main content if needed
+    isMatch, aResult = parser.parse(sHtmlContent, '<option[^>]*quality[^>]*id="(\w+)"[^>]*class="mirrorbuttons\w+"[^>]*>(.*?)</option>')  # filter main content if needed
 
-    if isMatch:
-        sHtmlContent = strContainer
-
-    sPattern = '<a href="([^"]+).*?name="save"[^>]value="(.*?)"'  # url / hostername
-    isMatch, aResult = parser.parse(sHtmlContent, sPattern)
     hosters = []
-    if isMatch:
-        for sUrl, sName in aResult:
-            oRequestHandler = cRequestHandler(sUrl)
-            sHtmlContent = oRequestHandler.request()
-            Pattern = 'none"><a[^>]*href="([^"]+)'
-            isMatch, bResult = parser.parse(sHtmlContent, Pattern)
-            if isMatch:
-                for Url in bResult:
-                    hoster = {}
-                    hoster['name'] = sName.strip()
-                    hoster['link'] = Url
-                    hosters.append(hoster)
+    
+    if not isMatch:
+        return hosters
+
+    for sID, sQulitTitle in aResult:
+        sPattern = '<div[^>]*class="mirrors\w+"[^>]*id="%s">(.*?)<div[^>]*id="' % sID
+        isMatchMirrors, sMirrorContainer = parser.parseSingleResult(sHtmlContent, sPattern)
+
+        if not isMatchMirrors:
+            continue
+
+        isMatchUrls, aResultMirrors = parser.parse(sMirrorContainer, '<a[^>]*href="([^"]+)"[^>]*>.*?name="save"[^>]*value="(.*?)"[^>]*/>')
+
+        if not isMatchUrls:
+            continue
+
+        for sUrl, sName in aResultMirrors:
+            hoster = {}
+            hoster['name'] = '[%s] %s' % (sQulitTitle, sName.strip())
+            hoster['link'] = sUrl
+            hosters.append(hoster)
 
     if hosters:
         hosters.append('getHosterUrl')
@@ -221,13 +225,18 @@ def showHosters():
     return hosters
 
 
-def getHosterUrl(sUrl=False):
+def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
+
+    sHtmlContent = cRequestHandler(sUrl).request()
+    isMatch, redirectUrl = cParser().parseSingleResult(sHtmlContent, 'none"><a[^>]*href="([^"]+)')
+
     results = []
-    result = {}
-    result['streamUrl'] = sUrl
-    result['resolved'] = False
-    results.append(result)
+    if isMatch:
+        result = {}
+        result['streamUrl'] = redirectUrl
+        result['resolved'] = False
+        results.append(result)
     return results
 
 
