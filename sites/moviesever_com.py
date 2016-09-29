@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import re, base64, urllib
+import re, base64
 
 SITE_IDENTIFIER = 'moviesever_com'
 SITE_NAME = 'MoviesEver'
@@ -184,7 +184,6 @@ def __decode(text):
     return text
 
 def __checkSEUrl(sUrl):
-    logger.info("Checking " + sUrl)
     if "play/old/framer.php" in sUrl:
         sHtmlContent = __getHtmlContent(sUrl)
         sUrl = re.findall('src="(.*?)"', sHtmlContent)[0]
@@ -193,9 +192,7 @@ def __checkSEUrl(sUrl):
         sHtmlContent = __getHtmlContent(sUrl)
         sHash = re.findall('link:"(.*?)"', sHtmlContent)[0]
         return __decodeHash(sHash)
-    url = __decodeHash(sUrl)
-    if url.startswith('http'): return url
-    return None
+    return sUrl
 
 
 def __decodeHash(sHash):
@@ -249,16 +246,25 @@ def showHosters():
 
 
 def getHoster(sHtmlContent, hosters):
-    sPattern = '(?:\{"link":"|<p><iframe src=")([^"]*?)"'
+    isEncoded = False
+
+    if 'gkpluginsphp' in sHtmlContent:
+        sPattern = '{"link":"(.*?)"}'
+        isEncoded = True
+    else:
+        sPattern = '<iframe.*?src="(.*?)".*?>'
 
     # parse content
     oParser = cParser()
-
     aResult = oParser.parse(sHtmlContent, sPattern)
+
     if aResult[0]:
         hoster = dict()
 
-        hoster['link'] = __checkSEUrl(aResult[1][0])
+        if isEncoded:
+            hoster['link'] = __decodeHash(aResult[1][0])
+        else:
+            hoster['link'] = __checkSEUrl(aResult[1][0])
 
         if hoster['link'] is None:
             return hosters
