@@ -13,8 +13,9 @@ SITE_NAME = 'Video2k'
 SITE_ICON = 'Video2k.png'
 
 URL_MAIN = 'http://www.video2k.is/'
-URL_MOVIE = URL_MAIN + '?c=movie&m=%s'
+URL_MOVIE = URL_MAIN + '?c=movie&m=filter&directors=&cast=&genre=all&order_by=%s&date=this+month'
 URL_SEARCH = URL_MAIN + '?keyword=%s&c=movie&m=filter'
+URL_Hoster = URL_MAIN + '?c=ajax&m=movieStreams2&id=%s'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -40,7 +41,10 @@ def showEntries(entryUrl = False, sGui = False):
     sHtmlContent = oRequestHandler.request()
 
     parser = cParser()
-    pattern ='<li[^>]title="([^">]+).*?([^-/d]+)-film[^>]stream[^>]([^.]+).*?<img[^>]src=[^>]([^?<]+)[^>][^>]border.*?<a[^>]href=.*?>([^<]+)'
+    pattern = '<li[^>]*title="(.*?)\((:?\d+)?\).*?(:?\s+-\s+(:?[^"]+))?"[^>]*>.*?' # name / year / desc
+    pattern += "<a[^>]*href='[^>]*-(\d+).[^>]*'[^>]*>.*?" # url
+    pattern += "<img[^>]*src='([^']*)'[^>]*>.*?" # img
+    pattern += "</li>" # title
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
@@ -48,43 +52,42 @@ def showEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult)
-    for sDescription, sYear, sUrl, sThumbnail, sName in aResult:
+    for sName, sYear, sUglyDesc, sDesc, sUrl, sThumbnail in aResult:
             oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
-            oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+            oGuiElement.setDescription(cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8'))
             oGuiElement.setYear(sYear)
-            params.setParam('entryUrl', 'http://video2k.is/?c=ajax&m=movieStreams2&id=' + sUrl)
-            params.setParam('sName', sName)
-            params.setParam('sThumbnail', sThumbnail)
-            oGui.addFolder(oGuiElement, params, bIsFolder = False,)
+            params.setParam('sUrl', URL_Hoster % sUrl)
+            oGui.addFolder(oGuiElement, params, False, total)
+
     isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '</strong>.*?<a[^>]*href="([^"]+)"[^>]*>\d+')
     if isMatchNextPage:
         params.setParam('sUrl', cUtil().unescape(sNextUrl))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
     if not sGui:
         oGui.setEndOfDirectory()
 
 def showHosters():
-    oParams = ParameterHandler()
-    sUrl = oParams.getValue('entryUrl')
+    sUrl = ParameterHandler().getValue('sUrl')
+
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = 'show[^>]player.*?, "([^"]+)".*?domain=([^">]+)[^>]'
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    sPattern = "<a[^>]*href='([^']+)'(:?[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='url'[^>]*>(.*?)</span>"
+    isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
+
     hosters = []
-    if aResult[1]:
-        for sUrl, sName in aResult[1]:
+    if isMatch:
+        for sHref, sUglyEmbeded, sEmbeded, sName in aResult:
             hoster = {}
-            hoster['link'] = sUrl
+            hoster['link'] = (sHref if sHref != '#player' else sEmbeded)
             hoster['name'] = sName
-            hosters.append(hoster)         
+            hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
 
 def getHosterUrl(sUrl = False):
-    oParams = ParameterHandler()
-    if not sUrl: sUrl = oParams.getValue('url')
-    logger.info("url %s" % sUrl)
+    if not sUrl: sUrl = ParameterHandler().getValue('sUrl')
     results = []
     result = {}
     result['streamUrl'] = sUrl
