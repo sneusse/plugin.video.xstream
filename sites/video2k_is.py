@@ -38,6 +38,7 @@ def showEntries(entryUrl = False, sGui = False):
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
     oRequestHandler = cRequestHandler(entryUrl)
+    oRequestHandler.addHeaderEntry('Referer', entryUrl)
     sHtmlContent = oRequestHandler.request()
 
     parser = cParser()
@@ -62,7 +63,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '</strong>.*?<a[^>]*href="([^"]+)"[^>]*>\d+')
     if isMatchNextPage:
-        params.setParam('sUrl', cUtil().unescape(sNextUrl))
+        params.setParam('sUrl', URL_MAIN + cUtil().unescape(sNextUrl))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
