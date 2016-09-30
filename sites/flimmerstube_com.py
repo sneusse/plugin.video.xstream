@@ -26,7 +26,7 @@ def showGenresList():
     oGui = cGui()
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    aResult = cParser().parse(sHtmlContent, '<a[^>]class=[^>]catName[^>][^>]href="([^"]+)" >([^"]+)</a>')
+    aResult = cParser().parse(sHtmlContent, '<a[^>]class=[^>]catName[^>][^>]href="([^"]+)"[^>]>([^"]+)</a>')
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
         for sUrl, sName in aResult[1]:
@@ -39,7 +39,7 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = '<div[^>]class="ve-screen" title="([^"(]+)[^>]([^")]+).*?url[^>]([^")]+).*?<a href="([^">]+)'
+    pattern = '<div[^>]class="ve-screen"[^>]title="([^"(]+)[^>]([^")]+).*?url[^>]([^")]+).*?<a[^>]href="([^">]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if aResult[0] and aResult[1][0]:
@@ -48,11 +48,10 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setYear(sJahr)
-            params.setParam('sName', sName)
             params.setParam('entryUrl', sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
-    pattern = 'onclick="spages[^>][^>]([^"]+)[^>][^>];return[^>]false;"><span>&raquo;</span></a></span></td></tr></table><hr /><div style.*document.location.href=[^>]([^"]+)[^>][^>]page[^>]'
+    pattern = 'onclick="spages[^>][^>]([^"]+)[^>][^>];return[^>]false;"><span>&raquo;</span></a></span></td></tr></table>.*?location.href=[^>]([^"]+)[^>][^>]page[^>]'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
        for sNr, Url in aResult[1]:
