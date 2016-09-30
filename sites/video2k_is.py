@@ -114,7 +114,7 @@ def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('sUrl')
     
     if URL_MAIN in sUrl:
-        logger.info("Hi! I need a redirect => %s" % SITE_NAME)
+        sUrl = _redirectHoster(sUrl)
 
     results = []
     result = {}
@@ -122,6 +122,28 @@ def getHosterUrl(sUrl = False):
     result['resolved'] = False
     results.append(result)
     return results
+
+def _redirectHoster(url):
+    # WHY?! Why is this not working? :'(
+    #oRequestHandler = cRequestHandler(url)
+    #oRequestHandler.addHeaderEntry('Referer', url)
+    #oRequestHandler.request()
+    #return oRequestHandler.getRealUrl()
+
+    import urllib2
+    opener = urllib2.build_opener()
+    opener.addheaders = [('Referer', url)]
+    try:
+        resp = opener.open(url)
+        if url != resp.geturl():
+            return resp.geturl()
+        else:
+            return url
+    except urllib2.HTTPError, e:
+        if e.code == 403:
+            if url != e.geturl():
+                return e.geturl()
+        raise ResolverError('File not found')
 
 def showSearch():
     oGui = cGui()
