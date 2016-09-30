@@ -12,6 +12,7 @@ SITE_NAME = 'Flimmerstube'
 SITE_ICON = 'flimmerstube.png'
 
 URL_MAIN = 'http://flimmerstube.com/video/'
+URL_SEARCH = URL_MAIN + 'shv'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -20,6 +21,7 @@ def load():
     params.setParam('sUrl', URL_MAIN)
     oGui.addFolder(cGuiElement('Deutsche Horrorfilm', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenresList'), params)
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 def showGenresList():
@@ -34,11 +36,15 @@ def showGenresList():
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
-def showEntries(entryUrl = False, sGui = False):
+def showEntries(entryUrl = False, sGui = False, sSearchText = None):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    oRequest = cRequestHandler(entryUrl)
+    if sSearchText:
+        oRequest.addParameters('query', sSearchText)
+        oRequest.setRequestType(1)
+    sHtmlContent = oRequest.request()
     pattern = '<div[^>]class="ve-screen"[^>]title="([^"(]+)[^>]([^")]+).*?url[^>]([^")]+).*?<a[^>]href="([^">]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 
@@ -87,3 +93,14 @@ def getHosterUrl(sUrl = False):
     result['resolved'] = False
     results.append(result)
     return results
+
+def showSearch():
+    oGui = cGui()
+    sSearchText = oGui.showKeyBoard()
+    if not sSearchText: return
+    _search(False, sSearchText)
+    oGui.setEndOfDirectory()
+
+def _search(oGui, sSearchText):
+    if not sSearchText: return
+    showEntries(URL_SEARCH, oGui, sSearchText)
