@@ -16,6 +16,7 @@ URL_MAIN = 'http://www.video2k.is/'
 URL_MOVIE = URL_MAIN + '?c=movie&m=filter&directors=&cast=&genre=all&order_by=%s&date=this+month'
 URL_SEARCH = URL_MAIN + '?keyword=%s&c=movie&m=filter'
 URL_Hoster = URL_MAIN + '?c=ajax&m=movieStreams2&id=%s'
+URL_GENRE = URL_MAIN + '?c=movie&m=filter&directors=&cast=&genre='
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -29,8 +30,29 @@ def load():
     oGui.addFolder(cGuiElement('Top', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl',URL_MOVIE % 'updates')
     oGui.addFolder(cGuiElement('Updates', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_MAIN)
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
+
+def showGenre():
+    oGui = cGui()
+    params = ParameterHandler()
+    entryUrl = params.getValue('sUrl')
+    sHtmlContent = cRequestHandler(entryUrl).request()
+    parser = cParser()
+    isMatch, aResult = parser.parse(sHtmlContent, 'Genre</option>[^>].*?</select>')
+
+    if isMatch:
+        sHtmlContent = aResult[0]
+
+    pattern = '>([^<]+)</option>'
+    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+
+    for sTitle in aResult:
+        params.setParam('sUrl', URL_GENRE + sTitle)
+        oGui.addFolder(cGuiElement(sTitle, SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.setEndOfDirectory()  
 
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
@@ -71,7 +93,6 @@ def showEntries(entryUrl = False, sGui = False):
 
 def showHosters():
     sUrl = ParameterHandler().getValue('sUrl')
-
     sHtmlContent = cRequestHandler(sUrl).request()
     sPattern = "<a[^>]*href='([^']+)'(:?[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='url'[^>]*>(.*?)</span>"
     isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
