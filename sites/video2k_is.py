@@ -96,7 +96,7 @@ def showEntries(entryUrl = False, sGui = False):
 def showHosters():
     sUrl = ParameterHandler().getValue('sUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = "<a[^>]*href='([^']+)'(:?[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='url'[^>]*>(.*?)</span>"
+    sPattern = "<a[^>]*href='([^']+)'(:?[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='?url'?[^>]*>(.*?)</span>"
     isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
 
     hosters = []
@@ -112,6 +112,10 @@ def showHosters():
 
 def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('sUrl')
+    
+    if URL_MAIN in sUrl:
+        logger.info("Hi! I need a redirect => %s" % SITE_NAME)
+
     results = []
     result = {}
     result['streamUrl'] = sUrl
