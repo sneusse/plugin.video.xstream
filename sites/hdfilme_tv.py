@@ -319,7 +319,7 @@ def getHosters(sUrl = False):
     sHtmlContent = _getRequestHandler(sUrl).request()
 
     # Servername und Episoden pro Server ermitteln
-    pattern = "[^>]*>([a-zA-Z0-9_ ]+)</div>\s+<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>(.*?)</ul>"
+    pattern = "<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>.*?([a-zA-Z0-9_ ]+)</div>(.*?)</ul>"
     parser = cParser()
     aResult = parser.parse(sHtmlContent, pattern)
 
