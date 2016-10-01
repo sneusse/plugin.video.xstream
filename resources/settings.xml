@@ -38,6 +38,7 @@
 	<setting default="false" id="plugin_filmpalast_to" label="30014" type="bool" />
 	<setting label="Flimmerstube" type="lsep" />
 	<setting default="false" id="plugin_flimmerstube_com" label="30014" type="bool" />
+	<setting default="flimmerstube.com" enable="!eq(-1,false)" id="flimmerstube-domain" label="Flimmerstube domain" type="labelenum" values="flimmerstube.do.am|flimmerstube.com" />
 	<setting label="Goldstream" type="lsep" />
 	<setting default="false" id="plugin_goldstream_org" label="30014" type="bool" />
 	<setting label="Gute Filme" type="lsep" />
