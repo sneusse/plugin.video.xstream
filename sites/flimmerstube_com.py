@@ -5,21 +5,27 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
+from resources.lib.config import cConfig
 from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'flimmerstube_com'
 SITE_NAME = 'Flimmerstube'
 SITE_ICON = 'flimmerstube.png'
+SITE_SETTINGS = '<setting default="flimmerstube.com" enable="!eq(-1,false)" id="flimmerstube-domain" label="' + SITE_NAME + ' domain" type="labelenum" values="flimmerstube.do.am|flimmerstube.com" />'
 
-URL_MAIN = 'http://flimmerstube.com/video/'
-URL_SEARCH = URL_MAIN + 'shv'
+oConfig = cConfig()
+DOMAIN = oConfig.getSetting('flimmerstube-domain')
+
+URL_MAIN = 'http://%s' % DOMAIN
+URL_MOVIE = URL_MAIN + '/video/'
+URL_SEARCH = URL_MOVIE + 'shv'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('sUrl', URL_MAIN)
-    oGui.addFolder(cGuiElement('Deutsche Horrorfilm', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_MOVIE)
+    oGui.addFolder(cGuiElement('Horrorfilme', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenresList'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
@@ -27,7 +33,7 @@ def load():
 def showGenresList():
     oGui = cGui()
     params = ParameterHandler()
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    sHtmlContent = cRequestHandler(URL_MOVIE).request()
     aResult = cParser().parse(sHtmlContent, '<a[^>]class=[^>]catName[^>][^>]href="([^"]+)"[^>]>([^"]+)</a>')
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
@@ -51,6 +57,8 @@ def showEntries(entryUrl = False, sGui = False, sSearchText = None):
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
         for sName, sJahr, sThumbnail, sUrl in aResult[1]:
+            if not sThumbnail.startswith('http'):
+                sThumbnail = URL_MAIN + sThumbnail
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setYear(sJahr)
