@@ -197,7 +197,7 @@ def showHosters():
     isMatch, aResult = parser.parse(sHtmlContent, '<option[^>]*quality[^>]*id="(\w+)"[^>]*class="mirrorbuttons\w+"[^>]*>(.*?)</option>')  # filter main content if needed
 
     hosters = []
-    
+
     if not isMatch:
         return hosters
 
@@ -215,7 +215,8 @@ def showHosters():
 
         for sUrl, sName in aResultMirrors:
             hoster = {}
-            hoster['name'] = '[%s] %s' % (sQulitTitle, sName.strip())
+            hoster['name'] = sName.strip()
+            hoster['displayedName'] = '[%s] %s' % (sQulitTitle, sName.strip())
             hoster['link'] = sUrl
             hosters.append(hoster)
 
