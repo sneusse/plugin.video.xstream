@@ -34,14 +34,14 @@ def load():
 def showMovieMenu():
     sHtmlContent = cRequestHandler(URL_MAIN).request()
     pattern = '<input[^>]*name="kind"[^>]*value="(.*?)"[^>]*>' # kind
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
-    if not aResult[0]:
+    if not isMatch:
         return
 
     oGui = cGui()
     params = ParameterHandler()
-    for sKind in aResult[1]:
+    for sKind in aResult:
         params.setParam('kind', sKind)
         oGui.addFolder(cGuiElement(sKind.title(), SITE_IDENTIFIER, 'searchRequest'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenresMenu'))
@@ -52,20 +52,20 @@ def showMovieMenu():
 def showGenresMenu():
     sHtmlContent = cRequestHandler(URL_MAIN).request()
     pattern = '<ul[^>]*id="genres"[^>]*>(.*?)</ul>' # genre-ul
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
 
-    if not aResult[0]:
+    if not isMatch:
         return
 
     pattern = '<a[^>]*data-id="(\d+)"[^>]*href="[^"]*"[^>]*>([^<]*)<s' # id / title
-    aResult = cParser().parse(aResult[1][0], pattern)
+    isMatch, aResult = cParser().parse(sContainer, pattern)
 
-    if not aResult[0]:
+    if not isMatch:
         return
 
     oGui = cGui()
     params = ParameterHandler()
-    for sGenreId, sTitle in aResult[1]:
+    for sGenreId, sTitle in aResult:
         params.setParam('genre', sGenreId)
         oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'searchRequest'), params)
     oGui.setEndOfDirectory()
