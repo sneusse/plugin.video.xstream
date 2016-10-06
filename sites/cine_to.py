@@ -5,6 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
+from resources.lib.util import cUtil
 
 import re, json
 from datetime import datetime
@@ -75,9 +76,10 @@ def searchRequest(dictFilter = False, sGui = False):
 
     dictFilter = {}
     for (prop, val) in SEARCH_DICT.items():
-        parmVal = params.getValue(prop)
+        parmVal = params.getValue(cUtil().quotePlus(prop))
+        parmVal = eval(parmVal) if prop == 'year[]' and parmVal else parmVal # yes a bit ugly
         dictFilter[prop] = parmVal if parmVal else val
-        params.setParam(prop, val)
+        params.setParam(prop, dictFilter[prop])
 
     oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
 
@@ -179,12 +181,12 @@ def showYearSearch():
     beginYear = correctWrongYearEntry(oGui.showNumpad(defaultNum=1913, numPadTitle="Begin Year"))
     endYear = correctWrongYearEntry(oGui.showNumpad(defaultNum=datetime.now().year, numPadTitle="End Year"))
     dictSearch['year[]'] = [beginYear, endYear]
-    searchRequest(dictSearch, oGui)
+    searchRequest(dictSearch, False)
     oGui.setEndOfDirectory()
 
 
 def correctWrongYearEntry(year):
-    if int(year) < 1913:
+    if year == '' or int(year) < 1913:
         year = "1913"
     elif int(year) > datetime.now().year:
         year = datetime.now().year
@@ -200,5 +202,5 @@ def showRatingSearch():
     elif int(minRating) < 1:
         minRating = "1"
     dictSearch['rating'] = minRating
-    searchRequest(dictSearch, oGui)
+    searchRequest(dictSearch, False)
     oGui.setEndOfDirectory()
