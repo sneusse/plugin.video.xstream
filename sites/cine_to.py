@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+import ast
 
 import re, json
 from datetime import datetime
@@ -77,7 +78,7 @@ def searchRequest(dictFilter = False, sGui = False):
     dictFilter = {}
     for (prop, val) in SEARCH_DICT.items():
         parmVal = params.getValue(cUtil().quotePlus(prop))
-        parmVal = eval(parmVal) if prop == 'year[]' and parmVal else parmVal # yes a bit ugly
+        parmVal = ast.literal_eval(parmVal) if prop == 'year[]' and parmVal else parmVal # yes a bit ugly
         dictFilter[prop] = parmVal if parmVal else val
         params.setParam(prop, dictFilter[prop])
 
