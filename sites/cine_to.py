@@ -97,7 +97,7 @@ def searchRequest(dictFilter = False, sGui = False):
         if sLanguage and sLanguage not in aLang:
             continue
         elif sLanguage:
-            aLang = {sLanguage}
+            aLang = [sLanguage]
         oGuiElement = cGuiElement()
         oGuiElement.setSiteName(SITE_IDENTIFIER)
         oGuiElement.setFunction('showHosters')
