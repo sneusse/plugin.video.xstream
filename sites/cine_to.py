@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+from resources.lib.config import cConfig
 import ast
 
 import re, json
@@ -88,9 +89,15 @@ def searchRequest(dictFilter = False, sGui = False):
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
+    sLanguage = _getPrefLanguage()
+
     total = len (oResponse['entries'])
     for aEntry in oResponse['entries']:
         aLang = re.compile('(\w+)-').findall(aEntry['language'])
+        if sLanguage and sLanguage not in aLang:
+            continue
+        elif sLanguage:
+            aLang = {sLanguage}
         oGuiElement = cGuiElement()
         oGuiElement.setSiteName(SITE_IDENTIFIER)
         oGuiElement.setFunction('showHosters')
@@ -120,8 +127,13 @@ def showHosters():
     lang = params.getValue('lang')
     if not imdbID or not lang: return
 
+    sLanguage = _getPrefLanguage()
+
     hosters = []
     for sLang in re.compile('(\w+)-').findall(lang):
+        if sLanguage and sLanguage != sLang:
+            continue
+
         oResponse = _getJSonResponse(URL_LINKS, {'ID':imdbID,'lang':sLang} )
         if 'links' not in oResponse or len(oResponse['links']) == 0:
             return
@@ -175,6 +187,15 @@ def _search(oGui, sSearchText):
     dictSearch['term'] = sSearchText.strip()
     searchRequest(dictSearch, oGui)
 
+def _getPrefLanguage():
+    sLanguage = cConfig().getSetting('prefLanguage')
+    if sLanguage == '0':
+        sLanguage = 'de'
+    elif sLanguage == '1':
+        sLanguage = 'en'
+    else:
+        sLanguage = False
+    return sLanguage
 
 def showYearSearch():
     oGui = cGui()
