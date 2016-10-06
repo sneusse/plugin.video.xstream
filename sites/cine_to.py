@@ -103,7 +103,7 @@ def searchRequest(dictFilter = False, sGui = False):
         oOutParms = ParameterHandler()
         oOutParms.setParam('itemID', aEntry['imdb'])
         oOutParms.setParam('lang', aEntry['language'])
-        oGui.addFolder(oGuiElement, oOutParms, False, total)
+        oGui.addFolder(oGuiElement, oOutParms, False, total, True)
 
     if int(oResponse['current']) < int(oResponse['pages']):
         params.setParam('page', int(oResponse['current']) + 1)
@@ -131,7 +131,7 @@ def showHosters():
                 hoster['quality'] = QUALITY_ENUM[oResponse['links'][aEntry][0]]
             hoster['link'] = URL_OUT % oResponse['links'][aEntry][1]
             hoster['name'] = aEntry
-            hoster['displayedName'] = '%s (%s) - Quality: %s' % (aEntry, sLang, oResponse['links'][aEntry][0])
+            hoster['displayedName'] = '%s (%s) - Quality: %s' % (aEntry.title(), sLang, oResponse['links'][aEntry][0])
             hosters.append(hoster)
 
     if hosters:
