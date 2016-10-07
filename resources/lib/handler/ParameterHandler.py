@@ -2,11 +2,12 @@ import urllib
 import sys
 
 class ParameterHandler:
-	
+
     def __init__(self):          
         params = dict()
-        if len(sys.argv)>=3 and len(sys.argv[2])>0:               
-            params = dict(part.split('=') for part in sys.argv[ 2 ][ 1: ].split('&')) 
+        if len(sys.argv)>=3 and len(sys.argv[2])>0:        
+            uri = urllib.unquote(sys.argv[ 2 ][ 1: ])
+            params = dict(part.split('=') for part in uri.split('&')) 
         for param in params:
             params[param]=urllib.unquote_plus(params[param])
         self.__params = params
