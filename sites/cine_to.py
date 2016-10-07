@@ -84,7 +84,6 @@ def searchRequest(dictFilter = False, sGui = False):
         dictFilter[prop] = parmVal if parmVal else val
         params.setParam(parmProb, dictFilter[prop])
 
-    logger.info("dictFilter %s" % dictFilter)
     oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
 
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
