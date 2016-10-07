@@ -78,11 +78,13 @@ def searchRequest(dictFilter = False, sGui = False):
 
     dictFilter = {}
     for (prop, val) in SEARCH_DICT.items():
-        parmVal = params.getValue(cUtil().quotePlus(prop))
+        parmProb = prop if prop != 'year[]' else 'year' # ty Kodi 16/17... (year%5b%5d != year%5B%5B)
+        parmVal = params.getValue(parmProb)
         parmVal = ast.literal_eval(parmVal) if prop == 'year[]' and parmVal else parmVal # yes a bit ugly
         dictFilter[prop] = parmVal if parmVal else val
-        params.setParam(prop, dictFilter[prop])
+        params.setParam(parmProb, dictFilter[prop])
 
+    logger.info("dictFilter %s" % dictFilter)
     oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
 
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
