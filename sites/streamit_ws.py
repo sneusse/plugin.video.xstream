@@ -193,10 +193,16 @@ def showHosters():
         oRequestHandler.setRequestType(1)
 
     sHtmlContent = oRequestHandler.request()
-    parser = cParser()
-    isMatch, aResult = parser.parse(sHtmlContent, '<option[^>]*quality[^>]*id="(\w+)"[^>]*class="mirrorbuttons\w+"[^>]*>(.*?)</option>')  # filter main content if needed
-
+    logger.info("sHtmlContent %s" % sHtmlContent)
     hosters = []
+    parser = cParser()
+    
+    isMatch, sContainer = parser.parseSingleResult(sHtmlContent, '<select[^>]*class="sel_quali"[^>]*>(.*?)</select>')  # filter main content if needed
+
+    if not isMatch:
+        return hosters
+
+    isMatch, aResult = parser.parse(sContainer, '<option[^>]*id="(\w+)"[^>]*>(.*?)</option>')  # filter main content if needed
 
     if not isMatch:
         return hosters
