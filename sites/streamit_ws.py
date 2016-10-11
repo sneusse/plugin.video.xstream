@@ -193,21 +193,19 @@ def showHosters():
         oRequestHandler.setRequestType(1)
 
     sHtmlContent = oRequestHandler.request()
-    logger.info("sHtmlContent %s" % sHtmlContent)
     hosters = []
     parser = cParser()
-    
     isMatch, sContainer = parser.parseSingleResult(sHtmlContent, '<select[^>]*class="sel_quali"[^>]*>(.*?)</select>')  # filter main content if needed
 
     if not isMatch:
         return hosters
 
-    isMatch, aResult = parser.parse(sContainer, '<option[^>]*id="(\w+)"[^>]*>(.*?)</option>')  # filter main content if needed
+    isMatch, aResult = parser.parse(sContainer, '<option[^>]*\((?:[^>]*quality/(\d+)\.png)?[^>]*id="(\w+)"[^>]*>(.*?)</option>')  # filter main content if needed
 
     if not isMatch:
         return hosters
 
-    for sID, sQulitTitle in aResult:
+    for sQulityNr, sID, sQulityTitle in aResult:
         sPattern = '<div[^>]*class="mirrors\w+"[^>]*id="%s">(.*?)</div></div>' % sID
         isMatchMirrors, sMirrorContainer = parser.parse(sHtmlContent, sPattern)
 
@@ -222,7 +220,8 @@ def showHosters():
         for sUrl, sName in aResultMirrors:
             hoster = {}
             hoster['name'] = sName.strip()
-            hoster['displayedName'] = '[%s] %s' % (sQulitTitle, sName.strip())
+            hoster['displayedName'] = '[%s] %s' % (sQulityTitle, sName.strip())
+            hoster['quality'] = sQulityNr if sQulityNr else '0'
             hoster['link'] = sUrl
             hosters.append(hoster)
 
