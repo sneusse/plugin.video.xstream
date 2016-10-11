@@ -216,7 +216,6 @@ def showMainMenu(sFunction):
             oGuiElement = cGuiElement()
             oGuiElement.setTitle(aPlugin['name'])
             oGuiElement.setSiteName(aPlugin['id'])
-            oGuiElement.setDescription('sdfsdfsdfsdf')
             oGuiElement.setFunction(sFunction)
             if 'icon' in aPlugin and aPlugin['icon']:
                 oGuiElement.setThumbnail(aPlugin['icon'])
