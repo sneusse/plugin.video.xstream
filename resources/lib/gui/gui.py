@@ -215,17 +215,17 @@ class cGui:
         '''
         set the listing to a certain content, makes special views available
         sets view to the viewID which is selected in xStream settings
+
+        see http://mirrors.xbmc.org/docs/python-docs/stable/xbmcplugin.html#-setContent
+        (seasons is also supported but not listed)
         '''
-        if content == 'movies':
-            xbmcplugin.setContent(self.pluginHandle, 'movies')
-        elif content == 'tvshows':
-            xbmcplugin.setContent(self.pluginHandle, 'tvshows')
-        elif content == 'seasons':
-            xbmcplugin.setContent(self.pluginHandle, 'seasons')
-        elif content == 'episodes':
-            xbmcplugin.setContent(self.pluginHandle, 'episodes')
+        content = content.lower()
+        supportedViews = ['files', 'songs', 'artists', 'albums', 'movies', 'tvshows', 'seasons','episodes', 'musicvideos']
+
+        if content in supportedViews:
+            xbmcplugin.setContent(self.pluginHandle, content)
         if cConfig().getSetting('auto-view')=='true':
-            xbmc.executebuiltin("Container.SetViewMode(%s)" % cConfig().getSetting(content+'-view') )
+            xbmc.executebuiltin("Container.SetViewMode(%s)" % cConfig().getSetting(content+'-view'))
 
 
     def updateDirectory(self):
