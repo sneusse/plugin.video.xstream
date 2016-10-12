@@ -243,7 +243,6 @@ def showMainMenu(sFunction):
     else:
         for folder in settingsGuiElements():
             oGui.addFolder(folder)
-    oGui.setView('files')
     oGui.setEndOfDirectory()
 
 def settingsGuiElements():

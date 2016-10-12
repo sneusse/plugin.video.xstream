@@ -42,6 +42,7 @@ class cGui:
            self.metaMode = 'replace'
         else:
            self.metaMode = 'add'
+        self.setView('files')
         #for globalSearch or alterSearch
         self.globalSearch = False
         self._collectMode = False
