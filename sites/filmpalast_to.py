@@ -49,7 +49,7 @@ def showGenre():
     if not aResult[0]: return
     for sUrl, sName in aResult[1]:
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEntries')
-        params.setParam('sUrl', sUrl)
+        params.setParam('sUrl', __checkUrl(sUrl))
         oGui.addFolder(oGuiElement, params)
     oGui.setEndOfDirectory()
 
@@ -66,7 +66,7 @@ def showAlphaNumeric():
     if not aResult[0]: return
     for sUrl, sName in aResult[1]:
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEntries')
-        params.setParam('sUrl', sUrl)
+        params.setParam('sUrl', __checkUrl(sUrl))
         oGui.addFolder(oGuiElement, params)
     oGui.setEndOfDirectory()
 
