@@ -184,6 +184,7 @@ def _search(oGui, sSearchText):
     showEntries(URL_SEARCH + sSearchText, oGui)
 
 def __checkUrl(url):
+    url = url.replace('https:', 'http:')
     return url if 'http:' in url else URL_MAIN + url
 
 def __getSource(id):
