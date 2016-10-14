@@ -238,8 +238,6 @@ def showHosters():
     oRequest = cRequestHandler(params.getValue('entryUrl'))
     sHtmlContent = oRequest.request()
 
-    logger.info("entryUrl %s" % params.getValue('entryUrl'))
-
     pattern = 'class="hostName"[^>]*>([^<>]+)(.+?)currentStreamLinks'
     aResult = cParser().parse(sHtmlContent, pattern)
 
