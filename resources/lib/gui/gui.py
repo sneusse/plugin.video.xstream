@@ -221,11 +221,11 @@ class cGui:
         (seasons is also supported but not listed)
         '''
         content = content.lower()
-        supportedViews = ['files', 'songs', 'artists', 'albums', 'movies', 'tvshows', 'seasons','episodes', 'musicvideos']
+        supportedViews = ['files', 'songs', 'artists', 'albums', 'movies', 'tvshows', 'seasons', 'episodes', 'musicvideos']
 
         if content in supportedViews:
             xbmcplugin.setContent(self.pluginHandle, content)
-        if cConfig().getSetting('auto-view')=='true':
+        if cConfig().getSetting('auto-view')=='true' and content:
             xbmc.executebuiltin("Container.SetViewMode(%s)" % cConfig().getSetting(content+'-view'))
 
 
