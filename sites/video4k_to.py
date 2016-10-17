@@ -24,6 +24,8 @@ DEFAULT_REQUEST_PARAMS = dict(sEcho=1, iColumns=1, sColumns="", iDisplayStart=0,
                               bSortable_0="false", bSortable_1="true", bSortable_2="false", bSortable_3="false",
                               bSortable_4="true", type="movies", filter="")
 
+QUALITY_ENUM = {0:'LOW', 1:'OKAY', 2:'GOOD'}
+
 def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
@@ -184,12 +186,15 @@ def showHosters():
         oRequest.addParameters('episode', oParams.getValue('episode'))
     sHtmlContent = oRequest.request()
 
+    if not sHtmlContent:
+        return []
+
     jContent = json.loads(sHtmlContent)
 
-    hosters = []
     if not jContent[1]:
-        return hosters
+        return []
 
+    hosters = []
     for ohoster in jContent[1].items():
         sName = ohoster[1]['name']
 
@@ -197,6 +202,9 @@ def showHosters():
             hoster = dict()
             hoster['link'] = links['URL']
             hoster['name'] = sName
+            if links['quality'] in QUALITY_ENUM:
+                hoster['displayedName'] = '[%s] %s' % (QUALITY_ENUM[links['quality']], sName)
+            hoster['quality'] = links['quality']
             hosters.append(hoster)
 
     if hosters:
