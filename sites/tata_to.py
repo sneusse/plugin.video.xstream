@@ -98,6 +98,9 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '(?:<span[^>]*class="season-label"[^>]*>.*?<span[^>]*class="el-num"[^>]*>\s+(\d+)\s+</span>.*?)?' # season
     pattern += '</a>.*?' # end link
     pattern += '<h\d+>(.*?)</h\d+>.*?' # title
+    pattern += '(?:<span[^>]*class="[^"]*glyphicon-time[^"]*"[^>]*></span>[^\d]*(\d+) min[^<]*</li>.*?)?' # duration
+    pattern += '(?:<span[^>]*class="[^"]*glyphicon-calendar[^"]*"[^>]*></span>(.*?)</li>.*?)' # year
+    pattern += '(?:<p>IMDb:</p>([^<]*)</li>.*?)' # imdb
     pattern += '(?:<div[^>]*class="caption-description"[^>]*>(.*?)</div>.*?)' # description
     parser = cParser()
     aResult = parser.parse(sHtmlContent, pattern)
@@ -107,7 +110,7 @@ def showEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult[1])
-    for sUrl, sQuality, sThumbnail, sSeason, sName, sDesc in aResult[1]:
+    for sUrl, sQuality, sThumbnail, sSeason, sName, sDuration, sYear, sImdb,sDesc in aResult[1]:
         isTvshow = True if sSeason else False
 
         sName = cUtil().removeHtmlTags(sName.strip())
@@ -127,9 +130,13 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement.setTitle('%s - Staffel %s' % (sName, sSeason))
             params.setParam('sSeason', sSeason)
 
+        oGuiElement.setYear(sYear)
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setDescription(sDesc)
+        oGuiElement.addItemValue('rating', sImdb)
+        if sDuration:
+            oGuiElement.addItemValue('duration', int(sDuration)*60)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
