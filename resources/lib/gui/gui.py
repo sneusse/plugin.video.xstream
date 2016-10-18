@@ -226,7 +226,9 @@ class cGui:
         if content in supportedViews:
             xbmcplugin.setContent(self.pluginHandle, content)
         if cConfig().getSetting('auto-view')=='true' and content:
-            xbmc.executebuiltin("Container.SetViewMode(%s)" % cConfig().getSetting(content+'-view'))
+            viewId = cConfig().getSetting(content+'-view')
+            if viewId:
+                xbmc.executebuiltin("Container.SetViewMode(%s)" % viewId)
 
 
     def updateDirectory(self):
