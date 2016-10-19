@@ -122,7 +122,7 @@ def update(REMOTE_PATH):
             data = updateFile.read(n)
             if os.path.exists(dest):
                 os.remove(dest)
-            f = open(dest, 'w')
+            f = open(dest, 'wb')
             f.write(data)
             f.close()
     updateFile.close()
