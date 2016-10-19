@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+import re
 
 SITE_IDENTIFIER = 'dokustreamer_de'
 SITE_NAME = 'Dokustreamer'
@@ -52,6 +53,7 @@ def showEntries(entryUrl=False, sGui=False):
     if aResult[0] and aResult[1][0]:
         total = len(aResult[1])
         for sUrl, sName, sThumbnail in aResult[1]:
+            sThumbnail = re.sub('-\d+x\d+\.', '.',sThumbnail)
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail.decode('utf-8').encode('utf-8'))
             params.setParam('entryUrl', URL_MAIN + sUrl)
