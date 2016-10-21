@@ -101,28 +101,28 @@ def showGenreList():
     # Movie-Seite laden
     sHtmlContent = _getRequestHandler(entryUrl).request()
 
-    # Select für Generes Laden
+    # Select für Generes-Container
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
 
     # Regex parsen
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
 
     # Nichts gefunden? => raus hier
-    if not aResult[0]:
+    if not isMatch:
         return
 
     # Filter für Genres
     pattern = '<option[^>]*value="(\d[^ ]*)"[^>]*>(.*?)</option[>].*?'
     
     # Regex parsen
-    aResult = cParser().parse(aResult[1][0], pattern)
+    isMatch, aResult = cParser().parse(sContainer, pattern)
 
     # Nichts gefunden? => raus hier
-    if not aResult[0]:
+    if not isMatch:
         return
 
     # Alle Genres durchlaufen und Liste erzeugen
-    for sID,sGenre in aResult[1]:
+    for sID,sGenre in aResult:
         params.setParam('sUrl',entryUrl + '&cat=' + sID)
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     
@@ -148,15 +148,13 @@ def showEntries(entryUrl = False, sGui = False):
     
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    parser = cParser()
+    isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
-    if not aResult[0] or not aResult[1][0]: 
+    if not isMatch: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
-
-    # Content festlegen der geparst werden soll
-    sMainContent = aResult[1][0]
 
     # URL ermitteln
     pattern = '<div[^>]*class="box-product clearfix"[^>]*>\s*?'
@@ -176,18 +174,18 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
 
     # HTML parsen
-    aResult = cParser().parse(sMainContent, pattern)
+    isMatch, aResult = parser.parse(sMainContent, pattern)
 
     # Kein Einträge gefunden? => Raus hier
-    if not aResult[0]: 
+    if not isMatch: 
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     # Listengröße ermitteln
-    total = len (aResult[1])
+    total = len(aResult)
 
     # Alle Ergebnisse durchlaufen
-    for sUrl, sThumbnail, sEpisodeNrs, sName, sDesc in aResult[1]:
+    for sUrl, sThumbnail, sEpisodeNrs, sName, sDesc in aResult:
         # Bei Filmen das Jahr vom Title trennen
         aYear = re.compile("(.*?)\((\d*)\)").findall(sName)
         iYear = False
@@ -237,11 +235,11 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
 
     # Seite parsen
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, sPageNr = parser.parseSingleResult(sHtmlContent, pattern)
 
     # Falls ein Ergebniss gefunden wurden "Next-Page" ergänzen
-    if aResult[0] and aResult[1][0]:
-        params.setParam('page', int(aResult[1][0]))
+    if isMatch:
+        params.setParam('page', int(sPageNr))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     # Liste abschließen und View setzen
@@ -261,10 +259,10 @@ def showHosters():
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     # Prüfen ob Einträge vorliegen
-    if not aResult[0]:
+    if not isMatch:
         return
 
     # Ermitteln ob es sich um eine Serie handelt
@@ -272,7 +270,7 @@ def showHosters():
 
     # Falls Episoden gefunden worden => Episodenauswahl vorschalten
     if isTvshowEntry == 'True':
-        showEpisodes(aResult[1], params)
+        showEpisodes(aResult, params)
     else:
         return getHosters(entryUrl)
 
@@ -321,13 +319,13 @@ def getHosters(sUrl = False):
     # Servername und Episoden pro Server ermitteln
     pattern = "<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>.*?([a-zA-Z0-9_ ]+)</div>(.*?)</ul>"
     parser = cParser()
-    aResult = parser.parse(sHtmlContent, pattern)
+    isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     # Hosterliste initialisieren
     hosters = []
 
     # Prüfen ob Server ermittelt werden konnte
-    if aResult[0]:
+    if isMatch:
         # Prüfen ob eine direkte-Episode gewünscht ist
         aMatches = re.compile("episode=(\d+)&").findall(sUrl)
 
@@ -335,14 +333,14 @@ def getHosters(sUrl = False):
         sEpisode = "\d+" if not aMatches else aMatches[0]
 
         # Server-Block durchlaufen
-        for sServername, sInnerHtml in aResult[1]:
+        for sServername, sInnerHtml in aResult:
             # Nur Links für die gewünschte Episode ermitteln
             pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\s+(?:%s|HD|SD|Audio Mic|Bluray)\s+</a>" % sEpisode
-            aResultLinks = parser.parse(sInnerHtml, pattern, ignoreCase = True)
+            isMatch, sServerUrl = parser.parseSingleResult(sInnerHtml, pattern)
 
             # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
-            if aResultLinks[0]:
-                hosters.extend(_getHostFromUrl(aResultLinks[1][0], sServername))
+            if isMatch:
+                hosters.extend(_getHostFromUrl(sServerUrl, sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
@@ -356,10 +354,10 @@ def _getHostFromUrl(sUrl, sServername):
 
     # JSon mit den Links ermitteln
     pattern = '(\[{".*?}\])'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, sJson = cParser().parseSingleResult(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
-    if not aResult[0] or not aResult[1][0]: 
+    if not isMatch: 
         logger.info("hoster pattern did not match")
         return []
 
@@ -367,7 +365,7 @@ def _getHostFromUrl(sUrl, sServername):
     hosters = []
 
     # Alle Einträge durchlaufen und Hostereintrag erstellen
-    for entry in json.loads(aResult[1][0]):
+    for entry in json.loads(sJson):
         if 'file' not in entry or 'label' not in entry: continue
         sLabel = sServername + ' - ' + entry['label'].encode('utf-8')
         hoster = dict()
@@ -412,7 +410,8 @@ def showSearch():
     # Suche durchführen
     _search(False, sSearchText)
 
-    #Liste abschließen
+    #Liste abschließen und View setzen
+    oGui.setView()
     oGui.setEndOfDirectory()
 
 # Such-Funktion (z.b auch für Globale-Suche)
