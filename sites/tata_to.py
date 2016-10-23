@@ -204,12 +204,19 @@ def getHosters(sUrl = False):
         sJson = cRequestHandler(sStreamUrl.replace('https:','http:')).request()
         data = json.loads(sJson)
         if "url" in data:
-            for urlData in data["url"]:
+            if isinstance(data["url"],list):
+                for urlData in data["url"]:
+                    hoster = dict()
+                    hoster['link'] = urlData["link_mp4"]
+                    hoster['name'] = urlData["quality"]
+                    if urlData["quality"] in QUALITY_ENUM:
+                        hoster['quality'] = QUALITY_ENUM[urlData["quality"]]
+                    hoster['resolveable'] = True
+                    hosters.append(hoster)
+            else:
                 hoster = dict()
-                hoster['link'] = urlData["link_mp4"]
-                hoster['name'] = urlData["quality"]
-                if urlData["quality"] in QUALITY_ENUM:
-                    hoster['quality'] = QUALITY_ENUM[urlData["quality"]]
+                hoster['link'] = data["url"]
+                hoster['name'] = SITE_NAME
                 hoster['resolveable'] = True
                 hosters.append(hoster)
 
