@@ -204,6 +204,8 @@ def getHosters(sUrl = False):
         if "url" in data:
             for urlData in data["url"]:
                 hoster = dict()
+                hoster['link'] = urlData["link_mp4"]
+                hoster['name'] = urlData["quality"]
                 hoster['resolveable'] = True
                 hosters.append(hoster)
 
