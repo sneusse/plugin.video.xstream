@@ -61,7 +61,7 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    oRequestHandler = cRequestHandler(entryUrl)
+    oRequestHandler = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False))
     oRequestHandler.addHeaderEntry('Referer', entryUrl)
     sHtmlContent = oRequestHandler.request()
 
