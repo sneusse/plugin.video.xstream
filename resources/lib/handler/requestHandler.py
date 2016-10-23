@@ -42,6 +42,8 @@ class cRequestHandler:
         self.__setCookiePath()
         self.__sResponseHeader = ''
 
+        if self.requestTimeout >= 60 or self.requestTimeout <= 0:
+            self.requestTimeout = 60
 
     def removeNewLines(self, bRemoveNewLines):
         self.__bRemoveNewLines = bRemoveNewLines
