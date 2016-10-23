@@ -34,6 +34,7 @@ class cRequestHandler:
         self.caching = caching
         self.ignoreErrors = ignoreErrors
         self.cacheTime = int(cConfig().getSetting('cacheTime'))
+        self.requestTimeout = int(cConfig().getSetting('requestTimeout'))
         self.removeBreakLines(True)
         self.removeNewLines(True)
         self.__setDefaultHeader()
@@ -111,8 +112,9 @@ class cRequestHandler:
             sContent = self.readCache(self.getRequestUri())
             if sContent:
                 return sContent
+
         try:
-            oResponse = opener.open(oRequest,timeout = 60)
+            oResponse = opener.open(oRequest,timeout = self.requestTimeout)
         except mechanize.HTTPError, e:
             if e.code == 503 and e.headers.get("Server") == 'cloudflare-nginx':
                 oResponse, cookieJar = cCFScrape().resolve(oRequest, e, cookieJar)
