@@ -195,17 +195,17 @@ def getHosters(sUrl = False):
     sHtmlContent = cRequestHandler(sUrl).request()
 
     pattern = "<div[^>]*data-url='([^']*)'[^>]*>"
-    isMatch, sJson = cParser().parseSingleResult(sHtmlContent,pattern)
+    isMatch, sStreamUrl = cParser().parseSingleResult(sHtmlContent,pattern)
 
     hosters = []
     if isMatch:
+        sJson = cRequestHandler(sStreamUrl).request()
         data = json.loads(sJson)
-        for hosterUrl in data:
-            hoster = dict()
-            hoster['link'] = hosterUrl.replace('https:','http:')
-            hoster['name'] = SITE_NAME
-            hoster['resolveable'] = True
-            hosters.append(hoster)
+        if "url" in data:
+            for urlData in data["url"]:
+                hoster = dict()
+                hoster['resolveable'] = True
+                hosters.append(hoster)
 
     if hosters:
         hosters.append('play')
