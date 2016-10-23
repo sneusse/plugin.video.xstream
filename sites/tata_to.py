@@ -25,6 +25,8 @@ URL_PARMS_ORDER_MOSTRATED = '&order=ratingen'
 URL_PARMS_ORDER_TOPIMDB = '&order=imdb'
 URL_PARMS_ORDER_RELEASEDATE = '&order=veröffentlichung'
 
+QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
+
 def load():
     logger.info("Load %s" % SITE_NAME)
 
@@ -206,6 +208,8 @@ def getHosters(sUrl = False):
                 hoster = dict()
                 hoster['link'] = urlData["link_mp4"]
                 hoster['name'] = urlData["quality"]
+                if urlData["quality"] in QUALITY_ENUM:
+                    hoster['quality'] = QUALITY_ENUM[urlData["quality"]]
                 hoster['resolveable'] = True
                 hosters.append(hoster)
 
