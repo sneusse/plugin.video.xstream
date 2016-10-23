@@ -127,11 +127,13 @@ class cRequestHandler:
             else:
                 oResponse = e                 
         except mechanize.URLError, e:
-            xbmcgui.Dialog().ok('xStream',str(e.reason), 'Fehler')
+            if not self.ignoreErrors:
+                xbmcgui.Dialog().ok('xStream',str(e.reason), 'Fehler')
             logger.error("URLError "+str(e.reason)+" Url: "+self.__sUrl)
             return ''
         except httplib.HTTPException, e:
-            xbmcgui.Dialog().ok('xStream', str(e))
+            if not self.ignoreErrors:
+                xbmcgui.Dialog().ok('xStream', str(e))
             logger.error("HTTPException "+str(e)+" Url: "+self.__sUrl)
             return ''
 
