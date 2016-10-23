@@ -12,8 +12,10 @@ SITE_IDENTIFIER = 'flimmerstube_com'
 SITE_NAME = 'Flimmerstube'
 SITE_ICON = 'flimmerstube.png'
 
-URL_MOVIE_GER = 'http://flimmerstube.com/video'
-URL_MOVIE_ENG = 'http://flimmerstube.do.am/video'
+URL_MAIN_GER = 'http://flimmerstube.com'
+URL_MAIN_ENG = 'http://flimmerstube.com'
+URL_MOVIE_GER = URL_MAIN_GER + '/video'
+URL_MOVIE_ENG = URL_MAIN_ENG + '/video'
 URL_SEARCH = '/shv'
 
 def load():
@@ -24,13 +26,17 @@ def load():
     sLanguage = _getPrefLanguage()
 
     if sLanguage == '0' or sLanguage == '2':
+        params.setParam('sBaseUrl', URL_MAIN_GER)
         params.setParam('sUrl', URL_MOVIE_GER)
         oGui.addFolder(cGuiElement('Deutsche Horrorfilme', SITE_IDENTIFIER, 'showEntries'), params)
+        params.setParam('sBaseUrl', URL_MAIN_GER)
         params.setParam('sUrl', URL_MOVIE_GER)
         oGui.addFolder(cGuiElement('Genre (DE)', SITE_IDENTIFIER, 'showGenresList'), params)
     if sLanguage == '1' or sLanguage == '2':
+        params.setParam('sBaseUrl', URL_MAIN_ENG)
         params.setParam('sUrl', URL_MOVIE_ENG)
         oGui.addFolder(cGuiElement('English Horror Movie', SITE_IDENTIFIER, 'showEntries'), params)
+        params.setParam('sBaseUrl', URL_MAIN_ENG)
         params.setParam('sUrl', URL_MOVIE_ENG)
         oGui.addFolder(cGuiElement('Genre (EN)', SITE_IDENTIFIER, 'showGenresList'), params)
 
@@ -49,10 +55,11 @@ def showGenresList():
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
-def showEntries(entryUrl = False, sGui = False, sSearchText = None):
+def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = None):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
+    if not sBaseUrl: sBaseUrl = params.getValue('sBaseUrl')
     oRequest = cRequestHandler(entryUrl)
     if sSearchText:
         oRequest.addParameters('query', sSearchText)
@@ -67,15 +74,17 @@ def showEntries(entryUrl = False, sGui = False, sSearchText = None):
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail if sThumbnail.startswith("http") else URL_MAIN + sThumbnail)
             oGuiElement.setYear(sJahr)
-            params.setParam('entryUrl', sUrl)
+            params.setParam('sBaseUrl', sBaseUrl)
+            params.setParam('entryUrl', sBaseUrl + sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
     pattern = 'onclick="spages[^>][^>]([^"]+)[^>][^>];return[^>]false;"><span>&raquo;</span></a></span></td></tr></table>.*?location.href=[^>]([^"]+)[^>][^>]page[^>]'
     aResult = cParser().parse(sHtmlContent, pattern)
     if aResult[0] and aResult[1][0]:
-       for sNr, Url in aResult[1]:
-        params.setParam('sUrl', Url + sNr)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+        for sNr, Url in aResult[1]:
+            params.setParam('sBaseUrl', sBaseUrl)
+            params.setParam('sUrl', sBaseUrl + Url + sNr)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
         oGui.setView('movies')
@@ -128,9 +137,9 @@ def _search(oGui, sSearchText):
         oGui = cGui()
 
     if sLanguage == '0' or sLanguage == '2':
-        showEntries(URL_MOVIE_GER + URL_SEARCH, oGui, sSearchText)
+        showEntries(URL_MOVIE_GER + URL_SEARCH, oGui, sSearchText, URL_MAIN_GER)
     if sLanguage == '1' or sLanguage == '2':
-        showEntries(URL_MOVIE_ENG + URL_SEARCH, oGui, sSearchText)
+        showEntries(URL_MOVIE_ENG + URL_SEARCH, oGui, sSearchText, URL_MAIN_ENG)
 
     if isInternalSearch:
         oGui.setView('movies')
