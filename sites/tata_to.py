@@ -199,7 +199,7 @@ def getHosters(sUrl = False):
 
     hosters = []
     if isMatch:
-        sJson = cRequestHandler(sStreamUrl).request()
+        sJson = cRequestHandler(sStreamUrl.replace('https:','http:')).request()
         data = json.loads(sJson)
         if "url" in data:
             for urlData in data["url"]:
