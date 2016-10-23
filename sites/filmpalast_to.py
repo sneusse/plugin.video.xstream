@@ -120,7 +120,7 @@ def showEntries(entryUrl = False, sGui = False):
         sView = 'episodes'
         sMediaType = 'episode'
     
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>[^<]*' # link / title
     pattern +='<img[^>]*src=["\']([^"\']*)["\'][^>]*class="cover-opacity"[^>]*>' # thumbnail
     parser = cParser()

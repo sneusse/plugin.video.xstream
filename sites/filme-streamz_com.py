@@ -53,7 +53,7 @@ def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = 'class="list_film.*?img src="([^"]+).*?\s=\s\'([^\']+).*?>([^"(]+).*?\(([^")]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 

@@ -89,7 +89,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    oRequest = cRequestHandler(entryUrl)
+    oRequest = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False))
     sHtmlContent = oRequest.request()
     pattern = '<div[^>]*class="ml-item-content"[^>]*>.*?' # start element
     pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?' # url

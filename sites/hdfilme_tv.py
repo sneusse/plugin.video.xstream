@@ -143,7 +143,7 @@ def showEntries(entryUrl = False, sGui = False):
     iPage = int(params.getValue('page'))
 
     # Daten ermitteln
-    oRequest = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl)
+    oRequest = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, (sGui is not False))
     sHtmlContent = oRequest.request()
     
     # Filter out the main section
@@ -432,7 +432,7 @@ def _search(oGui, sSearchText):
     showEntries(URL_SEARCH % sSearchText, oGui)
 
 # RequestHandler mit passenden User-Agent erzeugen
-def _getRequestHandler(sUrl):
-    oRequest = cRequestHandler(sUrl)
+def _getRequestHandler(sUrl, ignoreErrors = False):
+    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
     oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
     return oRequest

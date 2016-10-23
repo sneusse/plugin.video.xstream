@@ -58,7 +58,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = "<div[^>]id=['\"]\w+-\d+['\"].*?" # entry-typ
     pattern += '(?:<div[^>]*class="movieTV"[^>]*>([^"]*)</div>.*?)?' # season / episodes
     pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?' # Thumbnail

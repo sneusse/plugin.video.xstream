@@ -94,7 +94,7 @@ def showEntries(entryUrl = False, sGui = False):
     # set 'safe_search' for adult results
     safeSearchUrl = entryUrl + ('&' if '?' in entryUrl else '?') + 'safe_search=' + str(int(showAdult()))
 
-    sHtmlContent = _getRequestHandler(safeSearchUrl, True).request()
+    sHtmlContent = _getRequestHandler(safeSearchUrl, True, (sGui is not False)).request()
     pattern = '<img[^>]*src="([^"]*)"[^>]*class="img-responsive[ ]img-rounded"[^>]*>.*?' # Thumbnail
     pattern += '<a[^>]*href="([^"]*)"[^>]*>(.*?)</a[>].*?' # link / title
     pattern += '<a[^>]*><i[^>]*></i>(.*?)</a[>].*?' # type
@@ -330,7 +330,7 @@ def _getSiteKey():
     else:
         logger.error("error while getting sitekey: basic.min.js not found")
 
-def _getRequestHandler(sUrl, bCache = False):
-    oRequest = cRequestHandler(sUrl, caching = bCache)
+def _getRequestHandler(sUrl, bCache = False, ignoreErrors = False):
+    oRequest = cRequestHandler(sUrl, caching = bCache, ignoreErrors = ignoreErrors)
     oRequest.addHeaderEntry('User-Agent', 'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0')
     return oRequest

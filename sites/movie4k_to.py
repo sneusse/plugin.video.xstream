@@ -65,7 +65,7 @@ def showXXXMenu():
     __createMainMenuItem(oGui, 'Genre', URL_XXX_GENRE, 'showGenre')
     oGui.setEndOfDirectory()
 
-def __getHtmlContent(sUrl = False, sSecurityValue = False):
+def __getHtmlContent(sUrl = False, sSecurityValue = False, ignoreErrors = False):
     params = ParameterHandler()
     # Test if a url is available and set it
     if not sUrl:
@@ -86,7 +86,7 @@ def __getHtmlContent(sUrl = False, sSecurityValue = False):
     else:
         adultCookie = ''
     # Make the request
-    oRequest = cRequestHandler(sUrl)
+    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
     oRequest.addHeaderEntry('Cookie', sPrefLang+sSecurityValue+adultCookie)
     return oRequest.request()
     
@@ -246,7 +246,7 @@ def showSearch():
 
     sSearchText = oGui.showKeyBoard()
     if (sSearchText != False and sSearchText != ''):
-        _search(oGui, sSearchText)
+        _search(False, sSearchText)
     else:
         return
     oGui.setView('movies')
@@ -256,7 +256,7 @@ def _search(oGui, sSearchText):
     # add wildcard to find results where seatchText is part of a word
     sSearchText = '%'+sSearchText+'%'
     # perform search
-    oRequest = cRequestHandler(URL_SEARCH)
+    oRequest = cRequestHandler(URL_SEARCH, ignoreErrors = (oGui is not False))
     oRequest.addParameters('search', sSearchText)
     #oRequest.addParameters('securekey', key)
     response = oRequest.request()
@@ -368,11 +368,12 @@ def parseMovieSimpleList():
             oGui.setView('movies')
             oGui.setEndOfDirectory()
       
-def __parseMovieSimpleList(sUrl, iPage, oGui, sHtmlContent = False):
+def __parseMovieSimpleList(sUrl, iPage, sGui, sHtmlContent = False):
+    oGui = sGui if sGui else cGui()
     oParser = cParser()
     if not sHtmlContent:
-        oRequest = cRequestHandler(sUrl)
-        sHtmlContent = __getHtmlContent(sUrl)
+        oRequest = cRequestHandler(sUrl, ignoreErrors = (sGui is not False))
+        sHtmlContent = __getHtmlContent(sUrl, ignoreErrors = (oGui is not False))
     
     sPattern = '<TR[^>]*>\s*<TD[^>]*id="tdmovies"[^>]*>\s*<a href="([^"]+)">(.*?)</a>.*?<img[^>]*border=0[^>]*src="/img/([^"]+)"[^>]*>.*?</TR>'
     aResult = oParser.parse(sHtmlContent, sPattern)

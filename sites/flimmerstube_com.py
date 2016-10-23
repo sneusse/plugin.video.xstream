@@ -13,7 +13,7 @@ SITE_NAME = 'Flimmerstube'
 SITE_ICON = 'flimmerstube.png'
 
 URL_MAIN_GER = 'http://flimmerstube.com'
-URL_MAIN_ENG = 'http://flimmerstube.com'
+URL_MAIN_ENG = 'http://flimmerstube.do.am'
 URL_MOVIE_GER = URL_MAIN_GER + '/video'
 URL_MOVIE_ENG = URL_MAIN_ENG + '/video'
 URL_SEARCH = '/shv'
@@ -55,12 +55,12 @@ def showGenresList():
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
-def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = None):
+def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = None, isInternalSearch = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     if not sBaseUrl: sBaseUrl = params.getValue('sBaseUrl')
-    oRequest = cRequestHandler(entryUrl)
+    oRequest = cRequestHandler(entryUrl, ignoreErrors = (isInternalSearch == False))
     if sSearchText:
         oRequest.addParameters('query', sSearchText)
         oRequest.setRequestType(1)
@@ -137,9 +137,9 @@ def _search(oGui, sSearchText):
         oGui = cGui()
 
     if sLanguage == '0' or sLanguage == '2':
-        showEntries(URL_MOVIE_GER + URL_SEARCH, oGui, sSearchText, URL_MAIN_GER)
+        showEntries(URL_MOVIE_GER + URL_SEARCH, oGui, sSearchText, URL_MAIN_GER, isInternalSearch)
     if sLanguage == '1' or sLanguage == '2':
-        showEntries(URL_MOVIE_ENG + URL_SEARCH, oGui, sSearchText, URL_MAIN_ENG)
+        showEntries(URL_MOVIE_ENG + URL_SEARCH, oGui, sSearchText, URL_MAIN_ENG, isInternalSearch)
 
     if isInternalSearch:
         oGui.setView('movies')

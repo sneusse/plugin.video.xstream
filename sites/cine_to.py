@@ -83,7 +83,7 @@ def searchRequest(dictFilter = False, sGui = False):
         dictFilter[prop] = parmVal if parmVal else val
         params.setParam(prop, dictFilter[prop])
 
-    oResponse = _getJSonResponse(URL_SEARCH, dictFilter)
+    oResponse = _getJSonResponse(URL_SEARCH, dictFilter, (sGui is not False))
 
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -166,13 +166,17 @@ def play(sUrl = False):
     results.append(result)
     return results
 
-def _getJSonResponse(sUrl, parmDict):
-    oRequest = cRequestHandler(sUrl)
+def _getJSonResponse(sUrl, parmDict, ignoreErrors = False):
+    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
     oRequest.addHeaderEntry('X-Requested-With','XMLHttpRequest')
     oRequest.addHeaderEntry('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
     for (prop, val) in parmDict.items():
         oRequest.addParameters(prop,val)
-    return json.loads(oRequest.request())
+    content = oRequest.request()
+    if content:
+        return json.loads(content)
+    else:
+        return []
 
 def showSearch():
     oGui = cGui()

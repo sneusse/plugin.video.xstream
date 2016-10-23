@@ -90,8 +90,8 @@ def showSearch():
 ### Helper functions
 
 # Load a JSON object
-def _getJsonContent(urlPart):
-    request = cRequestHandler(URL_MAIN + urlPart)
+def _getJsonContent(urlPart, ignoreErrors = False):
+    request = cRequestHandler(URL_MAIN + urlPart, ignoreErrors = ignoreErrors)
     mod_request(request, urlPart)
     content = request.request()
     if content:
@@ -102,7 +102,7 @@ def _getJsonContent(urlPart):
 # Search for series using the requested string sSearchText
 def _search(oGui, sSearchText):
     params = ParameterHandler()
-    series = _getJsonContent("series")
+    series = _getJsonContent("series", True)
     total = len(series)
     sSearchText = sSearchText.lower()
     for serie in series:

@@ -94,7 +94,7 @@ def showSearchEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = 'class="short">.*?href="([^"]+)"[^>]class="title">([^<(]+)[^>]([^")]+).*?<img[^>]src="([^"]+)".*?>([^<]+)</p>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0]:
@@ -148,7 +148,7 @@ def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(oGui, sSearchText)
+    _search(False, sSearchText)
     oGui.setEndOfDirectory()
 
 def _search(oGui, sSearchText):

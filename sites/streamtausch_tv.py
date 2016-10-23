@@ -82,7 +82,7 @@ def showSearchEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = '<div[^>]*align="center"[^>]*>'
     pattern += '<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?' # url / title
     pattern += '</div>'

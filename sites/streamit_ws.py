@@ -77,7 +77,7 @@ def showEntries(entryUrl=False, sGui=False):
     if iPage > 0:
         entryUrl = entryUrl + ('&' if '?' in entryUrl else '?') + 'page=' + str(iPage)
 
-    oRequestHandler = cRequestHandler(entryUrl)
+    oRequestHandler = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False))
     sHtmlContent = oRequestHandler.request()
     pattern = '<div class="cover"><a[^>]*href="([^"]+)" title="([^"]+).*?data-src="([^"]+)'
     parser = cParser()
