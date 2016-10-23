@@ -44,7 +44,7 @@ def showEntries(sGui = False, sSearchText = None):
     oGui = sGui if sGui else cGui()
     oParams = ParameterHandler()
 
-    oRequest = cRequestHandler(URL_REQUEST)
+    oRequest = cRequestHandler(URL_REQUEST, ignoreErrors = (sGui is not False))
     for key in DEFAULT_REQUEST_PARAMS:
         oRequest.addParameters(key, DEFAULT_REQUEST_PARAMS[key])
 
