@@ -57,6 +57,8 @@
 	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
 	<setting label="MoviesEver" type="lsep" />
 	<setting default="false" id="plugin_moviesever_com" label="30014" type="bool" />
+	<setting label="Serienstream" type="lsep" />
+	<setting default="false" id="plugin_serienstream_to" label="30014" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
 	<setting default="false" id="plugin_seriesever_net" label="30014" type="bool" />
 	<setting label="StreamIt" type="lsep" />
