@@ -53,10 +53,11 @@ def showEntries(entryUrl=False, sGui=False):
     if aResult[0] and aResult[1][0]:
         total = len(aResult[1])
         for sUrl, sName, sThumbnail in aResult[1]:
+            sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
             sThumbnail = re.sub('-\d+x\d+\.', '.',sThumbnail)
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail.decode('utf-8').encode('utf-8'))
-            params.setParam('entryUrl', URL_MAIN + sUrl)
+            params.setParam('entryUrl', sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
     pattern = 'class="nextpostslink"[^>]rel="next"[^>]href="([^"]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -102,6 +103,7 @@ def showSearchEntries(entryUrl = False, sGui = False):
     aResult = cParser().parse(sHtmlContent, pattern)
     total = len(aResult[1])
     for sUrl, sName in aResult[1]:
+        sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
         oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
