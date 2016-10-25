@@ -22,15 +22,15 @@ def load():
     oGui = cGui()
     params = ParameterHandler()
 
-    #params.setParam('sUrl', URL_MAIN)
-    #oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, ''), params)
+    params.setParam('sUrl', URL_SERIES)
+    oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, 'showAllSeries'), params)
     params.setParam('sUrl', URL_MAIN)
     params.setParam('sCont', 'catalogNav')
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showLinkList'), params)
     params.setParam('sUrl', URL_MAIN)
     params.setParam('sCont', 'homeContentGenresList')
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showLinkList'), params)
-    #oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 def showLinkList():
@@ -59,13 +59,42 @@ def showLinkList():
         oGui.addFolder(cGuiElement(sName.strip(), SITE_IDENTIFIER, 'showEntries'), params)  
     oGui.setEndOfDirectory()
 
+def showAllSeries(entryUrl = False, sGui = False, sSearchText = False):
+    oGui = sGui if sGui else cGui()
+    params = ParameterHandler()
+
+    if not entryUrl: entryUrl = params.getValue('sUrl')
+
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
+    pattern = '<a[^>]*href="(\/serie\/[^"]*)"[^>]*>(.*?)</a>'
+    parser = cParser()
+    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+
+    if not isMatch: 
+        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(aResult)
+    for sEntryUrl, sName in aResult:
+        if sSearchText and not re.search(sSearchText, sName, re.IGNORECASE):
+            continue
+
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons')
+        oGuiElement.setMediaType('tvshow')
+        params.setParam('sUrl', URL_MAIN + sEntryUrl)
+        oGui.addFolder(oGuiElement, params, True, total)
+
+    if not sGui:
+        oGui.setView('tvshows')
+        oGui.setEndOfDirectory()
+
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    oRequest =  cRequestHandler(entryUrl, ignoreErrors = (sGui is not False));
+    oRequest = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False))
     sHtmlContent = oRequest.request()
 
     pattern = '<div[^>]*class="col-md-[^"]*"[^>]*>.*?' # start element
@@ -102,7 +131,8 @@ def showSeasons():
     sThumbnail = params.getValue('sThumbnail')
     sTVShowTitle = params.getValue('TVShowTitle')
 
-    sHtmlContent = cRequestHandler(sUrl).request()
+    oRequest = cRequestHandler(sUrl)
+    sHtmlContent = oRequest.request()
     pattern = '<div[^>]*class="hosterSiteDirectNav"[^>]*>.*?<ul>(.*?)<\/ul>'
     parser = cParser()
     isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
@@ -120,12 +150,20 @@ def showSeasons():
 
     isMatchDesc, sDesc = parser.parseSingleResult(sHtmlContent, '<p[^>]*data-full-description="(.*?)"[^>]*>')
 
+    if not sThumbnail:
+        isMatchThumb, sThumbnail = parser.parseSingleResult(sHtmlContent, '<div[^>]*class="seriesCoverBox"[^>]*>.*?<img[^>]*src="([^"]*)"[^>]*>')
+
+        if isMatchThumb:
+            sThumbnail = cCFScrape().createUrl(sThumbnail, oRequest)
+            params.setParam('sThumbnail', sThumbnail)
+
     total = len(aResult)
     for sEntryUrl, sName, sText in aResult:
         isMovie = sEntryUrl.endswith('filme')
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, ('showEpisodes'))
         oGuiElement.setMediaType('season' if not isMovie else 'movie')
-        oGuiElement.setThumbnail(sThumbnail)
+        if sThumbnail:
+            oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)
         if not isMovie:
             oGuiElement.setTVShowTitle(sTVShowTitle)
@@ -174,7 +212,8 @@ def showEpisodes():
         sName += sNameGer if sNameGer else sNameEng
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, ('showHosters'))
         oGuiElement.setMediaType('episode' if not isMovieList else 'movie')
-        oGuiElement.setThumbnail(sThumbnail)
+        if sThumbnail:
+            oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)
         if not isMovieList:
             oGuiElement.setSeason(sSeason)
@@ -235,7 +274,7 @@ def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(False, sSearchText)
+    showAllSeries(URL_SERIES, False, sSearchText)
     oGui.setEndOfDirectory()
 
 def _search(oGui, sSearchText):
