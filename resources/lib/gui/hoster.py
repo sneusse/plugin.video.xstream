@@ -193,7 +193,9 @@ class cHosterGui:
             if hoster.get('resolveable',False):
                 ranking.append([0,hoster])
                 continue
-            source = urlresolver.HostedMediaFile(host=hoster['name'].lower(), media_id='dummy')
+            source = urlresolver.HostedMediaFile(url=hoster['link'])
+            if not source:
+                source = urlresolver.HostedMediaFile(host=hoster['name'].lower(), media_id='dummy')
             if source:
                 priority = False
                 for resolver in source._HostedMediaFile__resolvers:
