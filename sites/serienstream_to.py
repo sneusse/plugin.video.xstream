@@ -274,8 +274,9 @@ def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    showAllSeries(URL_SERIES, False, sSearchText)
+    _search(False, sSearchText)
     oGui.setEndOfDirectory()
 
 def _search(oGui, sSearchText):
-    return
+    if not sSearchText: return
+    showAllSeries(URL_SERIES, oGui, sSearchText)
