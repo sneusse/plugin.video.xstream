@@ -58,7 +58,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | Cineplex       | cineplex.tv       | funktioniert           | 29.07.2016 |
 | Die Filme      | diefilme.net      | funktioniert           | 25.05.2016 |
 | DirectDownLoad | ddl.me            | funktioniert           | 09.04.2016 |
-| Dokustreamer    | dokustreamer.de   | funktioniert           | 28.08.2016 |
+| Dokustreamer    | dokustreamer.de   | funktioniert          | 28.08.2016 |
 | Filmmerstube   | filmmerstube.com  | funktioniert           | 21.08.2016 |
 | FilmPalast     | filmpalast.to     | funktioniert           | 09.04.2016 |
 | FilmeStreamz   | filme-streamz.com | funktioniert           | 29.07.2016 |
@@ -69,10 +69,15 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | KinoStreamz    | kino-streamz.com  | funktioniert           | 07.08.2016 |
 | KinoX          | kinox.to          | funktioniert           | 09.04.2016 |
 | Movie4k        | movie4k.to        | funktioniert           | 09.04.2016 |
+| SerienStream   | serienstream.to   | funktioniert           | 25.10.2016 |
 | MoviesEver     | moviesever.com    | funktioniert teilweise | 09.04.2016 |
 | SeriesEver     | seriesever.net    | funktioniert           | 09.04.2016 |
+| Streamit       | streamit.ws       | funktioniert           |            |
 | StreamTausch   | streamtausch.tv   | funktioniert           | 29.07.2016 |
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
+| Tata     	 | tata.to    	     | funktioniert           |            |
+| Video2k   	 | video2k.is        | funktioniert           |            |
+| Video4k   	 | video4k.to        | funktioniert           |            |
 
 
 Empfehlungen und Vorschläge für neue Seiten können über das [Forum](http://xstream-addon.square7.ch) unter dem Bereich [Wünsche und Anregungen](http://xstream-addon.square7.ch/forumdisplay.php?fid=9) angefragt bzw. eingestellt werden. Die Intergration der gewünschten Seiten ist nicht selbsverständlich und erfolgt nicht automatisch!
