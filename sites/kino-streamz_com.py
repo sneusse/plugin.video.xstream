@@ -46,17 +46,18 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
-    pattern = '"([^"]+)</div><a[^>]href="([^"]+).*?src="([^"]+)"></a>[^>].*?">([^"<]+)'
+    pattern = '">([^"]+)</div><a[^>]href="([^"]+)-([^"]+)-stream.*?src="([^"]+)"></a>[^>].*?">([^"<]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if aResult[0] and aResult[1][0]:
         total = len(aResult[1])
-        for sDesc, sUrl, sThumbnail, sName in aResult[1]:
+        for sDesc, sUrl, sYear, sThumbnail, sName in aResult[1]:
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail.decode('utf-8').encode('utf-8'))
             oGuiElement.setDescription(cUtil().removeHtmlTags(sDesc))
+            oGuiElement.setYear(sYear)
             params.setParam('sName', sName)
-            params.setParam('entryUrl', URL_MAIN + sUrl)
+            params.setParam('entryUrl', URL_MAIN + sUrl + '-' + sYear + '-stream')
             oGui.addFolder(oGuiElement, params, False, total)
 
     pattern = '"><a[^>]href="([^"]+)"([^>]+)?>&raquo;'
