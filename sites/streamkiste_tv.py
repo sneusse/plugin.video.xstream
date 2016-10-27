@@ -5,6 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
+from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'streamkiste_tv'
 SITE_NAME = 'StreamKisteTV'
@@ -33,10 +34,13 @@ def showMovieafter():
     params = ParameterHandler()
     oGui.addFolder(cGuiElement('Jahr', SITE_IDENTIFIER, 'showYear'))
     params.setParam('sUrl', URL_FILME + '?sortby=date')
+    params.setParam('sParm', '?sortby=date')
     oGui.addFolder(cGuiElement('Most Recent', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_FILME + '?sortby=views')
+    params.setParam('sParm', '?sortby=views')
     oGui.addFolder(cGuiElement('Most Views', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_FILME + '?sortby=imdb')
+    params.setParam('sParm', '?sortby=views')
     oGui.addFolder(cGuiElement('According to IMDB Rate', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()    
     
@@ -49,6 +53,7 @@ def showYear():
         total = len(aResult)
         for sUrl, sName in aResult:
             params.setParam('sUrl', URL_FILME + sUrl)
+            params.setParam('sParm', sUrl)
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
@@ -89,7 +94,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     total = len (aResult)
     for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
-            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setDescription(sDesc)
             oGuiElement.setYear(sYear)
@@ -98,6 +103,10 @@ def showEntries(entryUrl = False, sGui = False):
 
     isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)"')
     if isMatchNextPage:
+        sParm = params.getValue('sParm')
+        if sParm:
+            sNextUrl += sParm
+
         params.setParam('sUrl', sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
