@@ -241,7 +241,7 @@ def showHosters():
 
     totalLang = len(aResult)
     for sLangId , sLangName in aResult:
-        pattern = '<li[^>]*data-lang-key="1"[^>]*>.*?<a[^>]*href="([^"]*)"[^>]*>.*?<h4>([^<]+)<' % sLangId
+        pattern = '<li[^>]*data-lang-key="%s"[^>]*>.*?<a[^>]*href="([^"]*)"[^>]*>.*?<h4>([^<]+)<' % sLangId
         isMatchHoster, aResultHoster = parser.parse(sHtmlContent, pattern)
 
         if not isMatchHoster:
