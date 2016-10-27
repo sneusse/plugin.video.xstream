@@ -76,11 +76,11 @@
 </category>
   <category label="Views">
     <setting default="false" id="auto-view" label="Automatische Views aktivieren" type="bool" />
-    <setting default="50" enable="!eq(-5,false)" id="files-view" label="Default-View" type="number" />
-    <setting default="503" enable="!eq(-1,false)" id="movies-view" label="Film-View" type="number" />
-    <setting default="503" enable="!eq(-2,false)" id="tvshows-view" label="Serien-View" type="number" />
-    <setting default="504" enable="!eq(-3,false)" id="seasons-view" label="Staffel-View" type="number" />
-    <setting default="504" enable="!eq(-4,false)" id="episodes-view" label="Episoden-View" type="number" />
+    <setting default="50" enable="!eq(-1,false)" id="files-view" label="Default-View" type="number" />
+    <setting default="503" enable="!eq(-2,false)" id="movies-view" label="Film-View" type="number" />
+    <setting default="503" enable="!eq(-3,false)" id="tvshows-view" label="Serien-View" type="number" />
+    <setting default="504" enable="!eq(-4,false)" id="seasons-view" label="Staffel-View" type="number" />
+    <setting default="504" enable="!eq(-5,false)" id="episodes-view" label="Episoden-View" type="number" />
   </category>
   <category label="30024">
     <setting label="30080" type="sep" />
