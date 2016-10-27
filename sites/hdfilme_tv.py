@@ -373,7 +373,6 @@ def _getHostFromUrl(sUrl, sServername):
         if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
             hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
         hoster['name'] = sLabel
-        hoster['resolveable'] = True
         hosters.append(hoster)
 
     # Hoster zurückgeben
@@ -390,7 +389,7 @@ def play(sUrl = False):
     results = []
     result = {}
     result['streamUrl'] = sUrl
-    result['resolved'] = True
+    result['resolved'] = False
     results.append(result)
 
     # Ergebniss zurückliefern
