@@ -63,6 +63,8 @@
 	<setting default="false" id="plugin_seriesever_net" label="30014" type="bool" />
 	<setting label="StreamIt" type="lsep" />
 	<setting default="false" id="plugin_streamit_ws" label="30014" type="bool" />
+	<setting label="StreamKisteTV" type="lsep" />
+	<setting default="false" id="plugin_streamkiste_tv" label="30014" type="bool" />
 	<setting label="StreamTausch" type="lsep" />
 	<setting default="false" id="plugin_streamtausch_tv" label="30014" type="bool" />
 	<setting label="SzeneStreams" type="lsep" />

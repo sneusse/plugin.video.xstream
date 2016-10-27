@@ -44,10 +44,10 @@ def showYear():
     oGui = cGui()
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_FILME).request()
-    aResult = cParser().parse(sHtmlContent, 'li class="year-item year.*?"><a href="([^"]+)">([^<]+)')
-    if aResult[0] and aResult[1][0]:
-        total = len(aResult[1])
-        for sUrl, sName in aResult[1]:
+    isMatch, aResult = cParser().parse(sHtmlContent, 'li class="year-item year.*?"><a href="([^"]+)">([^<]+)')
+    if isMatch:
+        total = len(aResult)
+        for sUrl, sName in aResult:
             params.setParam('sUrl', URL_FILME + sUrl)
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
@@ -80,7 +80,7 @@ def showEntries(entryUrl = False, sGui = False):
     
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     parser = cParser()
-    pattern = 'tooltip-w"[^>]title="([^"]+).*?src="([^"]+).*?<a[^>]href="([^"]+).*?">([^<]+).*?">([^<]+).*?class="story">([^<]+)'
+    pattern = 'src="([^"]+).*?<a[^>]href="([^"]+).*?">([^<]+).*?">([^<]+).*?class="story">([^<]+)'
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
@@ -88,17 +88,17 @@ def showEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult)
-    for sQuali, sThumbnail, sUrl, sName, sYear, sDesc in aResult:
-            oGuiElement = cGuiElement(sName + ' ' + sQuali, SITE_IDENTIFIER, 'showHosters')
+    for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
+            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setDescription(sDesc)
             oGuiElement.setYear(sYear)
             params.setParam('entryUrl', sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<div class="sk-loadnavi-page-([^"]+)')
+    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)"')
     if isMatchNextPage:
-        params.setParam('sUrl', entryUrl + 'page' + sNextUrl)
+        params.setParam('sUrl', sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
