@@ -40,7 +40,7 @@ def showMovieafter():
     params.setParam('sParm', '?sortby=views')
     oGui.addFolder(cGuiElement('Most Views', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_FILME + '?sortby=imdb')
-    params.setParam('sParm', '?sortby=views')
+    params.setParam('sParm', '?sortby=imdb')
     oGui.addFolder(cGuiElement('According to IMDB Rate', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()    
     
