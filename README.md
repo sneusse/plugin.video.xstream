@@ -73,6 +73,7 @@ Mit xStream ist es möglich Serien und Filme unterschiedlichster Streaming-Platt
 | MoviesEver     | moviesever.com    | funktioniert teilweise | 09.04.2016 |
 | SeriesEver     | seriesever.net    | funktioniert           | 09.04.2016 |
 | StreamIt       | streamit.ws       | funktioniert           | 19.09.2016 |
+| StreamKiste    | streamkiste.tv    | funktioniert           | 27.10.2016 |
 | StreamTausch   | streamtausch.tv   | funktioniert           | 29.07.2016 |
 | SzeneStreams   | szene-streams.com | funktioniert           | 09.04.2016 |
 | Tata           | tata.to           | funktioniert           | 17.09.2016 |
