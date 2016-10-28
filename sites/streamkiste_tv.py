@@ -9,7 +9,7 @@ from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'streamkiste_tv'
 SITE_NAME = 'StreamKisteTV'
-SITE_ICON = 'streamkistetv.png'
+SITE_ICON = 'streamkiste.png'
 
 URL_MAIN = 'http://streamkiste.tv/'
 URL_KINO = URL_MAIN + 'cat/kinofilme/'
