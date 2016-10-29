@@ -10,7 +10,7 @@ from cCFScrape import cCFScrape
 import re, json
 
 SITE_IDENTIFIER = 'serienstream_to'
-SITE_NAME = 'Serienstream'
+SITE_NAME = 'SerienStream'
 SITE_ICON = 'serienstream.png'
 
 URL_MAIN = 'http://serienstream.to'
