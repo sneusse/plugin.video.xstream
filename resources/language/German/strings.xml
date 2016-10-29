@@ -17,7 +17,7 @@
   <string id="30013">Bevorzugte Qualität bei Auto-Play Funktion</string>
   <string id="30014">Aktivieren</string>
   <string id="30015">Timeout für HTTP-Anfragen in Sekunden</string>
-  <string id="30016">UrlResolver Auto-Update</string>
+  <string id="30016">URLResolver Auto-Update</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">Allgemein</string>

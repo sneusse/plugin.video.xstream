@@ -62,7 +62,7 @@ def checkforupdates():
 
 def urlResolverUpdate():
     commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
-    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, URLRESOLVER_DIRNAME, "Updating UrlResolver")
+    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, URLRESOLVER_DIRNAME, "Updating URLResolver")
 
 def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title):
     try:
