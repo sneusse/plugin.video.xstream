@@ -25,23 +25,23 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
     params.setParam('sGenreId', 1)
-    oGui.addFolder(cGuiElement('Genre Filme', SITE_IDENTIFIER, 'showGenre'), params)
-    params.setParam('sUrl', URL_MAIN)
-    params.setParam('sGenreId', 2)
-    oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenre'), params)
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'), params)
+    #params.setParam('sUrl', URL_MAIN)
+    #params.setParam('sGenreId', 2)
+    #oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenre'), params)
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showAlphaNumeric'), params)    
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 def showAlphaNumeric():
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    pattern = '<div[^>]class="catalog-nav">.*?</div>'
+    pattern = '<div[^>]*class="catalog-nav"[^>]*>(.*?)</div>'
     isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
        return
 
-    pattern = '<a[^>]href="([^"]+)" >([^<]+)'
+    pattern = '<a[^>]*href="([^"]+)"[^>]*>(\w)</a>'
     isMatch, aResult = cParser().parse(sContainer, pattern)
 
     if not isMatch:
@@ -58,13 +58,13 @@ def showGenre():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('sUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    pattern = '<div[^>]class="contab"[^>]id="tabln%s">.*?</li>[^>].*?</ul>' % oParams.getValue('sGenreId')
+    pattern = '<div[^>]*id="tabln%s"[^>]*>(.*?)</ul>' % oParams.getValue('sGenreId')
     isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
        return
 
-    pattern = '<a[^>]href="([^"]+).*?">([^<]+)'
+    pattern = '<a[^>]*href="([^"]+)"[^>]*>([^<]*)</a>'
     isMatch, aResult = cParser().parse(sContainer, pattern)
 
     if not isMatch:
@@ -93,18 +93,20 @@ def showEntries(entryUrl = False, sGui = False):
     total = len (aResult)
 
     for sUrl, sThumbnail,  sName, sYear in aResult:
-            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-            oGuiElement.setThumbnail(sThumbnail)
-            oGuiElement.setYear(sYear)
-            params.setParam('entryUrl', sUrl)
-            oGui.addFolder(oGuiElement, params, False, total)
+        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setYear(sYear)
+        oGuiElement.setMediaType('movie')
+        params.setParam('entryUrl', sUrl)
+        oGui.addFolder(oGuiElement, params, False, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<a[^>]href="([^"]+)">Weiter</a>')
+    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<a[^>]*href="([^"]+)"[^>]*>Weiter</a>')
     if isMatchNextPage:
         params.setParam('sUrl', sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
