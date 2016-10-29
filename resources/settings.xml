@@ -1,6 +1,7 @@
 <settings> 
   <category label="30021">
     <setting default="Off" id="UpdateSetting" label="30010" type="labelenum" values="Stable|Beta|Nightly|Off" />
+    <setting default="On" id="updateUrlResolver" label="30016" type="labelenum" values="On|Off" />
     <setting default="false" id="SettingsFolder" label="30012" type="bool" />
     <setting default="true" id="GlobalSearchPosition" label="30011" type="bool" />
     <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
