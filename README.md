@@ -3,7 +3,7 @@
 ![xStream logo](https://github.com/StoneOffStones/plugin.video.xstream/blob/wiki/graphics/website/logo/logo_512.png?raw=true)
 
 
-[![Join the chat at https://gitter.im/xStream-Kodi/plugin.video.xstream](https://badges.gitter.im/xStream-Kodi/plugin.video.xstream.svg)](https://gitter.im/xStream-Kodi/plugin.video.xstream?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/xStream-Kodi/Public](https://badges.gitter.im/xStream-Kodi/Public.svg)](https://gitter.im/xStream-Kodi/Public?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 ## Inhaltsverzeichnis
