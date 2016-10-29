@@ -65,7 +65,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     pattern = "<article[^>]*class=['\"].*? (movie|page) .*?['\"][^>]*>.*?" # link-typ
     pattern += "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>(.*?)</a>.*?" # url / title
     pattern += "(?:<img[^>]*src=['\"]([^'\"]*)\?fit.*?['\"][^>]*>.*?)?" # Thumbnail (opt)
