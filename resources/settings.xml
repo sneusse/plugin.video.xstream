@@ -21,8 +21,6 @@
 	<setting default="false" id="plugin_anime-loads_org" label="30014" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
 	<setting default="false" id="plugin_burning_series_org" label="30014" type="bool" />
-	<setting label="CineDream" type="lsep" />
-	<setting default="false" id="plugin_cine-dream_net" label="30014" type="bool" />
 	<setting label="Cine" type="lsep" />
 	<setting default="false" id="plugin_cine_to" label="30014" type="bool" />
 	<setting label="Cineplex" type="lsep" />
@@ -30,8 +28,6 @@
 	<setting label="DirectDownLoad" type="lsep" />
 	<setting default="false" id="plugin_ddl_me" label="30014" type="bool" />
 	<setting default="de.ddl.me" enable="!eq(-1,false)" id="ddl_me-domain" label="DirectDownLoad domain" type="labelenum" values="de.ddl.me|en.ddl.me" />
-	<setting label="Die Filme" type="lsep" />
-	<setting default="false" id="plugin_diefilme_net" label="30014" type="bool" />
 	<setting label="Dokustreamer" type="lsep" />
 	<setting default="false" id="plugin_dokustreamer_de" label="30014" type="bool" />
 	<setting label="FilmeStreamz" type="lsep" />
@@ -42,8 +38,6 @@
 	<setting default="false" id="plugin_flimmerstube_com" label="30014" type="bool" />
 	<setting label="Goldstream" type="lsep" />
 	<setting default="false" id="plugin_goldstream_org" label="30014" type="bool" />
-	<setting label="Gute Filme" type="lsep" />
-	<setting default="false" id="plugin_gute-filme_to" label="30014" type="bool" />
 	<setting label="HDfilme" type="lsep" />
 	<setting default="false" id="plugin_hdfilme_tv" label="30014" type="bool" />
 	<setting label="KinoStreamz" type="lsep" />
@@ -58,7 +52,9 @@
 	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="Movie4k domain" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
 	<setting label="MoviesEver" type="lsep" />
 	<setting default="false" id="plugin_moviesever_com" label="30014" type="bool" />
-	<setting label="Serienstream" type="lsep" />
+	<setting label="MyKino" type="lsep" />
+	<setting default="false" id="plugin_mykino_to" label="30014" type="bool" />
+	<setting label="SerienStream" type="lsep" />
 	<setting default="false" id="plugin_serienstream_to" label="30014" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
 	<setting default="false" id="plugin_seriesever_net" label="30014" type="bool" />
@@ -66,8 +62,6 @@
 	<setting default="false" id="plugin_streamit_ws" label="30014" type="bool" />
 	<setting label="StreamKisteTV" type="lsep" />
 	<setting default="false" id="plugin_streamkiste_tv" label="30014" type="bool" />
-	<setting label="StreamTausch" type="lsep" />
-	<setting default="false" id="plugin_streamtausch_tv" label="30014" type="bool" />
 	<setting label="SzeneStreams" type="lsep" />
 	<setting default="false" id="plugin_szene-streams_com" label="30014" type="bool" />
 	<setting label="Tata" type="lsep" />

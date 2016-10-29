@@ -9,6 +9,7 @@ from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'mykino_to'
 SITE_NAME = 'MyKino'
+SITE_ICON = 'mykino.png'
 
 URL_MAIN = 'http://mykino.to/'
 URL_Kinofilme = URL_MAIN + 'aktuelle-kinofilme/'
