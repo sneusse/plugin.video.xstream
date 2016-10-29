@@ -152,4 +152,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-showSearchEntries(URL_SEARCH + sSearchText.strip() + '&do=search&subaction=search', oGui)
+    showSearchEntries(URL_SEARCH + sSearchText.strip() + '&do=search&subaction=search', oGui)
