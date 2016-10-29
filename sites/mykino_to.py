@@ -24,9 +24,12 @@ def load():
     params.setParam('sUrl', URL_FILME)
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
-    oGui.addFolder(cGuiElement('Genre Filme', SITE_IDENTIFIER, 'showGenreFilme'), params)  
-    oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenreSerie'), params)
-    oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'AZ'), params)    
+    params.setParam('sGenreId', 1)
+    oGui.addFolder(cGuiElement('Genre Filme', SITE_IDENTIFIER, 'showGenre'), params)
+    params.setParam('sUrl', URL_MAIN)
+    params.setParam('sGenreId', 2)
+    oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenre'), params)
+    oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showAlphaNumeric'), params)    
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -105,7 +108,7 @@ def _search(oGui, sSearchText):
     if not sSearchText: return
     showEntries(URL_SEARCH % sSearchText.strip(), oGui)
 
-def AZ():
+def showAlphaNumeric():
     sHtmlContent = cRequestHandler(URL_MAIN).request()
     pattern = '<div[^>]class="catalog-nav">.*?</div>'
     isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
@@ -126,9 +129,11 @@ def AZ():
         oGui.addFolder(cGuiElement(sName , SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()   
 
-def showGenreFilme():
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
-    pattern = '<div[^>]class="contab"[^>]id="tabln1">.*?</li>[^>].*?</ul>'
+def showGenre():
+    oParams = ParameterHandler()
+    sUrl = oParams.getValue('sUrl')
+    sHtmlContent = cRequestHandler(sUrl).request()
+    pattern = '<div[^>]class="contab"[^>]id="tabln%s">.*?</li>[^>].*?</ul>' % oParams.getValue('sGenreId')
     isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
@@ -141,30 +146,7 @@ def showGenreFilme():
         return
 
     oGui = cGui()
-    params = ParameterHandler()
     for sUrl, sName in aResult:
-        params.setParam('sUrl', URL_MAIN + sUrl)
-        oGui.addFolder(cGuiElement(sName , SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.setEndOfDirectory()
-
-def showGenreSerie():
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
-    pattern = '<div[^>]class="contab"[^>]id="tabln2">.*?</li>[^>].*?</ul>'
-
-    isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
-
-    if not isMatch:
-       return
-
-    pattern = '<a[^>]href="([^"]+).*?">([^<]+)'
-    isMatch, aResult = cParser().parse(sContainer, pattern)
-
-    if not isMatch:
-        return
-
-    oGui = cGui()
-    params = ParameterHandler()
-    for sUrl, sName in aResult:
-        params.setParam('sUrl', URL_MAIN + sUrl)
-        oGui.addFolder(cGuiElement(sName , SITE_IDENTIFIER, 'showEntries'), params)
+        oParams.setParam('sUrl', URL_MAIN + sUrl)
+        oGui.addFolder(cGuiElement(sName , SITE_IDENTIFIER, 'showEntries'), oParams)
     oGui.setEndOfDirectory()
