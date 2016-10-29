@@ -10,7 +10,7 @@ SITE_IDENTIFIER = 'cineplex_tv'
 SITE_NAME = 'Cineplex'
 SITE_ICON = 'cineplex.png'
 
-URL_MAIN = 'http://cineplex.tv/'
+URL_MAIN = 'http://cineplex.su/'
 URL_CINEMA2015 = URL_MAIN + 'filme_2015/'
 URL_CINEMA2014 = URL_MAIN + 'filme_2014/'
 URL_CINEMA2013 = URL_MAIN + 'filme_2013/'
@@ -62,7 +62,7 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = 'li_block_title"><img\ssrc="(.+?(?=")).+?<a\shref="(.+?)">([^"(]+)[^>]([^")]+).*?class="blockstory".*?>([^"<]+)'
+    pattern = '<li><a[^>]href="([^"]+).*?<img[^>]src="([^"]+).*?alt="([^(]+)[^>]([^)]+)'
     aResult = cParser().parse(sHtmlContent, pattern)
 
     if not aResult[0]:
@@ -71,13 +71,12 @@ def showEntries(entryUrl = False, sGui = False):
 
     total = len (aResult[1])
     util = cUtil()
-    for sThumbnail, sEntryUrl, sName, sYear, sDescription in aResult[1]:
+    for sUrl, sThumbnail, sName, sYear in aResult[1]:
         oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-        oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
-        oGuiElement.setDescription(util.unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('movie')
-        params.setParam('entryUrl', sEntryUrl)
+        params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
     pattern = '<ul[^>]class="pagination">.*?</li>.*<li[^>]*><a[^>]*href="([^"]*)">Weiter<'
@@ -104,7 +103,7 @@ def showSearchEntries(entryUrl = False, sGui = False):
     util = cUtil()
     for sEntryUrl, sName, sYear, sThumbnail, sDescription in aResult[1]:
         oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-        oGuiElement.setThumbnail(URL_MAIN +sThumbnail)
+        oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(util.unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('movie')
@@ -153,4 +152,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH + sSearchText.strip() + '&do=search&subaction=search', oGui)
+showSearchEntries(URL_SEARCH + sSearchText.strip() + '&do=search&subaction=search', oGui)
