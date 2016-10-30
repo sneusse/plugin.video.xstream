@@ -43,16 +43,16 @@ def load():
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
-def showGenresList(entryUrl = False):
+def showGenresList():
     oGui = cGui()
     params = ParameterHandler()
-    if not entryUrl: entryUrl = params.getValue('sBaseUrl')
+    sBaseUrl = params.getValue('sBaseUrl')
     sHtmlContent = cRequestHandler(params.getValue('sUrl')).request()
     aResult = cParser().parse(sHtmlContent, '<a[^>]class=[^>]catName[^>][^>]href="([^"]+)"[^>]>([^"]+)</a>')
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
         for sUrl, sName in aResult[1]:
-            params.setParam('sUrl', entryUrl + sUrl)
+            params.setParam('sUrl', sBaseUrl + sUrl)
             oGui.addFolder(cGuiElement((sName), SITE_IDENTIFIER, 'showEntries'), params, True, total)
     oGui.setEndOfDirectory()
 
