@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import urllib
 import os
 import json
@@ -8,8 +9,9 @@ from resources.lib.download import cDownload
 
 ## Installation path.
 ROOT_DIR = addonPath
+ADDON_DIR = os.path.abspath(os.path.join(ROOT_DIR, '..'))
 XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
-URLRESOLVER_DIRNAME = os.path.abspath(os.path.join(ROOT_DIR, '..', 'script.module.urlresolver'))
+
 
 ## URLRESOLVER
 REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/tknorris/script.module.urlresolver/commits/master"
@@ -32,8 +34,22 @@ def xStreamUpdate():
 
 def urlResolverUpdate():
     logger.info("xStream urlResolverUpdate")
+
+    urlResolverPaths = []
+    for child in os.listdir(ADDON_DIR):
+        if not child.startswith('script.module.urlresolver'): continue
+        resolver_path = os.path.join(ADDON_DIR, child)
+        if os.path.isdir(resolver_path):
+            urlResolverPaths.append(resolver_path)
+
+    if len(urlResolverPaths) > 1:
+        from resources.lib.gui.gui import cGui
+        cGui().showError('xStream', 'Es ist mehr als ein URLResolver installiert. Bitte löschen!', 5)
+        logger.info("Its more the one URLResolver installed!")
+        return
+
     commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
-    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, URLRESOLVER_DIRNAME, "Updating URLResolver")
+    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver")
 
 def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title):
     try:
