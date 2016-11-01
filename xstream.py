@@ -138,7 +138,7 @@ def parseUrl():
             return
         elif sFunction == 'updateXstream':
             from resources.lib import updateManager
-            updateManager.checkforupdates()
+            updateManager.xStreamUpdate()
             return
         elif sFunction == 'updateUrlResolver':
             from resources.lib import updateManager
