@@ -11,13 +11,13 @@
   <string id="30007">Maximum number in hosterlist</string>
   <string id="30008">Metahandler replaces information of websites</string>
   <string id="30009">Pre-validate and sort hosterlist (slow on weak systems)</string>
-  <string id="30010">xStream Auto-Update</string>
+  <string id="30010">Auto-Update for xStream</string>
   <string id="30011">Global Search at first position</string>
   <string id="30012">Show centralized Settings</string>
   <string id="30013">Prefered Auto-Play quality (if available)</string>
   <string id="30014">Enable</string>
   <string id="30015">Timeout for HTTP requests in seconds</string>
-  <string id="30016">URLResolver Auto-Update</string>
+  <string id="30016">Auto-Update for URLResolver</string>
 
   <!-- settingtabs begin by 30021 - 30030 -->
   <string id="30021">General</string>
