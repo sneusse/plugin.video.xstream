@@ -24,6 +24,14 @@
   <string id="30022">Site-plugins</string>
   <string id="30023">JDownloader settings</string>
   <string id="30024">Downloads</string>
+  
+  <!-- settingsheader begin by 30040 - 30070 -->
+  <string id="30040">View</string>
+  <string id="30041">Update</string>
+  <string id="30042">Hosterlist</string>
+  <string id="30043">Content</string>
+  <string id="30044">Metadata</string>
+  <string id="30045">Network</string>
 
   <!-- Downloads begin by 30071 - 30085 -->
   <string id="30070">JDownloader</string>
