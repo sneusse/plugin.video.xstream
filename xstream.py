@@ -150,9 +150,9 @@ def parseUrl():
     # Test if we should run a function on a special site
     if not params.exist('site'):
         xbmc.executebuiltin('XBMC.RunPlugin(%s?function=clearCache)' % sys.argv[0])
-        if cConfig().getSetting('UpdateSetting') != 'Off':
+        if cConfig().getSetting('githubUpdateXstream') == 'true':
             xbmc.executebuiltin('XBMC.RunPlugin(%s?function=updateXstream)' % sys.argv[0])
-        if cConfig().getSetting('UpdateUrlResolver') != 'Off':
+        if cConfig().getSetting('githubUpdateUrlResolver') == 'true':
             xbmc.executebuiltin('XBMC.RunPlugin(%s?function=updateUrlResolver)' % sys.argv[0])
         # As a default if no site was specified, we run the default starting gui with all plugins
         showMainMenu(sFunction)

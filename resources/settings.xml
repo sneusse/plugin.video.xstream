@@ -1,7 +1,8 @@
 <settings> 
   <category label="30021">
-    <setting default="Off" id="UpdateSetting" label="30010" type="labelenum" values="Nightly|Off" />
-    <setting default="On" id="updateUrlResolver" label="30016" type="labelenum" values="On|Off" />
+    <setting default="true" id="githubUpdateXstream" label="30010" type="bool" />
+    <setting default="true" id="githubUpdateUrlResolver" label="30016" type="bool" />
+    <setting type="sep" />
     <setting default="false" id="SettingsFolder" label="30012" type="bool" />
     <setting default="true" id="GlobalSearchPosition" label="30011" type="bool" />
     <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
@@ -21,6 +22,8 @@
 	<setting default="false" id="plugin_anime-loads_org" label="30014" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
 	<setting default="false" id="plugin_burning_series_org" label="30014" type="bool" />
+	<setting label="CineDream" type="lsep" />
+	<setting default="false" id="plugin_cine-dream_net" label="30014" type="bool" />
 	<setting label="Cine" type="lsep" />
 	<setting default="false" id="plugin_cine_to" label="30014" type="bool" />
 	<setting label="Cineplex" type="lsep" />
