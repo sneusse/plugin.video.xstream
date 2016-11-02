@@ -97,7 +97,7 @@ class cPluginHandler:
         #find Element for plugin Settings
         pluginElem = False
         for elem in tree.findall('category'):
-            if elem.attrib['label']=='30022':
+            if elem.attrib['label']=='30021':
                 pluginElem = elem
                 break
         if pluginElem is None:
@@ -113,7 +113,7 @@ class cPluginHandler:
             subEl.tail = '\n\t'
             attrib = {'default': 'false', 'type': 'bool'}
             attrib['id'] = 'plugin_%s' % pluginID
-            attrib['label'] = '30014'
+            attrib['label'] = '30050'
             subEl = ET.SubElement(pluginElem, 'setting', attrib)
             subEl.tail = '\n\t'
             if 'settings' in plugin:

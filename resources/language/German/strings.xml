@@ -15,9 +15,8 @@
   <string id="30011">Globale Suche an erster Position</string>
   <string id="30012">Zentralisierte Einstellungen anzeigen</string>
   <string id="30013">Bevorzugte Qualität bei Auto-Play Funktion</string>
-  <string id="30014">Site-Plugin verwenden</string>
-  <string id="30015">Timeout für HTTP-Anfragen in Sekunden</string>
-  <string id="30016">Auto-Update für URLResolver</string>
+  <string id="30014">Timeout für HTTP-Anfragen in Sekunden</string>
+  <string id="30015">Auto-Update für URLResolver</string>
 
   <!-- settingtabs begin by 30020 - 30029 -->
   <string id="30020">Allgemein</string>
@@ -25,13 +24,17 @@
   <string id="30022">Ansichten</string>
   <string id="30023">Downloads</string>
   
-  <!-- settingsheader begin by 30030 - 30059 -->
+  <!-- settingsheader begin by 30030 - 30049 -->
   <string id="30030">Darstellung</string>
   <string id="30031">Update</string>
   <string id="30032">Hoster</string>
   <string id="30033">Inhalt</string>
   <string id="30034">Metadaten</string>
   <string id="30035">Netzwerk</string>
+  
+  <!-- site-plugins begin by 30050 - 30059 -->
+  <string id="30050">Site-Plugin verwenden</string>
+  <string id="30051">Domain auswählen</string>
   
   <!-- views begin by 30060 - 30069 -->
   <string id="30060">Automatisch erzeugte Ansichten verwenden</string>
