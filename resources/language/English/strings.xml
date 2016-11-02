@@ -24,13 +24,20 @@
   <string id="30022">Views</string>
   <string id="30023">Downloads</string>
 
-  <!-- settingsheader begin by 30030 - 30049 -->
+  <!-- settingsheader begin by 30030 - 30039 -->
   <string id="30030">Update</string>
   <string id="30031">Presentation</string>
   <string id="30032">Content</string>
   <string id="30033">Metadata</string>
   <string id="30034">Hoster</string>
   <string id="30035">Network</string>
+
+  <!-- settingsfolder begin by 30040 - 30049 -->
+  <string id="30040">Global Search</string>
+  <string id="30041">Settings</string>
+  <string id="30042">xStream-Settings</string>
+  <string id="30043">URLResolver-Settings</string>
+  <string id="30044">Metahandler-Settings</string>
 
   <!-- site-plugins begin by 30050 - 30059 -->
   <string id="30050">Use Site-Plugin</string>
@@ -56,7 +63,7 @@
   <string id="30082">PyLoad on/off</string>
   <string id="30083">Username</string>
   <string id="30084">Password</string>
-  
+
   <string id="30302">Seasons german</string>
   <string id="30303">Seasons english</string>
   <string id="30304">Search</string>
