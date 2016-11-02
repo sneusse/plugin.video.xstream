@@ -15,24 +15,34 @@
   <string id="30011">Global Search at first position</string>
   <string id="30012">Show centralized Settings</string>
   <string id="30013">Prefered Auto-Play quality (if available)</string>
-  <string id="30014">Use Site-Plugin</string>
-  <string id="30015">Timeout for HTTP requests in seconds</string>
-  <string id="30016">Auto-Update for URLResolver</string>
+  <string id="30014">Timeout for HTTP requests in seconds</string>
+  <string id="30015">Auto-Update for URLResolver</string>
 
   <!-- settingtabs begin by 30020 - 30029 -->
   <string id="30020">General</string>
   <string id="30021">Site-Plugins</string>
   <string id="30022">Views</string>
   <string id="30023">Downloads</string>
-  
-  <!-- settingsheader begin by 30030 - 30059 -->
-  <string id="30030">Presentation</string>
-  <string id="30031">Update</string>
-  <string id="30032">Hoster</string>
-  <string id="30033">Content</string>
-  <string id="30034">Metadata</string>
+
+  <!-- settingsheader begin by 30030 - 30039 -->
+  <string id="30030">Update</string>
+  <string id="30031">Presentation</string>
+  <string id="30032">Content</string>
+  <string id="30033">Metadata</string>
+  <string id="30034">Hoster</string>
   <string id="30035">Network</string>
-  
+
+  <!-- settingsfolder begin by 30040 - 30049 -->
+  <string id="30040">Global Search</string>
+  <string id="30041">Settings</string>
+  <string id="30042">xStream-Settings</string>
+  <string id="30043">URLResolver-Settings</string>
+  <string id="30044">Metahandler-Settings</string>
+
+  <!-- site-plugins begin by 30050 - 30059 -->
+  <string id="30050">Use Site-Plugin</string>
+  <string id="30051">Select Domain</string>
+
   <!-- views begin by 30060 - 30069 -->
   <string id="30060">Use automatically generated views</string>
   <string id="30061">Default-View</string>
@@ -53,7 +63,7 @@
   <string id="30082">PyLoad on/off</string>
   <string id="30083">Username</string>
   <string id="30084">Password</string>
-  
+
   <string id="30302">Seasons german</string>
   <string id="30303">Seasons english</string>
   <string id="30304">Search</string>

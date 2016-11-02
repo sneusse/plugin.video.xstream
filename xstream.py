@@ -241,7 +241,7 @@ def showMainMenu(sFunction):
     if cConfig().getSetting('SettingsFolder') == 'true':
         # Create a gui element for Settingsfolder
         oGuiElement = cGuiElement()
-        oGuiElement.setTitle("Settings")
+        oGuiElement.setTitle(cConfig().getLocalizedString(30041))
         oGuiElement.setSiteName("settings")
         oGuiElement.setFunction("showSettingsFolder")
         oGuiElement.setThumbnail("DefaultAddonService.png")
@@ -254,7 +254,7 @@ def showMainMenu(sFunction):
 def settingsGuiElements():
     # Create a gui element for addon settings
     oGuiElement = cGuiElement()
-    oGuiElement.setTitle("xStream Settings")
+    oGuiElement.setTitle(cConfig().getLocalizedString(30042))
     oGuiElement.setSiteName("xStream")
     oGuiElement.setFunction("display_settings")
     oGuiElement.setThumbnail("DefaultAddonProgram.png")
@@ -262,7 +262,7 @@ def settingsGuiElements():
 
     # Create a gui element for urlresolver settings
     oGuiElement = cGuiElement()
-    oGuiElement.setTitle("Resolver Settings")
+    oGuiElement.setTitle(cConfig().getLocalizedString(30043))
     oGuiElement.setSiteName("urlresolver")
     oGuiElement.setFunction("display_settings")
     oGuiElement.setThumbnail("DefaultAddonRepository.png")
@@ -270,7 +270,7 @@ def settingsGuiElements():
 
     # Create a gui element for metahandler settings
     oGuiElement = cGuiElement()
-    oGuiElement.setTitle("Metahandler Settings")
+    oGuiElement.setTitle(cConfig().getLocalizedString(30044))
     oGuiElement.setSiteName("metahandler")
     oGuiElement.setFunction("display_settings")
     oGuiElement.setThumbnail("DefaultAddonTvInfo.png")
@@ -284,7 +284,7 @@ def settingsGuiElements():
 def globalSearchGuiElement():
     # Create a gui element for global search
     oGuiElement = cGuiElement()
-    oGuiElement.setTitle("Globale Suche")
+    oGuiElement.setTitle(cConfig().getLocalizedString(30040))
     oGuiElement.setSiteName("globalSearch")
     oGuiElement.setFunction("globalSearch")
     oGuiElement.setThumbnail("DefaultAddonWebSkin.png")

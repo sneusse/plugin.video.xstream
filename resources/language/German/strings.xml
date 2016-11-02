@@ -15,24 +15,34 @@
   <string id="30011">Globale Suche an erster Position</string>
   <string id="30012">Zentralisierte Einstellungen anzeigen</string>
   <string id="30013">Bevorzugte Qualität bei Auto-Play Funktion</string>
-  <string id="30014">Site-Plugin verwenden</string>
-  <string id="30015">Timeout für HTTP-Anfragen in Sekunden</string>
-  <string id="30016">Auto-Update für URLResolver</string>
+  <string id="30014">Timeout für HTTP-Anfragen in Sekunden</string>
+  <string id="30015">Auto-Update für URLResolver</string>
 
   <!-- settingtabs begin by 30020 - 30029 -->
   <string id="30020">Allgemein</string>
   <string id="30021">Site-Plugins</string>
   <string id="30022">Ansichten</string>
   <string id="30023">Downloads</string>
-  
-  <!-- settingsheader begin by 30030 - 30059 -->
-  <string id="30030">Darstellung</string>
-  <string id="30031">Update</string>
-  <string id="30032">Hoster</string>
-  <string id="30033">Inhalt</string>
-  <string id="30034">Metadaten</string>
+
+  <!-- settingsheader begin by 30030 - 30039 -->
+  <string id="30030">Update</string>
+  <string id="30031">Darstellung</string>
+  <string id="30032">Inhalt</string>
+  <string id="30033">Metadaten</string>
+  <string id="30034">Hoster</string>
   <string id="30035">Netzwerk</string>
-  
+
+  <!-- settingsfolder begin by 30040 - 30049 -->
+  <string id="30040">Globale Suche</string>
+  <string id="30041">Einstellungen</string>
+  <string id="30042">xStream-Einstellungen</string>
+  <string id="30043">URLResolver-Einstellungen</string>
+  <string id="30044">Metahandler-Einstellungen</string>
+
+  <!-- site-plugins begin by 30050 - 30059 -->
+  <string id="30050">Site-Plugin verwenden</string>
+  <string id="30051">Domain auswählen</string>
+
   <!-- views begin by 30060 - 30069 -->
   <string id="30060">Automatisch erzeugte Ansichten verwenden</string>
   <string id="30061">Standard-Ansicht</string>
@@ -40,7 +50,7 @@
   <string id="30063">Serien-Ansicht</string>
   <string id="30064">Staffel-Ansicht</string>
   <string id="30065">Episoden-Ansicht</string>
-  
+
   <!-- downloads begin by 30070 - 30089 -->
   <string id="30070">JDownloader</string>
   <string id="30071">JDownloader an/aus</string>
@@ -53,7 +63,7 @@
   <string id="30082">PyLoad an/aus</string>
   <string id="30083">Benutzername</string>
   <string id="30084">Passwort</string>
-  
+
   <string id="30302">Staffeln Deutsch</string>
   <string id="30303">Staffeln Englisch</string>
   <string id="30304">Suche</string>
