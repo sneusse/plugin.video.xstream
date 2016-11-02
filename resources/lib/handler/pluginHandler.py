@@ -111,7 +111,7 @@ class cPluginHandler:
             plugin = pluginData[pluginID]
             subEl = ET.SubElement(pluginElem,'setting', {'type': 'lsep', 'label':plugin['name']})
             subEl.tail = '\n\t'
-            attrib = {'default': 'false', 'type': 'bool'}
+            attrib = {'default': 'true', 'type': 'bool'}
             attrib['id'] = 'plugin_%s' % pluginID
             attrib['label'] = '30050'
             subEl = ET.SubElement(pluginElem, 'setting', attrib)
