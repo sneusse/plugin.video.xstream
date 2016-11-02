@@ -25,11 +25,11 @@
   <string id="30023">Downloads</string>
   
   <!-- settingsheader begin by 30030 - 30049 -->
-  <string id="30030">Darstellung</string>
-  <string id="30031">Update</string>
-  <string id="30032">Hoster</string>
-  <string id="30033">Inhalt</string>
-  <string id="30034">Metadaten</string>
+  <string id="30030">Update</string>
+  <string id="30031">Darstellung</string>
+  <string id="30032">Inhalt</string>
+  <string id="30033">Metadaten</string>
+  <string id="30034">Hoster</string>
   <string id="30035">Netzwerk</string>
   
   <!-- site-plugins begin by 30050 - 30059 -->
