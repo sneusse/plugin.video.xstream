@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-from resources.lib import blazingfast
+from cBFScrape import cBFScrape
 import sys
 
 SITE_IDENTIFIER = 'cine-dream_net'
@@ -121,32 +121,4 @@ def _search(oGui, sSearchText):
 
 def __getContent(sUrl):
     request = cRequestHandler(sUrl,caching = False)
-    return __unprotect(request)
-    
-def __unprotect(initialRequest):       
-    parser = cParser()
-    content = initialRequest.request()
-    if 'Blazingfast.io' not in content:
-        return content
-    pattern = 'xhr\.open\("GET","([^,]+),'
-    match = parser.parse(content,pattern)
-    if not match[0]:
-        return False
-    urlParts = match[1][0].split('"')
-    sid = '1200'
-    url = '%s%s%s%s' % (URL_MAIN[:-1], urlParts[0],sid,urlParts[2])
-    request = cRequestHandler(url,caching = False)
-    request.addHeaderEntry('Referer',initialRequest.getRequestUri())
-    content = request.request()
-    if not blazingfast.check(content):
-        return content #even if its false its probably not the right content, we'll see
-    cookie = blazingfast.getCookieString(content)
-    if not cookie: 
-        return False
-    initialRequest.caching = False
-    name, value = cookie.split(';')[0].split('=')
-    cookieData = dict((k.strip(), v.strip()) for k,v in (item.split("=") for item in cookie.split(";")))     
-    cookie = initialRequest.createCookie(name,value,domain=cookieData['domain'], expires=sys.maxint, discard=False)
-    initialRequest.setCookie(cookie)
-    content = initialRequest.request()
-    return content
+    return cBFScrape.unprotect(request)
