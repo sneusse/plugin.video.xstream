@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-import urllib2, re
+import urllib2, re, sys
 from binascii import unhexlify
 from binascii import hexlify
 from resources.lib import pyaes
 from resources.lib import logger
 from resources.lib.parser import cParser
+from urlparse import urlparse
+from resources.lib.handler.requestHandler import cRequestHandler
 
 class cBFScrape:
 
@@ -15,7 +17,7 @@ class cBFScrape:
         '''
         returns True if there seems to be a protection 
         '''
-        return COOKIE_NAME in content
+        return cBFScrape.COOKIE_NAME in content
 
     #not very robust but lazieness...
     @staticmethod
@@ -24,15 +26,15 @@ class cBFScrape:
         if not vars:
             logger.info('vars not found')
             return False
-        value = _decrypt(vars[2], vars[0], vars[1])
+        value = cBFScrape._decrypt(vars[2], vars[0], vars[1])
         if not value:
             logger.info('value decryption failed')
             return False
-        pattern = '"%s=".*?";([^"]+)"' % COOKIE_NAME
+        pattern = '"%s=".*?";([^"]+)"' % cBFScrape.COOKIE_NAME
         cookieMeta = re.findall(pattern,content)
         if not cookieMeta:
             logger.info('cookie meta not found')
-        cookie = "%s=%s;%s" % (COOKIE_NAME, value, cookieMeta[0])
+        cookie = "%s=%s;%s" % (cBFScrape.COOKIE_NAME, value, cookieMeta[0])
         return cookie
         # + toHex(BFCrypt.decrypt(c, 2, a, b)) +
 
@@ -60,14 +62,16 @@ class cBFScrape:
         if not match[0]:
             return False
         urlParts = match[1][0].split('"')
+        requestUrl = initialRequest.getRequestUri()
+        parsed_url = urlparse(requestUrl)
         sid = '1200'
-        url = '%s%s%s%s' % (URL_MAIN[:-1], urlParts[0],sid,urlParts[2])
+        url = '%s://%s%s%s%s' % (parsed_url.scheme, parsed_url.netloc, urlParts[0],sid,urlParts[2])
         request = cRequestHandler(url,caching = False)
-        request.addHeaderEntry('Referer',initialRequest.getRequestUri())
+        request.addHeaderEntry('Referer',requestUrl)
         content = request.request()
-        if not blazingfast.checkBFCookie(content):
+        if not cBFScrape.checkBFCookie(content):
             return content #even if its false its probably not the right content, we'll see
-        cookie = blazingfast.getCookieString(content)
+        cookie = cBFScrape.getCookieString(content)
         if not cookie: 
             return False
         initialRequest.caching = False
