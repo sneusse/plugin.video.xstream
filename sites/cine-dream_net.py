@@ -7,7 +7,8 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import re
+from resources.lib import blazingfast
+import sys
 
 SITE_IDENTIFIER = 'cine-dream_net'
 SITE_NAME = 'CineDream'
@@ -32,7 +33,8 @@ def load():
 def showCategory():
     params = ParameterHandler()
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    sHtmlContent = __getContent(URL_MAIN)
+    logger.info("Load %s" % sHtmlContent)
     pattern = 'class="cat-item.*?a[^>]*href="([^"]+)" title="([^"]+)' # url / title
     aResult = cParser().parse(sHtmlContent, pattern)
     for sUrl, sTitle in aResult[1]:
@@ -44,8 +46,8 @@ def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
+    sHtmlContent = __getContent(entryUrl)
 
-    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
     parser = cParser()
     aResult = parser.parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
     if aResult[0]:
@@ -83,7 +85,7 @@ def showEntries(entryUrl = False, sGui = False):
 def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = __getContent(sUrl)
     sPattern = '>Stream:\s([^\s]+)\s.*?<center><a href="([^"]+)' # hostername / url
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
@@ -116,3 +118,35 @@ def showSearch():
 def _search(oGui, sSearchText):
     if not sSearchText: return
     showEntries(URL_SEARCH % sSearchText.strip(), oGui)
+
+def __getContent(sUrl):
+    request = cRequestHandler(sUrl,caching = False)
+    return __unprotect(request)
+    
+def __unprotect(initialRequest):       
+    parser = cParser()
+    content = initialRequest.request()
+    if 'Blazingfast.io' not in content:
+        return content
+    pattern = 'xhr\.open\("GET","([^,]+),'
+    match = parser.parse(content,pattern)
+    if not match[0]:
+        return False
+    urlParts = match[1][0].split('"')
+    sid = '1200'
+    url = '%s%s%s%s' % (URL_MAIN[:-1], urlParts[0],sid,urlParts[2])
+    request = cRequestHandler(url,caching = False)
+    request.addHeaderEntry('Referer',initialRequest.getRequestUri())
+    content = request.request()
+    if not blazingfast.check(content):
+        return content #even if its false its probably not the right content, we'll see
+    cookie = blazingfast.getCookieString(content)
+    if not cookie: 
+        return False
+    initialRequest.caching = False
+    name, value = cookie.split(';')[0].split('=')
+    cookieData = dict((k.strip(), v.strip()) for k,v in (item.split("=") for item in cookie.split(";")))     
+    cookie = initialRequest.createCookie(name,value,domain=cookieData['domain'], expires=sys.maxint, discard=False)
+    initialRequest.setCookie(cookie)
+    content = initialRequest.request()
+    return content
