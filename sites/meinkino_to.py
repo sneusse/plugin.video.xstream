@@ -11,6 +11,7 @@ import json
 
 SITE_IDENTIFIER = 'meinkino_to'
 SITE_NAME = 'MeinKino'
+SITE_ICON = 'meinkino_to.png'
 
 URL_MAIN = 'http://meinkino.to/'
 URL_NEW_FILME = URL_MAIN + 'filme?order=veroeffentlichung'
