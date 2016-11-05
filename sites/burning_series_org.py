@@ -10,6 +10,7 @@ from resources.lib import logger
 import string
 import json
 import random
+import xbmcgui
 from resources.lib.bs_finalizer import *
 
 # "Global" variables
@@ -95,7 +96,16 @@ def _getJsonContent(urlPart, ignoreErrors = False):
     mod_request(request, urlPart)
     content = request.request()
     if content:
-        return json.loads(content)
+        aJson = json.loads(content)
+        if 'error' in aJson:
+            logger.info("API-Error: %s" % aJson)
+            if 'unauthorized' in aJson and aJson['unauthorized'] == 'timestamp':
+                xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','','System-Zeit ist nicht korrekt.')
+            else:
+                xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','',str(aJson))
+            return []
+        else:
+            return aJson
     else:
         return []
 
