@@ -6,7 +6,8 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-#import json
+from urlparse import urlparse
+import json
 
 SITE_IDENTIFIER = 'meinkino_to'
 SITE_NAME = 'MeinKino'
@@ -16,6 +17,8 @@ URL_NEW_FILME = URL_MAIN + 'filme?order=veroeffentlichung'
 URL_FILME = URL_MAIN + 'filme'
 URL_SERIE = URL_MAIN + 'tv'
 URL_GET_URL = URL_MAIN + 'geturl/'
+
+QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 def load():
    logger.info("Load %s" % SITE_NAME)
@@ -95,24 +98,58 @@ def showHosters(): # dirty
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry("X-Requested-With","XMLHttpRequest")
     oRequest.setRequestType(1)
-    sHtmlContent = oRequest.request()
+    sJson = oRequest.request()
     
-    isMatch, aResult = cParser().parse(sHtmlContent, '":"ht([^\/]+)([^"]+)","quality":"([^"]+)')
-    if not isMatch:
+    if not sJson:
         return []
 
     hosters = []
-    for ht, sUrl, sQualy in aResult:
-            hoster = {}
-            hoster['name'] = 'https:' + sUrl.replace('/\/', '//').replace('\/', '/')
-            hoster['link'] = 'https:' + sUrl.replace('/\/', '//').replace('\/', '/')
-            hoster['displayedName'] = sQualy
-            hosters.append(hoster)
+    data = json.loads(sJson)
+
+    # add main link
+    if isinstance(data["url"], list):
+        for urlData in data["url"]:
+            hosters.append(__getHosterFromList(urlData))
+    else:
+        hosters.append(__getHosterEntry(data["url"]))
+
+    # add alternative links
+    if 'alternative' in data:
+        for urlData in data["alternative"]:
+            hosterData = data["alternative"][urlData]
+            if isinstance(hosterData, list):
+                for urlHosterData in hosterData:
+                    hosters.append(__getHosterFromList(urlHosterData))
+            else:
+                hosters.append(__getHosterEntry(hosterData, urlData))
 
     if hosters:
         hosters.append('getHosterUrl')
-
     return hosters
+
+def __getHosterFromList(urlData, hostername=False):
+    if not hostername:
+        parsed_url = urlparse(urlData["link_mp4"])
+        hostername = parsed_url.netloc
+
+    hoster = dict()
+    hoster['link'] = urlData["link_mp4"]
+    hoster['name'] = hostername
+    if urlData["quality"] in QUALITY_ENUM:
+        hoster['quality'] = QUALITY_ENUM[urlData["quality"]]
+    hoster['displayedName'] = '%sP (%s)' % (urlData["quality"], hostername)
+    return hoster
+
+def __getHosterEntry(sUrl, hostername=False):
+    if not hostername:
+        parsed_url = urlparse(sUrl)
+        hostername = parsed_url.netloc
+
+    hoster = dict()
+    hoster['link'] = sUrl
+    hoster['name'] = hostername
+    hoster['displayedName'] = hostername.title()
+    return hoster
 
 def getHosterUrl(sUrl=False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
