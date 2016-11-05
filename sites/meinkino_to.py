@@ -14,27 +14,50 @@ SITE_NAME = 'MeinKino'
 SITE_ICON = 'meinkino_to.png'
 
 URL_MAIN = 'http://meinkino.to/'
-URL_NEW_FILME = URL_MAIN + 'filme?order=veroeffentlichung'
-URL_FILME = URL_MAIN + 'filme'
-URL_SERIE = URL_MAIN + 'tv'
+URL_MOVIES = URL_MAIN + 'filme?type=filme'
+URL_SHOWS = URL_MAIN + 'filme?type=tv'
+URL_SEARCH = URL_MAIN + 'filme?suche=%s&type=alle'
 URL_GET_URL = URL_MAIN + 'geturl/'
 
-URL_SEARCH_ALL = 'http://meinkino.to/filme?suche=%s&type=alle'
+URL_PARMS_ORDER_ID = '&order=neueste'
+URL_PARMS_ORDER_MOSTVIEWED = '&order=ansichten'
+URL_PARMS_ORDER_MOSTRATED = '&order=ratingen'
+URL_PARMS_ORDER_TOPIMDB = '&order=imdb'
+URL_PARMS_ORDER_RELEASEDATE = '&order=veröffentlichung'
+
 
 QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 def load():
    logger.info("Load %s" % SITE_NAME)
+   
    oGui = cGui()
    params = ParameterHandler()
-   params.setParam('sUrl', URL_NEW_FILME)
-   oGui.addFolder(cGuiElement('Neue Filme', SITE_IDENTIFIER, 'showEntries'), params)
-   params.setParam('sUrl', URL_FILME)
-   oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
-   params.setParam('sUrl', URL_SERIE)
-   oGui.addFolder(cGuiElement('TV-Serien', SITE_IDENTIFIER, 'showEntries'), params)
+
+   params.setParam('sUrl', URL_MOVIES)
+   oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
+   params.setParam('sUrl', URL_SHOWS)
+   oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
    oGui.setEndOfDirectory()
+
+def showContentMenu():
+    oGui = cGui()
+    params = ParameterHandler()
+    baseURL = params.getValue('sUrl')
+
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_ID)
+    oGui.addFolder(cGuiElement('Neuste', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_MOSTVIEWED)
+    oGui.addFolder(cGuiElement('Am häufigsten gesehen', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_MOSTRATED)
+    oGui.addFolder(cGuiElement('Am meisten bewertet', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_TOPIMDB)
+    oGui.addFolder(cGuiElement('Top IMDb', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_RELEASEDATE)
+    oGui.addFolder(cGuiElement('Veröffentlichungsdatum', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.setEndOfDirectory()   
+
 
 def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
@@ -194,4 +217,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showEntries(URL_SEARCH_ALL % sSearchText.strip(), oGui)
+    showEntries(URL_SEARCH % sSearchText.strip(), oGui)
