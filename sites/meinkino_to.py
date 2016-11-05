@@ -41,6 +41,7 @@ def load():
    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
    oGui.setEndOfDirectory()
 
+
 def showContentMenu():
     oGui = cGui()
     params = ParameterHandler()
@@ -56,7 +57,41 @@ def showContentMenu():
     oGui.addFolder(cGuiElement('Top IMDb', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_RELEASEDATE)
     oGui.addFolder(cGuiElement('Veröffentlichungsdatum', SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.setEndOfDirectory()   
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'genre')
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showValueList'), params)
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'staat')
+    oGui.addFolder(cGuiElement('Land', SITE_IDENTIFIER, 'showValueList'), params)
+    params.setParam('sUrl', baseURL)
+    params.setParam('valueType', 'veroeffentlichung')
+    oGui.addFolder(cGuiElement('Veröffentlichung', SITE_IDENTIFIER, 'showValueList'), params)
+
+    oGui.setEndOfDirectory()
+
+
+def showValueList():
+    oGui = cGui()
+    params = ParameterHandler()
+    entryUrl = params.getValue('sUrl')
+    valueType = params.getValue('valueType')
+
+    sHtmlContent = cRequestHandler(entryUrl).request()
+    sPattern = '<select[^>]*name="%s\[\]"[^>]*>(.*?)</select>' % valueType # container#
+    logger.info("sPattern %s" % sPattern)
+    isMatch, strContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
+
+    if isMatch: 
+        sPattern = '<option[^>]*value="(.*?)"[^>]*>(.*?)</option>' # container
+        isMatch, aResult = cParser.parse(strContainer, sPattern)
+
+    if not isMatch:
+        return
+
+    for sID, sName in aResult:
+        params.setParam('sUrl',entryUrl + '&' + valueType + '[]=' + sID)
+        oGui.addFolder(cGuiElement(sName.strip(), SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.setEndOfDirectory()
 
 
 def showEntries(entryUrl = False, sGui = False):
