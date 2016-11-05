@@ -257,7 +257,7 @@ def showHosters():
     sHtmlContent = _getRequestHandler(entryUrl).request()
 
     # Prüfen ob Episoden gefunden werden
-    pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>'
+    pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     # Prüfen ob Einträge vorliegen
@@ -287,8 +287,8 @@ def showEpisodes(aResult, params):
     total = len (aResult)
 
     # Alle Folgen durchlaufen und Einträge erzeugen
-    for iEpisode, sUrl in aResult:
-        sName = 'Folge ' + str(iEpisode)
+    for iEpisode, sUrl, sEpisodeTitle in aResult:
+        sName = 'Folge ' + sEpisodeTitle.strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
