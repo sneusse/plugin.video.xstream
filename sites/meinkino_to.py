@@ -19,6 +19,8 @@ URL_FILME = URL_MAIN + 'filme'
 URL_SERIE = URL_MAIN + 'tv'
 URL_GET_URL = URL_MAIN + 'geturl/'
 
+URL_SEARCH_ALL = 'http://meinkino.to/filme?suche=%s&type=alle'
+
 QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 def load():
@@ -31,6 +33,7 @@ def load():
    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
    params.setParam('sUrl', URL_SERIE)
    oGui.addFolder(cGuiElement('TV-Serien', SITE_IDENTIFIER, 'showEntries'), params)
+   oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
    oGui.setEndOfDirectory()
 
 def showEntries(entryUrl = False, sGui = False):
@@ -160,3 +163,15 @@ def getHosterUrl(sUrl=False):
     result['resolved'] = False
     results.append(result)
     return results
+
+def showSearch():
+    oGui = cGui()
+    sSearchText = oGui.showKeyBoard()
+    if not sSearchText: return
+    _search(False, sSearchText)
+    oGui.setEndOfDirectory()
+
+
+def _search(oGui, sSearchText):
+    if not sSearchText: return
+    showEntries(URL_SEARCH_ALL % sSearchText.strip(), oGui)
