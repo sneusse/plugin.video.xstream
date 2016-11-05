@@ -328,12 +328,12 @@ def getHosters(sUrl = False):
         aMatches = re.compile("episode=(\d+)&").findall(sUrl)
 
         # gewünsche Episode ermitteln wenn möglich
-        sEpisode = "\d+" if not aMatches else aMatches[0]
+        sEpisode = "1" if not aMatches else aMatches[0]
 
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult:
             # Nur Links für die gewünschte Episode ermitteln
-            pattern = "<a[^>]*href=['\"]([^'\"]*)['\"][^>]*>\s+(?:%s|HD|SD|Audio Mic|Bluray)\s+</a>" % sEpisode
+            pattern = "<a[^>]*_episode=['\"]%s['\"][^>]*href=['\"]([^'\"]*)['\"][^>]*>" % sEpisode
             isMatch, sServerUrl = cParser.parseSingleResult(sInnerHtml, pattern)
 
             # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
