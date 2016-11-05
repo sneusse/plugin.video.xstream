@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 from urlparse import urlparse
-import json
+import json, re
 
 SITE_IDENTIFIER = 'meinkino_to'
 SITE_NAME = 'MeinKino'
@@ -41,30 +41,37 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
-    parser = cParser()
-    pattern = '<a[^>]*href="([^"]+)id([^"]+)"[^>]*class="ml-name">([^"<]+).*?img*[^>]src="([^"]+).*?</a> ,([^<]+).*?IMDb:([^<]+).*?></span>([^<]+)'
-
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+    pattern = '<a[^>]*href="([^"]+)id([^"]+)"[^>]*class="ml-name">(.*?)<\/a.*?img*[^>]src="([^"]+).*?</a> ,([^<]+)'
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     total = len (aResult)
-
-    for sUrl, sId, sName, sThumbnail, sYear,IMDb, qualy in aResult:
-        sFunction = "showHosters" if not "staffel" in sUrl else "showEpisodes"
+    for sUrl, sId, sName, sThumbnail, sYear in aResult:
         isTvshow = True if "staffel" in sUrl else False
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, sFunction)
+        sName = cUtil.removeHtmlTags(sName.strip())
+        oGuiElement = cGuiElement(sName.strip(), SITE_IDENTIFIER, "showHosters")
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
+
+        if isTvshow:
+            res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
+            if res:
+                sName = res.group(1)
+            logger.info(sName)
+            oGuiElement.setTVShowTitle(sName)
+            oGuiElement.setTitle('%s - Staffel %s' % (sName, res.group(2)))
+            params.setParam('sSeason', res.group(2))
+
         params.setParam('entryUrl', sUrl + 'id' + sId if isTvshow else URL_GET_URL + sId)
-        params.setParam('sName', sName)
-        params.setParam('Thumbnail', sThumbnail)
+        params.setParam('sThumbnail', sThumbnail)
+        params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)')
+    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)')
     if isMatchNextPage:
         params.setParam('sUrl', sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
@@ -73,32 +80,45 @@ def showEntries(entryUrl = False, sGui = False):
         oGui.setView('tvshows' if 'staffel' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
-def showEpisodes():
-    oGui = cGui()
+def showHosters():
     params = ParameterHandler()
-    sUrl = params.getValue('entryUrl')
-    sThumbnail = params.getValue('Thumbnail')
-    sHtmlContent = cRequestHandler(sUrl).request()
+    entryUrl = params.getValue('entryUrl')
+    isTvshowEntry = params.getValue('isTvshow')
 
-    pattern = 'stream-id([^"]+)">([^<]+)'
-    isMatch, aResult = cParser.parse(sHtmlContent, pattern)    
-   
+    if isTvshowEntry == 'True':
+        sHtmlContent = cRequestHandler(entryUrl).request()
+        isMatch, aResult = cParser.parse(sHtmlContent, 'stream-id([^"]+)">([^<]+)')
+        if isMatch:
+            showEpisodes(aResult, params)
+    else:
+        return getHosters(entryUrl)
+
+def showEpisodes(aResult, params):
+    oGui = cGui()
+
+    sTVShowTitle = params.getValue('TVShowTitle')
+    sThumbnail = params.getValue('sThumbnail')
+    sSeason = params.getValue('sSeason')
+
     total = len (aResult)
-
     for sId, iEpisode in aResult:
-        oGuiElement = cGuiElement('Folge ' + iEpisode, SITE_IDENTIFIER, 'showHosters')
-        oGuiElement.setThumbnail(sThumbnail)
+        sName = 'Folge ' + str(iEpisode)
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setMediaType('episode')
+        oGuiElement.setTVShowTitle(sTVShowTitle)
+        oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(iEpisode)
+        oGuiElement.setThumbnail(sThumbnail)
         params.setParam('entryUrl', URL_GET_URL + sId)
-        params.setParam('sName', 'Folge' + iEpisode)
+        params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, False, total)
 
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
-def showHosters(): # dirty
-    sUrl = ParameterHandler().getValue('entryUrl')
+def getHosters(sUrl=False):
+    params = ParameterHandler()
+    sUrl = sUrl if sUrl else params.getValue('entryUrl')
     oRequest = cRequestHandler(sUrl)
     oRequest.addHeaderEntry("X-Requested-With","XMLHttpRequest")
     oRequest.setRequestType(1)
