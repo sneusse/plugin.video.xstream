@@ -24,12 +24,14 @@ REMOTE_XSTREAM_NIGHTLY = "https://github.com/xStream-Kodi/plugin.video.xstream/a
 ## Filename of the update File.
 LOCAL_NIGHTLY_VERSION = os.path.join(profilePath, "nightly_commit_sha")
 LOCAL_RESOLVER_VERSION = os.path.join(profilePath, "resolver_commit_sha")
+LOCAL_FILE_NAME_XSTREAM = 'update_xstream.zip'
+LOCAL_FILE_NAME_RESOLVER = 'update_urlresolver.zip'
 
 
 def xStreamUpdate():
     logger.info("xStream xStreamUpdate")
     nightlycommitsXML = urllib.urlopen(REMOTE_XSTREAM_COMMITS).read()
-    commitUpdate(nightlycommitsXML, LOCAL_NIGHTLY_VERSION, REMOTE_XSTREAM_NIGHTLY, ROOT_DIR, "Updating xStream")
+    commitUpdate(nightlycommitsXML, LOCAL_NIGHTLY_VERSION, REMOTE_XSTREAM_NIGHTLY, ROOT_DIR, "Updating xStream", LOCAL_FILE_NAME_XSTREAM)
 
 def urlResolverUpdate():
     logger.info("xStream urlResolverUpdate")
@@ -48,25 +50,24 @@ def urlResolverUpdate():
         return
 
     commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
-    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver")
+    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver", LOCAL_FILE_NAME_RESOLVER)
 
-def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title):
+def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title, localFileName):
     try:
         if not os.path.exists(offlineFile) or open(offlineFile).read() != \
                 json.loads(onlineFile)['sha']:
-            update(LocalDir, downloadLink, Title)
+            update(LocalDir, downloadLink, Title, localFileName)
             open(offlineFile, 'w').write(json.loads(onlineFile)['sha'])
     except Exception as e:
         logger.info("Ratelimit reached")
         logger.info(e)
 
-def update(LocalDir, REMOTE_PATH, Title):
+def update(LocalDir, REMOTE_PATH, Title, localFileName):
     logger.info(Title + " from: " + REMOTE_PATH)
-    LOCAL_FILE_NAME = Title.replace(' ','_').lower()+".zip"
 
-    cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False, Title)
+    cDownload().download(REMOTE_PATH, localFileName, False, Title)
 
-    updateFile = zipfile.ZipFile(os.path.join(profilePath, LOCAL_FILE_NAME))
+    updateFile = zipfile.ZipFile(os.path.join(profilePath, localFileName))
 
     removeFilesNotInRepo(updateFile, LocalDir)
 
