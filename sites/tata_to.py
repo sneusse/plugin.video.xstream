@@ -76,7 +76,7 @@ def showValueList():
     entryUrl = params.getValue('sUrl')
     valueType = params.getValue('valueType')
 
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = _getRequestHandler(entryUrl).request()
     pattern = '<input[^>]*name="%s[[]]"[^>]*value="(.*?)"[^>]*>(.*?)</' % valueType
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
@@ -95,7 +95,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
+    oRequest = _getRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
     pattern = '<div[^>]*class="ml-item-content"[^>]*>.*?'  # start element
     pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?'  # url
@@ -162,7 +162,7 @@ def showHosters():
     isTvshowEntry = params.getValue('isTvshow')
 
     if isTvshowEntry == 'True':
-        sHtmlContent = cRequestHandler(entryUrl).request()
+        sHtmlContent = _getRequestHandler(entryUrl).request()
         isMatch, aResult = cParser.parse(sHtmlContent, '<li[^>].*?<a[^>]*href="([^"]*)"[^>]*>(\d+)</a>')
         if isMatch:
             showEpisodes(aResult, params)
@@ -197,14 +197,14 @@ def showEpisodes(aResult, params):
 def getHosters(sUrl=False):
     params = ParameterHandler()
     sUrl = sUrl if sUrl else params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = _getRequestHandler(sUrl).request()
 
     pattern = "<div[^>]*data-url='([^']*)'[^>]*>"
     isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, pattern)
 
     hosters = []
     if isMatch:
-        sJson = cRequestHandler(sStreamUrl).request()
+        sJson = _getRequestHandler(sStreamUrl).request()
         if not sJson:
             return []
         data = json.loads(sJson)
@@ -234,6 +234,12 @@ def play(sUrl=False):
     oParams = ParameterHandler()
     if not sUrl: sUrl = oParams.getValue('url')
     return [{'streamUrl': sUrl, 'resolved': True}]
+
+
+def _getRequestHandler(sUrl, ignoreErrors = False):
+    sUrl = sUrl.replace('https:','http:')
+    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
+    return oRequest
 
 
 def showSearch():
