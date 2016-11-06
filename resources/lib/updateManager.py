@@ -22,7 +22,6 @@ REMOTE_XSTREAM_COMMITS = "https://api.github.com/repos/xStream-Kodi/plugin.video
 REMOTE_XSTREAM_NIGHTLY = "https://github.com/xStream-Kodi/plugin.video.xstream/archive/nightly.zip"
 
 ## Filename of the update File.
-LOCAL_FILE_NAME = "xStream_update.zip"
 LOCAL_NIGHTLY_VERSION = os.path.join(profilePath, "nightly_commit_sha")
 LOCAL_RESOLVER_VERSION = os.path.join(profilePath, "resolver_commit_sha")
 
@@ -63,6 +62,8 @@ def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title):
 
 def update(LocalDir, REMOTE_PATH, Title):
     logger.info(Title + " from: " + REMOTE_PATH)
+    LOCAL_FILE_NAME = Title.replace(' ','_').lower()+".zip"
+
     cDownload().download(REMOTE_PATH, LOCAL_FILE_NAME, False, Title)
 
     updateFile = zipfile.ZipFile(os.path.join(profilePath, LOCAL_FILE_NAME))
