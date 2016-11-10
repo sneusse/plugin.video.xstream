@@ -84,7 +84,8 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
-        params.setParam('entryUrl', URL_MAIN + sUrl)
+        params.setParam('entryUrl', URL_MAIN + sUrl)        
+        params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, False, total)
 
     isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, 'class="swchItemA1"[^>]*>.*?</b>\s*<a[^>]*href="([^"]+)"')
@@ -94,6 +95,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not sGui:
         oGui.setView('tvshows' if 'serie' in sUrl or 'show' in sUrl else 'movies')
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
@@ -112,13 +114,11 @@ def showHosters():
         for sName, sUrl in aResult[1]:
             hoster = {}
             if isTvshowEntry == 'True':
+                hoster['name'] = sUrl
                 hoster['link'] = sName
             else:
-                hoster['link'] = sUrl
-            if isTvshowEntry == 'True':
-                hoster['name'] = sUrl
-            else:
                 hoster['name'] = sName
+                hoster['link'] = sUrl
             hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
