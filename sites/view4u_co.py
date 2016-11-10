@@ -83,9 +83,9 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
-        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
-        params.setParam('entryUrl', URL_MAIN + sUrl)        
+        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')        
         params.setParam('isTvshow', isTvshow)
+        params.setParam('entryUrl', URL_MAIN + sUrl)        
         oGui.addFolder(oGuiElement, params, False, total)
 
     isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, 'class="swchItemA1"[^>]*>.*?</b>\s*<a[^>]*href="([^"]+)"')
@@ -95,7 +95,6 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not sGui:
         oGui.setView('tvshows' if 'serie' in sUrl or 'show' in sUrl else 'movies')
-        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
