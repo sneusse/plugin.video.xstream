@@ -92,7 +92,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
-        oGui.setView('tvshows' if True if ("serie" or "show") in entryUrl else False else 'movies')
+        oGui.setView('tvshows' if ("serie" or "show") in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
 def showHosters():

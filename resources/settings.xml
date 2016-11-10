@@ -84,6 +84,8 @@
 	<setting default="true" id="plugin_video2k_is" label="30050" type="bool" />
 	<setting label="Video4k" type="lsep" />
 	<setting default="true" id="plugin_video4k_to" label="30050" type="bool" />
+	<setting label="View4u" type="lsep" />
+	<setting default="true" id="plugin_view4u_co" label="30050" type="bool" />
 </category>
   <category label="30022">
     <setting default="false" id="auto-view" label="30060" type="bool" />
