@@ -94,7 +94,6 @@ def showEntries(entryUrl = False, sGui = False):
 
     if not sGui:
         oGui.setView('tvshows' if 'serie' in sUrl or 'show' in sUrl else 'movies')
-        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
