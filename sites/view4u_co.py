@@ -64,37 +64,36 @@ def showEntries(entryUrl = False, sGui = False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
-    parser = cParser()
     if not sGui:
         pattern = '<div class="s_poster"> <a href="([^"]+)"><img src="([^"]+).*?">([^<]+)</a></h2>.*?">([^<]+)</a></li>.*?shortstory_bottom">([^<]+)'
     else:
         pattern = 'poster">[^>]*<a[^>]*href="([^"]+)"><img[^>]*src="([^"]+).*?">([^"]+)</a></h2>.*?shortstory_bottom">([^<]+)'
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
+    isTvshow = True if ("serie" or "show") in sUrl else False
+
     total = len (aResult)
     for sUrl, sThumbnail, sName, sYear, sDescription in aResult:
-
-        isTvshow = True if "serie" in sUrl or "show" in sUrl else False
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(cUtil.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-        oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(cUtil.unescape(sDescription.decode('utf-8')).encode('utf-8'))
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')        
         params.setParam('isTvshow', isTvshow)
         params.setParam('entryUrl', URL_MAIN + sUrl)        
         oGui.addFolder(oGuiElement, params, False, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, 'class="swchItemA1"[^>]*>.*?</b>\s*<a[^>]*href="([^"]+)"')
+    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, 'class="swchItemA1"[^>]*>.*?</b>\s*<a[^>]*href="([^"]+)"')
     if isMatchNextPage:
         params.setParam('sUrl', URL_MAIN + sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
-        oGui.setView('tvshows' if 'serie' in sUrl or 'show' in sUrl else 'movies')
+        oGui.setView('tvshows' if isTvshow else 'movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
@@ -107,48 +106,46 @@ def showHosters():
     else:
         sPattern = '> <img alt="" src=".*?//.*?/.*?/([^"]+).png.*?<a target="_blank" href="([^"]+)' # Movies
 
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
+
+    if not isMatch:
+        return []
+
     hosters = []
-    if aResult[1]:
-        for sName, sUrl in aResult[1]:
-            hoster = {}
-            if isTvshowEntry == 'True':
-                hoster['name'] = sUrl
-                hoster['link'] = sName
-            else:
-                hoster['name'] = sName
-                hoster['link'] = sUrl
-            hosters.append(hoster)
+    for sName, sUrl in aResult:
+        hoster = {}
+        if isTvshowEntry == 'True':
+            hoster['name'] = sUrl
+            hoster['link'] = sName
+        else:
+            hoster['name'] = sName
+            hoster['link'] = sUrl
+        hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
 
 def getHosterUrl(sUrl = False):
-    if not sUrl: sUrl = ParameterHandler().getValue('url')
-    results = []
-    result = {}
-    result['streamUrl'] = sUrl
-    result['resolved'] = False
-    results.append(result)
-    return results
+    oParams = ParameterHandler()
+    if not sUrl: sUrl = oParams.getValue('url')
+    return [{'streamUrl': sUrl, 'resolved': False}]
 
 def showSearchEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
-    parser = cParser()
     pattern = 'poster">[^>]*<a[^>]*href="([^"]+)"><img[^>]*src="([^"]+).*?">([^"]+)</a></h2>.*?shortstory_bottom">([^<]+)'
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         return
 
     total = len (aResult)
     for sUrl, sThumbnail, sName, sDescription in aResult:
-        oGuiElement = cGuiElement(cUtil().removeHtmlTags(sName), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(cUtil.removeHtmlTags(sName), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-        oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(cUtil.unescape(sDescription.decode('utf-8')).encode('utf-8'))
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
