@@ -76,7 +76,7 @@ def showEntries(entryUrl = False, sGui = False):
 
     total = len (aResult)
     for sUrl, sThumbnail, sName, sYear, sDescription in aResult:
-        isTvshow = True if ("serie" or "show") in sUrl else False
+        isTvshow = True if "serie" in entryUrl or "show" in sUrl else False
         oGuiElement = cGuiElement(cUtil.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         oGuiElement.setDescription(cUtil.unescape(sDescription.decode('utf-8')).encode('utf-8'))
@@ -92,7 +92,7 @@ def showEntries(entryUrl = False, sGui = False):
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
-        oGui.setView('tvshows' if ("serie" or "show") in entryUrl else 'movies')
+        oGui.setView('tvshows' if "serie" in entryUrl or "show" in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
