@@ -14,13 +14,12 @@ from resources.lib.config import cConfig
 from resources.lib import common
 from resources.lib import logger
 
-from resources.lib import logger
-from cCFScrape import cCFScrape
+from resources.lib import logger, cookie_helper
+from resources.lib.cBFScrape import cBFScrape
+from resources.lib.cCFScrape import cCFScrape
+
 
 class cRequestHandler:
-    REQUEST_TYPE_GET = 0
-    REQUEST_TYPE_POST = 1
-      
     def __init__(self, sUrl, caching = True, ignoreErrors = False):
         self.__sUrl = sUrl
         self.__sRealUrl = ''
@@ -72,7 +71,7 @@ class cRequestHandler:
 
     # url after redirects
     def getRealUrl(self):
-        return self.__sRealUrl;
+        return self.__sRealUrl
 
     def request(self):
         self.__sUrl = self.__sUrl.replace(' ', '+')
@@ -87,9 +86,14 @@ class cRequestHandler:
         self.addHeaderEntry('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
 
     def __callRequest(self):
-        cookieJar = mechanize.LWPCookieJar()
+        if self.caching and self.cacheTime > 0:
+            sContent = self.readCache(self.getRequestUri())
+            if sContent:
+                return sContent
+
+        cookieJar = mechanize.LWPCookieJar(filename=self._cookiePath)
         try: #TODO ohne try evtl.
-            cookieJar.load(self._cookiePath, self.__bIgnoreDiscard, self.__bIgnoreExpired)
+            cookieJar.load(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired)
         except Exception as e:
             logger.info(e)
 
@@ -109,17 +113,18 @@ class cRequestHandler:
         for key, value  in self.__headerEntries.items():
             oRequest.add_header(key, value)
         cookieJar.add_cookie_header(oRequest)
-        
-        if self.caching and self.cacheTime > 0:
-            sContent = self.readCache(self.getRequestUri())
-            if sContent:
-                return sContent
+
+        user_agent = self.__headerEntries.get('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
 
         try:
-            oResponse = opener.open(oRequest,timeout = self.requestTimeout)
+            oResponse = opener.open(oRequest,timeout=self.requestTimeout)
         except mechanize.HTTPError, e:
             if e.code == 503 and e.headers.get("Server") == 'cloudflare-nginx':
-                oResponse, cookieJar = cCFScrape().resolve(oRequest, e, cookieJar)
+                html = e.read()
+                oResponse = self.__check_protection(html, user_agent, cookieJar)
+                if not oResponse or not self.ignoreErrors:
+                    logger.error("HTTPError " + str(e) + " Url: " + self.__sUrl)
+                    return ''
             elif not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xStream','Fehler beim Abrufen der Url:',self.__sUrl, str(e))
                 logger.error("HTTPError "+str(e)+" Url: "+self.__sUrl)
@@ -137,12 +142,17 @@ class cRequestHandler:
             logger.error("HTTPException "+str(e)+" Url: "+self.__sUrl)
             return ''
 
-        cookieJar.extract_cookies(oResponse, oRequest)
-
-        cookieJar = self.__checkCookie(cookieJar)
-
-        cookieJar.save(self._cookiePath, self.__bIgnoreDiscard, self.__bIgnoreExpired)
         sContent = oResponse.read()
+
+        checked_response = self.__check_protection(sContent, user_agent, cookieJar)
+        if checked_response:
+            oResponse = checked_response
+            sContent = oResponse.read()
+
+        cookieJar.extract_cookies(oResponse, oRequest)
+        cookie_helper.check_cookies(cookieJar)
+        cookieJar.save(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired)
+
         self.__sResponseHeader = oResponse.info()
         # handle gzipped content
         if self.__sResponseHeader.get('Content-Encoding') == 'gzip':
@@ -170,12 +180,16 @@ class cRequestHandler:
 
         return sContent
 
-    def __checkCookie(self, cookieJar):
-        for entry in cookieJar:
-            if entry.expires > sys.maxint:
-                entry.expires = sys.maxint
 
-        return cookieJar
+    def __check_protection(self, html, user_agent, cookie_jar):
+        oResponse = None
+
+        if 'cf-browser-verification' in html:
+            oResponse = cCFScrape().resolve(self.__sUrl, cookie_jar, user_agent)
+        elif 'Blazingfast.io' in html:
+            oResponse = cBFScrape().resolve(self.__sUrl, cookie_jar, user_agent)
+
+        return oResponse
 
     def getHeaderLocationUrl(self):        
         opened = mechanize.urlopen(self.__sUrl)
@@ -188,40 +202,6 @@ class cRequestHandler:
             file = open(cookieFile, 'w')
             file.close()
         self._cookiePath = cookieFile
-
-    #from kennethreitz module "requests"
-    def createCookie(self, name, value, **kwargs):
-        """Make a cookie from underspecified parameters.
-        By default, the pair of `name` and `value` will be set for the domain ''
-        and sent on every request (this is sometimes called a "supercookie").
-        """
-        result = dict(
-            version=0,
-            name=name,
-            value=value,
-            port=None,
-            domain='',
-            path='/',
-            secure=False,
-            expires=None,
-            discard=True,
-            comment=None,
-            comment_url=None,
-            rest={'HttpOnly': None},
-            rfc2109=False,)
-
-        badargs = set(kwargs) - set(result)
-        if badargs:
-            err = 'create_cookie() got unexpected keyword arguments: %s'
-            raise TypeError(err % list(badargs))
-
-        result.update(kwargs)
-        result['port_specified'] = bool(result['port'])
-        result['domain_specified'] = bool(result['domain'])
-        result['domain_initial_dot'] = result['domain'].startswith('.')
-        result['path_specified'] = bool(result['path'])
-
-        return mechanize.Cookie(**result)
 
     def getCookie(self, sCookieName, sDomain = ''):
         cookieJar = mechanize.LWPCookieJar()
