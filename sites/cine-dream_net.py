@@ -5,7 +5,10 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
+from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
+from cBFScrape import cBFScrape
+import sys
 
 SITE_IDENTIFIER = 'cine-dream_net'
 SITE_NAME = 'CineDream'
@@ -30,7 +33,7 @@ def load():
 def showCategory():
     params = ParameterHandler()
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    sHtmlContent = __getContent(URL_MAIN)
     logger.info("Load %s" % sHtmlContent)
     pattern = 'class="cat-item.*?a[^>]*href="([^"]+)" title="([^"]+)' # url / title
     aResult = cParser().parse(sHtmlContent, pattern)
@@ -43,7 +46,7 @@ def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl).request()
+    sHtmlContent = __getContent(entryUrl)
 
     parser = cParser()
     aResult = parser.parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
@@ -82,7 +85,7 @@ def showEntries(entryUrl = False, sGui = False):
 def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = __getContent(sUrl)
     sPattern = '>Stream:\s([^\s]+)\s.*?<center><a href="([^"]+)' # hostername / url
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
@@ -115,3 +118,7 @@ def showSearch():
 def _search(oGui, sSearchText):
     if not sSearchText: return
     showEntries(URL_SEARCH % sSearchText.strip(), oGui)
+
+def __getContent(sUrl):
+    request = cRequestHandler(sUrl,caching = False)
+    return cBFScrape.unprotect(request)
