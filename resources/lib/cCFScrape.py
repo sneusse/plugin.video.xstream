@@ -1,18 +1,37 @@
-from time import sleep
+# -*- coding: utf-8 -*-
 import mechanize
 import urllib
 import re
-
+import sys
+from time import sleep
 from urlparse import urlparse
 
+from resources.lib import logger, cookie_helper
+
 class cCFScrape:
-    def resolve(self, req, error, cookieJar):
-        sleep(5)
+    def resolve(self, url, cookie_jar, user_agent):
+        headers = {'User-agent': user_agent, 'Referer': url}
 
-        useragent = req.headers.get('User-agent')
+        try: cookie_jar.load(ignore_discard=True)
+        except Exception as e: logger.info(e)
 
-        body = error.read()
-        parsed_url = urlparse(error.url)
+        opener = mechanize.build_opener(mechanize.HTTPCookieProcessor(cookie_jar))
+
+        request = mechanize.Request(url)
+        for key in headers:
+            request.add_header(key, headers[key])
+
+        try:
+            response = opener.open(request)
+        except mechanize.HTTPError as e:
+            response = e
+
+        body = response.read()
+
+        cookie_jar.extract_cookies(response, request)
+        cookie_helper.check_cookies(cookie_jar)
+
+        parsed_url = urlparse(url)
         submit_url = "%s://%s/cdn-cgi/l/chk_jschl" % (parsed_url.scheme, parsed_url.netloc)
 
         params = {}
@@ -22,25 +41,30 @@ class cCFScrape:
             params["pass"] = re.search(r'name="pass" value="(.+?)"', body).group(1)
 
             js = self._extract_js(body)
-        except:
-            raise
+        except mechanize.HTTPError as e:
+            return None
 
         params["jschl_answer"] = str(js + len(parsed_url.netloc))
-
-        opener = mechanize.build_opener(mechanize.HTTPCookieProcessor(cookieJar))
 
         sParameters = urllib.urlencode(params, True)
 
         request = mechanize.Request("%s?%s" % (submit_url, sParameters))
-        request.add_header('Referer', error.url)
-        request.add_header('User-agent', useragent)
+        for key in headers:
+            request.add_header(key, headers[key])
+
+        sleep(5)
 
         try:
             response = opener.open(request)
-        except:
-            raise
+        except mechanize.HTTPError as e:
+            response = e
 
-        return response, cookieJar
+        return response
+
+    def __checkCookie(self, cookieJar):
+        for entry in cookieJar:
+            if entry.expires > sys.maxint:
+                entry.expires = sys.maxint
 
     def _extract_js(self, body):
         js = re.search(r"setTimeout\(function\(\){\s+(var "
