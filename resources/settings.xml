@@ -19,12 +19,12 @@
     <setting type="sep" />
     <setting label="30034" type="lsep" />
     <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
-    <setting default="100" id="maxHoster" label="30007" type="number" />
+    <setting default="100" id="maxHoster" label="30007" type="slider" range="10,5,100" option="int" />
     <setting default="true" enable="!eq(-2,1)" id="presortHoster" label="30009" type="bool" />
     <setting type="sep" />
     <setting label="30035" type="lsep" />
-    <setting default="600" id="cacheTime" label="30006" type="number" />
-    <setting default="30" id="requestTimeout" label="30014" type="number" />
+    <setting default="600" id="cacheTime" label="30006" type="slider" range="0,60,1800" option="int" />
+    <setting default="30" id="requestTimeout" label="30014" type="slider" range="10,5,60" option="int" />
   </category> 
   <category label="30021">
 	<setting label="AnimeLoads" type="lsep" />
