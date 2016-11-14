@@ -6,6 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
+from urlparse import urlparse
 
 SITE_IDENTIFIER = 'streamdream_ws'
 SITE_NAME = 'Streamdream'
@@ -15,6 +16,8 @@ URL_MAIN = 'http://streamdream.ws/'
 
 EPISODE_URL = URL_MAIN + 'episodeholen.php'
 URL_HOSTER_URL = URL_MAIN + 'episodeholen2.php'
+
+QUALITY_ENUM = {'SD': 1, 'HD': 4}
 
 
 def load():
@@ -113,33 +116,39 @@ def showHosters():
     isTvshowEntry = params.getValue('isTvshow')
 
     if isTvshowEntry == 'True':
-        oRequest = cRequestHandler(entryUrl)
-        oRequest.addHeaderEntry("X-Requested-With", "XMLHttpRequest")
-        sHtmlContent = oRequest.request()
+        sHtmlContent = cRequestHandler(entryUrl).request()
 
-        pattern = 'season="([^"]+)[^>]>([^<]+)</div>.*?[^>]*<script>[^>].*?imdbid[^>][^>]"([^"]+).*?language[^>][^>]"([^"]+)"'
+        pattern = '<div[^>]*season="(\d+)"[^>]*>.*?'  # sSeasonID
+        pattern += 'imdbid\s*:\s*"(\d+)".*?'  # imdbid
+        pattern += 'language\s*:\s*"([^"]+)"'  # language
         isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
         if isMatch:
-            showSeason(aResult, params)
+            isMatchDesc, aResultDesc = cParser.parse(sHtmlContent, '<p[^>]*style=[^>]*>(.*?)</p>')
+
+            if isMatchDesc:
+                aResultDesc[0] = cUtil().unescape(aResultDesc[0].decode('utf-8')).encode('utf-8').strip()
+
+            showSeason(aResult, params, '' if not isMatchDesc else aResultDesc[0])
     else:
         return getHosters(entryUrl)
 
 
-def showSeason(aResult, params):
+def showSeason(aResult, params, sDesc):
     oGui = cGui()
 
     sTVShowTitle = params.getValue('Name')
     sThumbnail = params.getValue('sThumbnail')
 
     total = len(aResult)
-    for sID, sSeasonName, imdbid, slanguage in aResult:
-        oGuiElement = cGuiElement(sSeasonName, SITE_IDENTIFIER, 'showEpisodes')
+    for sSeason, imdbid, slanguage in aResult:
+        oGuiElement = cGuiElement('Staffel ' + sSeason, SITE_IDENTIFIER, 'showEpisodes')
         oGuiElement.setMediaType('season')
         oGuiElement.setTVShowTitle(sTVShowTitle)
-        oGuiElement.setSeason(sID)
-        oGuiElement.setDescription(slanguage)
+        oGuiElement.setSeason(sSeason)
+        oGuiElement.setDescription(sDesc)
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-        params.setParam('Season', sID)
+        params.setParam('Season', sSeason)
         params.setParam('imdbid', imdbid)
         params.setParam('language', slanguage)
         oGui.addFolder(oGuiElement, params, True, total)
@@ -151,6 +160,7 @@ def showSeason(aResult, params):
 def showEpisodes():
     oGui = cGui()
     params = ParameterHandler()
+    entryUrl = params.getValue('entryUrl')
     sThumbnail = params.getValue('sThumbnail')
     imdbid = params.getValue('imdbid')
     slanguage = params.getValue('language')
@@ -165,7 +175,6 @@ def showEpisodes():
     oRequest.addParameters('season', sSeason)
 
     sHtmlContent = oRequest.request()
-
     pattern = '>#([^<]+)</p>[^>]*[^>]*<script>.*?imdbid:[^>]"([^"]+).*?language:[^>]"([^"]+).*?season:[^>]"([^"]+)'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
@@ -173,14 +182,22 @@ def showEpisodes():
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
+    sHtmlContent = cRequestHandler(entryUrl).request()
+    isMatchDesc, aResultDesc = cParser.parse(sHtmlContent, '<p[^>]*style=[^>]*>(.*?)</p>')
+    sDesc = ''
+
+    if isMatchDesc:
+        sDesc = cUtil().unescape(aResultDesc[0].decode('utf-8')).encode('utf-8').strip()
+
     total = len(aResult)
     for sEpisode, imdbid, slanguage, sSeason in aResult:
-        oGuiElement = cGuiElement('Folge ' + sEpisode, SITE_IDENTIFIER, 'getserieHosters')
+        oGuiElement = cGuiElement('Folge ' + sEpisode, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setMediaType('season')
         oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(sEpisode)
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
+        oGuiElement.setDescription(sDesc)
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         params.setParam('Episode', sEpisode)
         params.setParam('Season', sSeason)
@@ -192,49 +209,36 @@ def showEpisodes():
     oGui.setEndOfDirectory()
 
 
-def getserieHosters():
-    params = ParameterHandler()
-    oRequest = cRequestHandler(URL_HOSTER_URL)
-    oRequest.addHeaderEntry("X-Requested-With", "XMLHttpRequest")
-    oRequest.setRequestType(1)
-    oRequest.addParameters('imdbid', params.getValue('imdbid'))
-    oRequest.addParameters('language', params.getValue('language'))
-    oRequest.addParameters('season', params.getValue('Season'))
-    oRequest.addParameters('episode', params.getValue('Episode'))
-    sHtmlContent = oRequest.request()
-
-    isMatch, aResult = cParser.parse(sHtmlContent, '<a href="([^"]+)//([^"/]+)([^"]+)" target="_blank"><img class="sd')
-
-    hosters = []
-    if not isMatch:
-        return hosters
-
-    for sHttp, sName, sUrl in aResult:
-        hoster = {}
-        hoster['link'] = sHttp + '//' + sName + sUrl
-        hoster['name'] = sName
-        hosters.append(hoster)
-
-    if hosters:
-        hosters.append('getHosterUrl')
-    return hosters
-
-
 def getHosters(sUrl=False):
-    oParams = ParameterHandler()
-    sUrl = oParams.getValue('entryUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = '<a href="([^"]+)//([^"/]+)([^"]+)" target="_blank"><img class="sd'
+    if not sUrl:
+        params = ParameterHandler()
+        oRequest = cRequestHandler(URL_HOSTER_URL)
+        oRequest.addHeaderEntry("X-Requested-With", "XMLHttpRequest")
+        oRequest.setRequestType(1)
+        oRequest.addParameters('imdbid', params.getValue('imdbid'))
+        oRequest.addParameters('language', params.getValue('language'))
+        oRequest.addParameters('season', params.getValue('Season'))
+        oRequest.addParameters('episode', params.getValue('Episode'))
+        sHtmlContent = oRequest.request()
+    else:
+        sHtmlContent = cRequestHandler(sUrl).request()
+
+    if not sHtmlContent:
+        return []
+
+    sPattern = '<a[^>]*href="([^"]+)"[^>]*><img[^>]*class="([s|h]d+)linkbutton"'
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     hosters = []
     if not isMatch:
         return hosters
 
-    for sHttp, sName, sUrl in aResult:
+    for sUrl, sQuali in aResult:
         hoster = {}
-        hoster['link'] = sHttp + '//' + sName + sUrl
-        hoster['name'] = sName
+        hoster['link'] = sUrl
+        hoster['name'] = str(urlparse(sUrl).netloc).title()
+        hoster['displayedName'] = '%s [%s]' % (hoster['name'], sQuali.upper())
+        hoster['quality'] = QUALITY_ENUM[sQuali.upper()]
         hosters.append(hoster)
 
     if hosters:
