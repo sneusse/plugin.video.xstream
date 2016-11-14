@@ -61,7 +61,8 @@ def showEntries(entryUrl=False, sGui=False):
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
-    pattern = '<a[^>]*class="linkto"[^>]*href="([^"]+)">*[^>]*.*?<img[^>]*src="([^"]+)">([^<]+)'
+    pattern = '<a[^>]*class="linkto"[^>]*href="(?:\.\.\/)*([^"]+)"[^>]*>.*?' # link
+    pattern += '<img[^>]*src="([^"]*)"[^>]*>(.*?)</div>'  # thumbnail / name
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
