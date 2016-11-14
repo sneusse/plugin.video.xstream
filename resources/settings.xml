@@ -19,12 +19,12 @@
     <setting type="sep" />
     <setting label="30034" type="lsep" />
     <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
-    <setting default="100" id="maxHoster" label="30007" type="slider" range="10,5,100" option="int" />
+    <setting default="100" id="maxHoster" label="30007" option="int" range="10,5,100" type="slider" />
     <setting default="true" enable="!eq(-2,1)" id="presortHoster" label="30009" type="bool" />
     <setting type="sep" />
     <setting label="30035" type="lsep" />
-    <setting default="600" id="cacheTime" label="30006" type="slider" range="0,60,1800" option="int" />
-    <setting default="30" id="requestTimeout" label="30014" type="slider" range="10,5,60" option="int" />
+    <setting default="600" id="cacheTime" label="30006" option="int" range="0,60,1800" type="slider" />
+    <setting default="30" id="requestTimeout" label="30014" option="int" range="10,5,60" type="slider" />
   </category> 
   <category label="30021">
 	<setting label="AnimeLoads" type="lsep" />
@@ -72,6 +72,8 @@
 	<setting default="true" id="plugin_serienstream_to" label="30050" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
 	<setting default="true" id="plugin_seriesever_net" label="30050" type="bool" />
+	<setting label="streamdream" type="lsep" />
+	<setting default="true" id="plugin_streamdream_ws" label="30050" type="bool" />
 	<setting label="StreamIt" type="lsep" />
 	<setting default="true" id="plugin_streamit_ws" label="30050" type="bool" />
 	<setting label="StreamKisteTV" type="lsep" />
