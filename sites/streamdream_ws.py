@@ -72,7 +72,7 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, sThumbnail, sName in aResult:
         isTvshow = True if 'serie' in sUrl else False
-        sName = cUtil().unescape(sName.decode('utf-8')).encode('utf-8')
+        sName = cUtil().unescape(sName.decode('utf-8')).encode('utf-8').strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         oGuiElement.setMediaType("tvshow" if isTvshow else "movie")
@@ -82,7 +82,7 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<a*[^>]class="righter"*[^>]href="([^"]+)"')
+    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"')
     if isMatchNextPage:
         params.setParam('sUrl', entryUrl + sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
