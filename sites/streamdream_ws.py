@@ -27,7 +27,6 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_SERIE)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-
     params.setParam('sUrl', URL_MAIN)
     params.setParam('valueType', 'film')
     oGui.addFolder(cGuiElement('Genre Filme', SITE_IDENTIFIER, 'showGenre'), params)
@@ -44,14 +43,14 @@ def showGenre():
     valueType = params.getValue('valueType')
 
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = 'href="%s([^"]+)">([^<]+)</a></li>' % valueType
-    aResult = cParser().parse(sHtmlContent, pattern)
+    pattern = 'href="(%s[^"]+)">([^<]+)<\/a><\/li>' % valueType
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
-    if not aResult[0]:
+    if not isMatch:
         return
 
-    for sID, sName in aResult[1]:
-        params.setParam('sUrl', entryUrl + valueType + sID)
+    for sID, sName in aResult:
+        params.setParam('sUrl', entryUrl + sID)
         oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
