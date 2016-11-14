@@ -60,12 +60,13 @@ def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    sBaseUrl =  params.getValue('sBaseUrl')
+    sBaseUrl = params.getValue('sBaseUrl')
     if not sBaseUrl:
+        params.setParam('sBaseUrl', entryUrl)
         sBaseUrl = entryUrl
 
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
-    pattern = '<a[^>]*class="linkto"[^>]*href="(?:\.\.\/)*([^"]+)"[^>]*>.*?' # link
+    pattern = '<a[^>]*class="linkto"[^>]*href="(?:\.\.\/)*([^"]+)"[^>]*>.*?'  # link
     pattern += '<img[^>]*src="([^"]*)"[^>]*>(.*?)</div>'  # thumbnail / name
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
@@ -160,7 +161,6 @@ def showEpisodes():
     if not isMatch:
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
-
 
     total = len(aResult)
     for sEpisode, imdbid, slanguage, sSeason in aResult:
