@@ -51,6 +51,7 @@ def showGenre():
 
     for sID, sName in aResult:
         params.setParam('sUrl', entryUrl + sID)
+        params.setParam('sBaseUrl', entryUrl + sID)
         oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
@@ -59,6 +60,9 @@ def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
+    sBaseUrl =  params.getValue('sBaseUrl')
+    if not sBaseUrl:
+        sBaseUrl = entryUrl
 
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
     pattern = '<a[^>]*class="linkto"[^>]*href="(?:\.\.\/)*([^"]+)"[^>]*>.*?' # link
@@ -84,7 +88,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"')
     if isMatchNextPage:
-        params.setParam('sUrl', entryUrl + sNextUrl)
+        params.setParam('sUrl', sBaseUrl + sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
     if not sGui:
