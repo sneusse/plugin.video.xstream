@@ -12,8 +12,6 @@ SITE_NAME = 'Streamdream'
 SITE_ICON = 'streamdream_ws.png'
 
 URL_MAIN = 'http://streamdream.ws/'
-URL_FILME = URL_MAIN + 'neuefilme'
-URL_SERIE = URL_MAIN + 'neueserien'
 
 EPISODE_URL = URL_MAIN + 'episodeholen.php'
 URL_HOSTER_URL = URL_MAIN + 'episodeholen2.php'
@@ -23,16 +21,28 @@ def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('sUrl', URL_FILME)
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SERIE)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MAIN)
     params.setParam('valueType', 'film')
-    oGui.addFolder(cGuiElement('Genre Filme', SITE_IDENTIFIER, 'showGenre'), params)
-    params.setParam('sUrl', URL_MAIN)
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('valueType', 'serien')
-    oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenre'), params)
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
+    oGui.setEndOfDirectory()
+
+
+def showContentMenu():
+    oGui = cGui()
+    params = ParameterHandler()
+    valueType = params.getValue('valueType')
+
+    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    pattern = 'href="(?:\.\.\/)*([neu|beliebt]+%s[^"]*)"[^>]*>([^<]+)<\/a><\/li>' % valueType
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    for sID, sName in aResult:
+        params.setParam('sUrl', URL_MAIN + sID)
+        oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
+
+    params.setParam('sUrl', URL_MAIN)
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'), params)
     oGui.setEndOfDirectory()
 
 
@@ -51,7 +61,6 @@ def showGenre():
 
     for sID, sName in aResult:
         params.setParam('sUrl', entryUrl + sID)
-        params.setParam('sBaseUrl', entryUrl + sID)
         oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
@@ -87,7 +96,8 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"')
+    pattern = '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"'
+    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, pattern)
     if isMatchNextPage:
         params.setParam('sUrl', sBaseUrl + sNextUrl)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
@@ -126,6 +136,7 @@ def showSeason(aResult, params):
         oGuiElement = cGuiElement(sSeasonName, SITE_IDENTIFIER, 'showEpisodes')
         oGuiElement.setMediaType('season')
         oGuiElement.setTVShowTitle(sTVShowTitle)
+        oGuiElement.setSeason(sID)
         oGuiElement.setDescription(slanguage)
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         params.setParam('Season', sID)
