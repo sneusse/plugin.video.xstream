@@ -15,7 +15,8 @@ SITE_ICON = 'streamdream_ws.png'
 URL_MAIN = 'http://streamdream.ws/'
 
 EPISODE_URL = URL_MAIN + 'episodeholen.php'
-URL_HOSTER_URL = URL_MAIN + 'episodeholen2.php'
+HOSTER_URL = URL_MAIN + 'episodeholen2.php'
+SEARCH_URL = URL_MAIN + 'searchy.php?ser=%s'
 
 QUALITY_ENUM = {'SD': 1, 'HD': 4}
 
@@ -28,6 +29,7 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('valueType', 'serien')
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
@@ -81,6 +83,10 @@ def showEntries(entryUrl=False, sGui=False):
     pattern = '<a[^>]*class="linkto"[^>]*href="(?:\.\.\/)*([^"]+)"[^>]*>.*?'  # link
     pattern += '<img[^>]*src="([^"]*)"[^>]*>(.*?)</div>'  # thumbnail / name
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    if not isMatch:  # Fallback for Search-Results
+        pattern = "<a[^>]*href='(?:\.\.\/)*([^']+)'[^>]*()>(.*?)\(\d+\s*-\s*\w+\)\s*</"  # link, filler, name
+        isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
@@ -212,7 +218,7 @@ def showEpisodes():
 def getHosters(sUrl=False):
     if not sUrl:
         params = ParameterHandler()
-        oRequest = cRequestHandler(URL_HOSTER_URL)
+        oRequest = cRequestHandler(HOSTER_URL)
         oRequest.addHeaderEntry("X-Requested-With", "XMLHttpRequest")
         oRequest.setRequestType(1)
         oRequest.addParameters('imdbid', params.getValue('imdbid'))
@@ -249,3 +255,16 @@ def getHosters(sUrl=False):
 def getHosterUrl(sUrl=False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
     return [{'streamUrl': sUrl, 'resolved': False}]
+
+
+def showSearch():
+    oGui = cGui()
+    sSearchText = oGui.showKeyBoard()
+    if not sSearchText: return
+    _search(False, sSearchText)
+    oGui.setEndOfDirectory()
+
+
+def _search(oGui, sSearchText):
+    if not sSearchText: return
+    showEntries(SEARCH_URL % sSearchText.strip(), oGui)
