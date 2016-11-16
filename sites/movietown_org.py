@@ -128,6 +128,7 @@ def showSeasons():
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
+
 def showEpisodes():
     oGui = cGui()
     oParams = ParameterHandler()
@@ -178,6 +179,7 @@ def showEpisodes():
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
+
 def showHosters():
     oParams = ParameterHandler()
     title_id = oParams.getValue('title_id')
@@ -204,7 +206,7 @@ def showHosters():
 
             hoster = dict()
             hoster['link'] = link["url"]
-            hoster['name'] = link["label"].encode('utf-8').Title()
+            hoster['name'] = link["label"].encode('utf-8').title()
             hosters.append(hoster)
 
     if hosters:
