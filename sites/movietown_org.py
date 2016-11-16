@@ -12,7 +12,7 @@ SITE_NAME = 'MovieTown'
 SITE_ICON = 'movietown.png'
 
 URL_MAIN = 'http://movietown.org/'
-URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&type=%s&query=%s&availToStream=true'
+URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&genres[]=%s&type=%s&query=%s&availToStream=true'
 
 
 def load():
@@ -40,14 +40,44 @@ def showContentMenu():
     params.setParam('order', 'mc_num_of_votesDesc')
     oGui.addFolder(cGuiElement('Anzahl Userbewertungen', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('order', 'titleAsc')
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'), params)
+    params.setParam('order', 'titleAsc')
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'), params)
     oGui.setEndOfDirectory()
+
+
+def showGenre():
+    oGui = cGui()
+    params = ParameterHandler()
+    type = params.getValue('type')
+
+    if not type:
+        oGui.showError('xStream', 'Es wurde kein Token gefunden.')
+        return
+
+    sUrl = URL_MAIN + ('series' if type == 'series' else 'movies')
+    sHtmlContent = cRequestHandler(sUrl).request()
+
+    pattern = '<input[^>]*type="checkbox"[^>]*value="([^"]*)"[^>]*data-bind="[^"]*params.genres"/>([^<]*)</'
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    if not isMatch:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(aResult)
+    for sGenre, sTitle in aResult:
+        params.setParam('genre', sGenre)
+        oGui.addFolder(cGuiElement(sTitle, SITE_IDENTIFIER, 'showEntries'), params, iTotal=total)
+    oGui.setEndOfDirectory()
+
 
 def showEntries(searchString='', sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     order = params.getValue('order')
     type = params.getValue('type')
+    genre = params.getValue('genre')
 
     if not type: type = ''
     if not type: order = 'titleAsc'
@@ -62,9 +92,9 @@ def showEntries(searchString='', sGui=False):
     if iPage <= 0:
         iPage = 1
 
-    sUrl = URL_LIST % (token, 25, iPage, order, type, searchString)
+    sUrl = URL_LIST % (token, 25, iPage, order, genre, type, searchString)
     print sUrl
-    sJson = cRequestHandler(sUrl, ignoreErrors=True).request()
+    sJson = cRequestHandler(sUrl, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
         if not sGui: oGui.showError('xStream', 'Fehler beim Laden der Daten.')
@@ -99,7 +129,6 @@ def showEntries(searchString='', sGui=False):
 
     oGui.setView('movies')
     oGui.setEndOfDirectory()
-
 
 
 def showSeasons():
@@ -243,6 +272,7 @@ def play(sUrl=False):
 def __getToken():
     sHtmlContent = cRequestHandler(URL_MAIN, ignoreErrors=True).request()
     return cParser.parseSingleResult(sHtmlContent, "token\s*:\s*'([\w|\d]+)'")
+
 
 def showSearch():
     oGui = cGui()
