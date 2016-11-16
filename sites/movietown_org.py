@@ -8,7 +8,7 @@ from resources.lib.handler.ParameterHandler import ParameterHandler
 import json
 
 SITE_IDENTIFIER = 'movietown_org'
-SITE_NAME = 'Movietown'
+SITE_NAME = 'MovieTown'
 SITE_ICON = 'movietown.png'
 
 URL_MAIN = 'http://movietown.org/'
