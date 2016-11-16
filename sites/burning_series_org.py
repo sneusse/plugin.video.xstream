@@ -84,25 +84,26 @@ def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(oGui, sSearchText)
-    oGui.setView('tvshows')
+    _search(False, sSearchText)
+
     oGui.setEndOfDirectory()
 
 ### Helper functions
 
 # Load a JSON object
 def _getJsonContent(urlPart, ignoreErrors = False):
-    request = cRequestHandler(URL_MAIN + urlPart, ignoreErrors = ignoreErrors)
+    request = cRequestHandler(URL_MAIN + urlPart, ignoreErrors=ignoreErrors)
     mod_request(request, urlPart)
     content = request.request()
     if content:
         aJson = json.loads(content)
         if 'error' in aJson:
             logger.info("API-Error: %s" % aJson)
-            if 'unauthorized' in aJson and aJson['unauthorized'] == 'timestamp':
-                xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','','System-Zeit ist nicht korrekt.')
-            else:
-                xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','',str(aJson))
+            if not ignoreErrors:
+                if 'unauthorized' in aJson and aJson['unauthorized'] == 'timestamp':
+                    xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','','System-Zeit ist nicht korrekt.')
+                else:
+                    xbmcgui.Dialog().ok('xStream', 'Fehler bei API-Abfrage:','',str(aJson))
             return []
         else:
             return aJson
@@ -110,9 +111,10 @@ def _getJsonContent(urlPart, ignoreErrors = False):
         return []
 
 # Search for series using the requested string sSearchText
-def _search(oGui, sSearchText):
+def _search(sGui, sSearchText):
+    oGui = sGui if sGui else cGui()
     params = ParameterHandler()
-    series = _getJsonContent("series", True)
+    series = _getJsonContent("series", ignoreErrors = (sGui is not False))
     total = len(series)
     sSearchText = sSearchText.lower()
     for serie in series:
@@ -123,6 +125,7 @@ def _search(oGui, sSearchText):
         guiElement.setThumbnail(URL_COVER % serie["id"])
         params.addParams({'seriesID' : str(serie["id"]), 'Title' : sTitle})
         oGui.addFolder(guiElement, params, iTotal = total)
+    oGui.setView('tvshows')
 
 # Show a list of seasons for a requested series, and movies if available
 def showSeasons():
