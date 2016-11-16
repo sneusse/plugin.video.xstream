@@ -1,33 +1,47 @@
 # -*- coding: utf-8 -*-
 import xbmc
+from resources.lib import common
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
-LOG_LEVEL_INFO = 0;
-LOG_LEVEL_ERROR = 1;
-LOG_LEVEL_FATAL = 2;
-
-logLevel = LOG_LEVEL_INFO# (config.getSetting("debug")=="true")
 
 def info(sInfo):
-    if (logLevel <= LOG_LEVEL_INFO):
-        __writeLog(sInfo, xbmc.LOGNOTICE);
+    __writeLog(sInfo, cLogLevel=xbmc.LOGNOTICE)
+
+
+def debug(sInfo):
+    __writeLog(sInfo, cLogLevel=xbmc.LOGDEBUG)
+
 
 def error(sInfo):
-    if (logLevel <= LOG_LEVEL_FATAL):
-         __writeLog(sInfo, xbmc.LOGERROR);
+    __writeLog(sInfo, cLogLevel=xbmc.LOGERROR)
+
 
 def fatal(sInfo):
-    if (logLevel <= LOG_LEVEL_FATAL):
-         __writeLog(sInfo, xbmc.LOGFATAL);
+    __writeLog(sInfo, cLogLevel=xbmc.LOGFATAL)
 
-def __writeLog(sLog, cLogLevel):
+
+def __writeLog(sLog, cLogLevel=xbmc.LOGDEBUG):
     params = ParameterHandler()
     try:
         sLog = str(sLog)
     except UnicodeEncodeError:
         sLog = sLog.encode('utf-8')
-    if params.exist('site'):
-        site = params.getValue('site')
-        print "\t[xStream] ->%s: %s" %(site,sLog)
-    else:
-        print "\t[xStream] %s" % sLog
+
+    try:
+        if isinstance(sLog, unicode):
+            sLog = '%s (ENCODED)' % (sLog.encode('utf-8'))
+
+        if params.exist('site'):
+            site = params.getValue('site')
+            sLog = "\t[%s] -> %s: %s" % (common.addonName, site, sLog)
+        else:
+            sLog = "\t[%s] %s" % (common.addonName, sLog)
+
+        xbmc.log(sLog, cLogLevel)
+
+
+    except Exception as e:
+        try:
+            xbmc.log('Logging Failure: %s' % (e), cLogLevel)
+        except:
+            pass

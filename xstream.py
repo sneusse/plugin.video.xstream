@@ -392,4 +392,4 @@ def _pluginSearch(pluginEntry, sSearchText, oGui):
     except:
         logger.info(pluginEntry['name']+': search failed')
         import traceback
-        print traceback.format_exc()
+        logger.debug(traceback.format_exc())
