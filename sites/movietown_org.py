@@ -12,7 +12,6 @@ SITE_NAME = 'Movietown'
 SITE_ICON = 'movietown.png'
 
 URL_MAIN = 'http://movietown.org/'
-
 URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&type=%s'
 
 
@@ -117,6 +116,7 @@ def showSeasons():
     for season in sorted(aSeasons):
         oGuiElement = cGuiElement('Staffel ' + str(season), SITE_IDENTIFIER, 'showEpisodes')
         oGuiElement.setMediaType('season')
+        oGuiElement.setTVShowTitle(tvshowItem['title'].encode('utf-8'))
         oGuiElement.setThumbnail(tvshowItem['poster'])
         oGuiElement.setYear(tvshowItem['year'])
         oGuiElement.setDescription(tvshowItem['plot'])
@@ -165,6 +165,7 @@ def showEpisodes():
     for episode in sorted(aEpisodes):
         oGuiElement = cGuiElement('Folge ' + str(episode), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setMediaType('episode')
+        oGuiElement.setTVShowTitle(tvshowItem['title'].encode('utf-8'))
         oGuiElement.setThumbnail(tvshowItem['poster'])
         oGuiElement.setYear(tvshowItem['year'])
         oGuiElement.setDescription(tvshowItem['plot'])
@@ -203,7 +204,7 @@ def showHosters():
 
             hoster = dict()
             hoster['link'] = link["url"]
-            hoster['name'] = link["label"].Title()
+            hoster['name'] = link["label"].encode('utf-8').Title()
             hosters.append(hoster)
 
     if hosters:
