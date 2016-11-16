@@ -20,15 +20,28 @@ def load():
 
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('order', 'release_dateDesc')
     params.setParam('type', 'movie')
-    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('order', 'release_dateDesc')
+    oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('type', 'series')
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
+
+def showContentMenu():
+    oGui = cGui()
+    params = ParameterHandler()
+    params.setParam('order', 'titleAsc')
+    oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('order', 'release_dateDesc')
+    oGui.addFolder(cGuiElement('Veröffentlichungsdatum', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('order', 'mc_user_scoreDesc')
+    oGui.addFolder(cGuiElement('Userbewertungen', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('order', 'mc_num_of_votesDesc')
+    oGui.addFolder(cGuiElement('Anzahl Userbewertungen', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('order', 'titleAsc')
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'), params)
+    oGui.setEndOfDirectory()
 
 def showEntries(searchString='', sGui=False):
     oGui = sGui if sGui else cGui()
@@ -37,7 +50,7 @@ def showEntries(searchString='', sGui=False):
     type = params.getValue('type')
 
     if not type: type = ''
-    if not type: order = 'release_dateDesc'
+    if not type: order = 'titleAsc'
 
     hasToken, token = __getToken()
 

@@ -64,7 +64,7 @@
 	<setting default="movie4k.to" enable="!eq(-1,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
 	<setting label="MoviesEver" type="lsep" />
 	<setting default="true" id="plugin_moviesever_com" label="30050" type="bool" />
-	<setting label="Movietown" type="lsep" />
+	<setting label="MovieTown" type="lsep" />
 	<setting default="true" id="plugin_movietown_org" label="30050" type="bool" />
 	<setting label="MyKino" type="lsep" />
 	<setting default="true" id="plugin_mykino_to" label="30050" type="bool" />
