@@ -9,8 +9,8 @@ from resources.lib.util import cUtil
 from urlparse import urlparse
 
 SITE_IDENTIFIER = 'streamdream_ws'
-SITE_NAME = 'Streamdream'
-SITE_ICON = 'streamdream_ws.png'
+SITE_NAME = 'StreamDream'
+SITE_ICON = 'streamdream.png'
 
 URL_MAIN = 'http://streamdream.ws/'
 
