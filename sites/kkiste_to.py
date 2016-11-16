@@ -167,7 +167,7 @@ def _parseMovie(sHtmlContent,sUrl,sRootUrl,iPage,sPattern, sGui):
 
         oGui.setView('movies')
     else:
-        oGui.showError('Fehler','Keine Eintraege gefunden')
+        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
 
 def showAllSeasons():
     oGui = cGui()

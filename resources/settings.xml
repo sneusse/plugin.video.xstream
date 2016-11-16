@@ -72,7 +72,7 @@
 	<setting default="true" id="plugin_serienstream_to" label="30050" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
 	<setting default="true" id="plugin_seriesever_net" label="30050" type="bool" />
-	<setting label="Streamdream" type="lsep" />
+	<setting label="StreamDream" type="lsep" />
 	<setting default="true" id="plugin_streamdream_ws" label="30050" type="bool" />
 	<setting label="StreamIt" type="lsep" />
 	<setting default="true" id="plugin_streamit_ws" label="30050" type="bool" />
