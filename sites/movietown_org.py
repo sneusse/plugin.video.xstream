@@ -207,6 +207,7 @@ def showHosters():
             hoster = dict()
             hoster['link'] = link["url"]
             hoster['name'] = link["label"].encode('utf-8').title()
+            hoster['displayedName'] = '[%s] %s' % (link['quality'], hoster['name'])
             hosters.append(hoster)
 
     if hosters:

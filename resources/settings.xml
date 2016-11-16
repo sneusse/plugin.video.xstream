@@ -57,8 +57,6 @@
 	<setting label="KinoX" type="lsep" />
 	<setting default="true" id="plugin_kinox_to" label="30050" type="bool" />
 	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="30051" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
-	<setting label="KinoKiste" type="lsep" />
-	<setting default="true" id="plugin_kkiste_to" label="30050" type="bool" />
 	<setting label="MeinKino" type="lsep" />
 	<setting default="true" id="plugin_meinkino_to" label="30050" type="bool" />
 	<setting label="Movie4k" type="lsep" />
