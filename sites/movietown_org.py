@@ -12,7 +12,7 @@ SITE_NAME = 'MovieTown'
 SITE_ICON = 'movietown.png'
 
 URL_MAIN = 'http://movietown.org/'
-URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&type=%s'
+URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&type=%s&query=%s&availToStream=true'
 
 
 def load():
@@ -26,14 +26,18 @@ def load():
     params.setParam('order', 'release_dateDesc')
     params.setParam('type', 'series')
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
-def showEntries(entryUrl=False, sGui=False):
+def showEntries(searchString='', sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     order = params.getValue('order')
     type = params.getValue('type')
+
+    if not type: type = ''
+    if not type: order = 'release_dateDesc'
 
     hasToken, token = __getToken()
 
@@ -45,7 +49,8 @@ def showEntries(entryUrl=False, sGui=False):
     if iPage <= 0:
         iPage = 1
 
-    sUrl = URL_LIST % (token, 25, iPage, order, type)
+    sUrl = URL_LIST % (token, 25, iPage, order, type, searchString)
+    print sUrl
     sJson = cRequestHandler(sUrl, ignoreErrors=True).request()
 
     if not sJson:
@@ -81,6 +86,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     oGui.setView('movies')
     oGui.setEndOfDirectory()
+
 
 
 def showSeasons():
@@ -224,3 +230,15 @@ def play(sUrl=False):
 def __getToken():
     sHtmlContent = cRequestHandler(URL_MAIN, ignoreErrors=True).request()
     return cParser.parseSingleResult(sHtmlContent, "token\s*:\s*'([\w|\d]+)'")
+
+def showSearch():
+    oGui = cGui()
+    sSearchText = oGui.showKeyBoard()
+    if not sSearchText: return
+    _search(False, sSearchText)
+    oGui.setEndOfDirectory()
+
+
+def _search(oGui, sSearchText):
+    if not sSearchText: return
+    showEntries(sSearchText.strip(), oGui)
