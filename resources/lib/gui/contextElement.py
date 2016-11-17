@@ -19,7 +19,7 @@ class cContextElement:
         return self.__sFile
 
     def setTitle(self, sTitle):
-        self.__sTitle = sTitle;
+        self.__sTitle = sTitle
 
     def getTitle(self):
         return self.__sTitle

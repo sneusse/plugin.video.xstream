@@ -70,7 +70,7 @@ class cGuiElement:
         return self.__sFunctionName
 
     def setTitle(self, sTitle):
-        self.__sTitle = sTitle;
+        self.__sTitle = sTitle
 
     def getTitle(self):
         return self.__sTitle

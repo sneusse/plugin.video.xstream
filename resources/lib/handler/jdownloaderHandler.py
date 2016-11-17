@@ -64,7 +64,7 @@ class cJDownloaderHandler:
         logger.info('JD Link: ' + str(sLinkForJd))
                 
         oRequestHandler = cRequestHandler(sLinkForJd)
-        oRequestHandler.request();
+        oRequestHandler.request()
         return True
 
     def __createJDUrl(self, sFileUrl, sHost, sPort, bAutomaticDownload, bLinkGrabber):
@@ -88,7 +88,7 @@ class cJDownloaderHandler:
         
         try:
             oRequestHandler = cRequestHandler(sLinkForJd)
-            sHtmlContent = oRequestHandler.request();            
+            oRequestHandler.request()
             return True
         except Exception, e:
             return False

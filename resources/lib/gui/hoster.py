@@ -145,7 +145,7 @@ class cHosterGui:
             self.dialog.close()
         oPlayer = cPlayer()
         oPlayer.addItemToPlaylist(oGuiElement)
-        oGui.showInfo('Playlist', 'Stream wurde hinzugefügt', 5);
+        oGui.showInfo('Playlist', 'Stream wurde hinzugefügt', 5)
         return True
 
     def download(self, siteResult = False):
