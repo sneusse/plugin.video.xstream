@@ -80,7 +80,8 @@ def showEntries(searchString='', sGui=False):
     genre = params.getValue('genre')
 
     if not type: type = ''
-    if not type: order = 'titleAsc'
+    if not order: order = 'titleAsc'
+    if not genre: genre = ''
 
     hasToken, token = __getToken()
 
