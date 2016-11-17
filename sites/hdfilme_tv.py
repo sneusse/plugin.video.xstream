@@ -6,7 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-from cCFScrape import cCFScrape
+from resources.lib.cCFScrape import cCFScrape
 import re, json
 
 # Plugin-Eigenschaften
