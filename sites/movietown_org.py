@@ -93,7 +93,6 @@ def showEntries(searchString='', sGui=False):
         iPage = 1
 
     sUrl = URL_LIST % (token, 25, iPage, order, genre, type, searchString)
-    print sUrl
     sJson = cRequestHandler(sUrl, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
@@ -239,9 +238,6 @@ def showHosters():
 
     if not sJson:
         return hosters
-
-    print sSeason
-    print sEpisode
 
     aJson = json.loads(sJson)
     for item in aJson['items']:
