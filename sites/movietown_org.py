@@ -106,9 +106,12 @@ def showEntries(searchString='', sGui=False):
         if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
+    isTvShowfound = False
+
     total = len(aJson['items'])
     for item in aJson["items"]:
         isTvshow = True if item['type'] == 'series' else False
+        if isTvshow: isTvShowfound = True
         oGuiElement = cGuiElement(item['title'].encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(item['poster'])
@@ -127,8 +130,9 @@ def showEntries(searchString='', sGui=False):
         params.setParam('page', (iPage + 1))
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
-    oGui.setView('movies')
-    oGui.setEndOfDirectory()
+    if not sGui:
+        oGui.setView('tvshows' if isTvShowfound else 'movies')
+        oGui.setEndOfDirectory()
 
 
 def showSeasons():
