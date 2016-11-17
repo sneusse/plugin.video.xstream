@@ -85,7 +85,7 @@ def showSearch():
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
     _search(False, sSearchText)
-
+    oGui.setView('tvshows')
     oGui.setEndOfDirectory()
 
 ### Helper functions
@@ -125,7 +125,6 @@ def _search(sGui, sSearchText):
         guiElement.setThumbnail(URL_COVER % serie["id"])
         params.addParams({'seriesID' : str(serie["id"]), 'Title' : sTitle})
         oGui.addFolder(guiElement, params, iTotal = total)
-    oGui.setView('tvshows')
 
 # Show a list of seasons for a requested series, and movies if available
 def showSeasons():
