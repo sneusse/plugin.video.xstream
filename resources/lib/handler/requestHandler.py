@@ -1,22 +1,20 @@
 #!/usr/bin/env python2.7
-import os
-import sys
-import urllib
+import hashlib
 import httplib
-import mechanize
+import os
 import socket
-import xbmc
+import sys
+import time
+import urllib
+
+import mechanize
 import xbmcgui
 
-import hashlib
-import time
-from resources.lib.config import cConfig
 from resources.lib import common
-from resources.lib import logger
-
 from resources.lib import logger, cookie_helper
 from resources.lib.cBFScrape import cBFScrape
 from resources.lib.cCFScrape import cCFScrape
+from resources.lib.config import cConfig
 
 
 class cRequestHandler:

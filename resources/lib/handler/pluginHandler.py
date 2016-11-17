@@ -1,8 +1,9 @@
-import sys
-import os
 import json
-from resources.lib.config import cConfig
+import os
+
 from resources.lib import common, logger
+from resources.lib.config import cConfig
+
 
 class cPluginHandler:
 

@@ -1,10 +1,10 @@
-from resources.lib.gui.guiElement import cGuiElement
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.config import cConfig
-import logger
-from resources.lib.gui.gui import cGui
 import xbmc
-import time
+
+from resources.lib import logger
+from resources.lib.config import cConfig
+from resources.lib.gui.gui import cGui
+from resources.lib.handler.ParameterHandler import ParameterHandler
+
 
 class XstreamPlayer(xbmc.Player):
     def __init__(self, *args, **kwargs):

@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
+import base64
+import json
+import re
+import urllib
+
+from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from xbmc import translatePath
-
-import os
-import re
-import json
-import urllib
-import base64
-import xbmcaddon
 
 SITE_IDENTIFIER = 'seriesever_net'
 SITE_NAME = 'SeriesEver'

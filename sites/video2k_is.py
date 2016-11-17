@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
+from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-import re
 
 SITE_IDENTIFIER = 'video2k_is'
 SITE_NAME = 'Video2k'
@@ -143,7 +142,7 @@ def _redirectHoster(url):
         if e.code == 403:
             if url != e.geturl():
                 return e.geturl()
-        raise ResolverError('File not found')
+        raise
 
 def showSearch():
     oGui = cGui()

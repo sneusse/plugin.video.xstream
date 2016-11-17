@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
+import re
+
+from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.handler.pluginHandler import cPluginHandler
-from resources.lib.util import cUtil
-import re
 
 SITE_IDENTIFIER = 'szene-streams_com'
 SITE_NAME = 'SzeneStreams'

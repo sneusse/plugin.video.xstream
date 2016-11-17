@@ -7,7 +7,7 @@ from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.gui.gui import cGui
 from resources.lib.config import cConfig
 import re
-import logger
+from resources.lib import logger
 from resources.lib import jsunprotect
 
 

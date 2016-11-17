@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+import re
+
+from resources.lib import logger
+from resources.lib.cCFScrape import cCFScrape
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
-from cCFScrape import cCFScrape
-import re, json
 
 SITE_IDENTIFIER = 'serienstream_to'
 SITE_NAME = 'SerienStream'
@@ -138,14 +138,14 @@ def showSeasons():
     isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>(.*?)<\/a>.*?'
     isMatch, aResult = parser.parse(sMainContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     isMatchDesc, sDesc = parser.parseSingleResult(sHtmlContent, '<p[^>]*data-full-description="(.*?)"[^>]*>')
@@ -194,14 +194,14 @@ def showEpisodes():
     isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<tr[^>]*data-episode-season-id="(\d+)">.*?<td[^>]*class="seasonEpisodeTitle"[^>]*>.*?<a[^>]*href="([^"]*)"[^>]*>.*?(?:<strong>(.*?)</strong>.*?)?(?:<span>(.*?)</span>.*?)?<'
     isMatch, aResult = parser.parse(sMainContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
 
     isMatchDesc, sDesc = parser.parseSingleResult(sHtmlContent, '<p[^>]*data-full-description="(.*?)"[^>]*>')
