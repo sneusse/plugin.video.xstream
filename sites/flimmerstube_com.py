@@ -73,7 +73,7 @@ def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = N
         total = len (aResult[1])
         for sName, sJahr, sThumbnail, sUrl in aResult[1]:
             oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-            oGuiElement.setThumbnail(sThumbnail if sThumbnail.startswith("http") else URL_MAIN + sThumbnail)
+            oGuiElement.setThumbnail(sThumbnail if sThumbnail.startswith("http") else sBaseUrl + sThumbnail)
             oGuiElement.setYear(sJahr)
             params.setParam('sBaseUrl', sBaseUrl)
             params.setParam('entryUrl', sBaseUrl + sUrl)
