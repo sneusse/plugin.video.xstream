@@ -186,11 +186,10 @@ def showFrontPage():
             episode = 'N/A'
             res = re.search("Staffel ([^ ]+) Episode ([^ ]+)", sSubTitle,re.I)
             if res:
-            	season = res.group(1)
-            	episode = res.group(2)
+                season = res.group(1)
+                episode = res.group(2)
             else:
-            	     	
-            	continue # ignore movies
+                continue # ignore movies
             
             guiElement = cGuiElement('%s: Season %s - Episode %s' % (sTitle, season, episode), SITE_IDENTIFIER, 'showHosters')
             guiElement.setMediaType('episode')
