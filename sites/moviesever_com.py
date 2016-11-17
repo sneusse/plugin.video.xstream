@@ -65,20 +65,16 @@ def showNewMovies():
 
 
 def showSearch():
-    logger.info('load showSearch')
     oGui = cGui()
-
     sSearchText = oGui.showKeyBoard()
-    if (sSearchText != False and sSearchText != ''):
-        _search(False, sSearchText)
-    else:
-        return
-
+    if not sSearchText: return
+    _search(False, sSearchText)
     oGui.setView('movies')
     oGui.setEndOfDirectory()
 
 
 def _search(oGui, sSearchText):
+    if not sSearchText: return
     showMovies(oGui, URL_MAIN + '?s=' + sSearchText, True)
 
 
