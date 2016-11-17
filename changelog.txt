@@ -2,16 +2,45 @@ Big THX to all contributors!
 For more information check out the commit history at GitHub.
 
 
+xStream v3.1.0 - 17.11.2016
+================================================================================
+
+FIXES…
+ - bs: fixe description error in randomSeason
+ - bs: fix view-error on search
+ - cine: fixed error on playing a stream
+ - flimmerstube: fix error with thumbnails
+ - hdfilme: fix import errors on some devices
+ - moviesever: dont search on empty input
+ - fix errors on global-search at several sites
+
+NEW…
+ - add movietown.org
+ - add streamdream.ws
+ - add view4u.co
+ - change numeric settings to slider
+ - integrate blazingfast into requesthandler
+ - renew screenshots for kodi17
+ - shrink fanart
+ - update sources, website, summary and description in addon.xml
+ - update logger
+
+REMOVED…
+ - delete offline site-plugin kkiste
+ - move readme to github-wiki
+ - some code cleanup
+
+
 xStream v3.0.2 - 07.11.2016
 ================================================================================
 
-FIXED…
+FIXES…
  - bs.to handle API-Erros
  - hdfilme.tv fix hoster detection
  - tata.to fix HTTPS/SSL-Erros
  - fix an error in the updatemanager that occur if xStream and URLResolver updates at the same time
 
-ADDED…
+NEW…
  - add blazingfast and pyaes support
  - add meinkino.to
 
@@ -19,7 +48,7 @@ ADDED…
 xStream v3.0.0 - 03.11.2016
 ================================================================================
 
-FIXED…
+FIXES…
 
 Sites:
  - anime-loads: for different roster responses
@@ -69,7 +98,7 @@ Other:
  - more small bugfixes
 
 
-ADDED…
+NEW…
 
 Sites:
  - dokustreamer.de

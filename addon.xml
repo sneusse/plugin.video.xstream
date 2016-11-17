@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.xstream"
     name="xStream"
-    version="3.0.3~nightly"
+    version="3.1.0"
     provider-name="xStream-Team (originator: Lynx187, murphy, MaxMustermann)">
  <requires>
    <import addon="xbmc.python"                 version="2.14.0"/>
@@ -13,10 +13,10 @@
    <provides>video</provides>
  </extension>
  <extension point="xbmc.addon.metadata">
-   <summary lang="de">Streaming deutscher Inhalte</summary>
+   <summary lang="de">Watch xStream!</summary>
    <description lang="de">Mit diesem Addon kannst du auf all die angebotenen deutschen Streams von verschiedensten Quellen zugreifen.[CR]Website: https://xstream-kodi.github.io[CR]Support: http://xstream-addon.square7.ch</description>
    <disclaimer lang="de">Die von diesem Addon dargestellten Inhalte werden von den Erstellern des Addons weder gehostet oder verbreitet, noch stehen die Ersteller in irgendeiner Beziehung zu den Content-Anbietern.</disclaimer>
-   <summary lang="en">Streaming of german content</summary>
+   <summary lang="en">Watch xStream!</summary>
    <description lang="en">With this addon you can watch all the german streams from various sources.[CR]Website: https://xstream-kodi.github.io[CR]Support: http://xstream-addon.square7.ch</description>
    <disclaimer lang="en">The creators of this addon do not host or distribute any of the content displayed by the addon nor do they have any affiliation with the content providers.</disclaimer>
    <forum>http://xstream-addon.square7.ch</forum>
@@ -28,16 +28,45 @@
    For more information check out the commit history at GitHub.
 
 
+xStream v3.1.0 - 17.11.2016
+================================================================================
+
+FIXES…
+ - bs: fixe description error in randomSeason
+ - bs: fix view-error on search
+ - cine: fixed error on playing a stream
+ - flimmerstube: fix error with thumbnails
+ - hdfilme: fix import errors on some devices
+ - moviesever: dont search on empty input
+ - fix errors on global-search at several sites
+
+NEW…
+ - add movietown.org
+ - add streamdream.ws
+ - add view4u.co
+ - change numeric settings to slider
+ - integrate blazingfast into requesthandler
+ - renew screenshots for kodi17
+ - shrink fanart
+ - update sources, website, summary and description in addon.xml
+ - update logger
+
+REMOVED…
+ - delete offline site-plugin kkiste
+ - move readme to github-wiki
+ - some code cleanup
+ 
+ 
 xStream v3.0.2 - 07.11.2016
 ================================================================================
 
-FIXED…
+FIXES…
  - bs.to handle API-Erros
  - hdfilme.tv fix hoster detection
  - tata.to fix HTTPS/SSL-Erros
  - fix an error in the updatemanager that occur if xStream and URLResolver updates at the same time
 
-ADDED…
+NEW…
  - add blazingfast and pyaes support
  - add meinkino.to
 
@@ -45,7 +74,7 @@ ADDED…
 xStream v3.0.0 - 03.11.2016
 ================================================================================
 
-FIXED…
+FIXES…
        
 Sites:
  - anime-loads: for different roster responses
@@ -95,7 +124,7 @@ Other:
  - more small bugfixes
 
 
-ADDED…
+NEW…
 
 Sites:
  - dokustreamer.de
