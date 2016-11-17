@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 from resources.lib.gui.gui import cGui
-from resources.lib.util import cUtil
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
-from resources.lib.parser import cParser
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.config import cConfig
 from resources.lib import logger
 import string
 import json
@@ -262,7 +259,7 @@ def randomSeason():
     guiElement.setMediaType('season')
     guiElement.setSeason(seasonNum)
     guiElement.setTVShowTitle(oParams.getValue('Title'))
-    guiElement.setDescription(seasons["series"]["description"])
+    guiElement.setDescription(data["series"]["description"])
 
     oParams.setParam('Season', seasonNum)
     guiElement.setThumbnail(URL_COVER % data["series"]["id"])
