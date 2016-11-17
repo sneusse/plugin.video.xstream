@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
+import ast
+import json
+import re
+from datetime import datetime
+
+from resources.lib import logger
+from resources.lib.config import cConfig
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
-from resources.lib.config import cConfig
-import ast
-
-import re, json
-from datetime import datetime
 
 SITE_IDENTIFIER = 'cine_to'
 SITE_NAME = 'Cine'
@@ -153,7 +153,7 @@ def showHosters():
     return hosters
 
 def play(sUrl = False):
-    if not sUrl: sUrl = oParams.getValue('url')
+    if not sUrl: sUrl = ParameterHandler().getValue('url')
 
     oRequestHandler = cRequestHandler(sUrl)
     oRequestHandler.request()
