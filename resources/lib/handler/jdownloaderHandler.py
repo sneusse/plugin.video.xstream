@@ -1,8 +1,9 @@
-from resources.lib.util import cUtil
+import logger
+
 from resources.lib.config import cConfig
 from resources.lib.gui.gui import cGui
 from resources.lib.handler.requestHandler import cRequestHandler
-import logger
+
 
 class cJDownloaderHandler:
 

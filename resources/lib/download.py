@@ -1,15 +1,17 @@
 # -- coding: utf-8 --
-from resources.lib.gui.gui import cGui
-from resources.lib.config import cConfig
-from resources.lib import common
-import urllib2
-import xbmc
-import xbmcgui
-import string
-import logger
-import time
 import os
 import sys
+import time
+import urllib2
+
+import xbmc
+import xbmcgui
+
+import logger
+from resources.lib import common
+from resources.lib.config import cConfig
+from resources.lib.gui.gui import cGui
+
 
 class cDownload:
 
