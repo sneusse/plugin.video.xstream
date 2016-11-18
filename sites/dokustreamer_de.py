@@ -15,7 +15,7 @@ SITE_ICON = 'dokustreamer.png'
 URL_MAIN = 'https://dokustreamer.de/'
 URL_HDDOKU = URL_MAIN + 'category/doku/dokus/hd-doku-stream'
 URL_BELIEBTE = URL_MAIN + 'beliebte-dokumentationen'
-URL_SEARCH = URL_MAIN + '?s='
+URL_SEARCH = URL_MAIN + '?s=%s'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -48,32 +48,44 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = '<a[^>].*?href="([^"]+)"[^>]title="([^"]+)">[^>]<img.*?src="([^"]+)'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        total = len(aResult[1])
-        for sUrl, sName, sThumbnail in aResult[1]:
-            sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
-            sThumbnail = re.sub('-\d+x\d+\.', '.',sThumbnail)
-            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-            oGuiElement.setThumbnail(sThumbnail.decode('utf-8').encode('utf-8'))
-            params.setParam('entryUrl', sUrl)
-            oGui.addFolder(oGuiElement, params, False, total)
-    pattern = 'class="nextpostslink"[^>]rel="next"[^>]href="([^"]+)'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', aResult[1][0])
+
+    pattern = '<a[^>]*href="([^"]+)"[^>]*title="([^"]+)"[^>]*>\s*<img[^>]*src="([^"]*)"[^>]*>'
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    if not isMatch:
+        pattern = '<h\d[^>]*class="[^"]+entry-title"[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*title="([^"]+)"[^>]*>()'
+        isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    if not isMatch:
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(aResult)
+    for sUrl, sName, sThumbnail in aResult:
+        sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
+        sThumbnail = re.sub('-\d+x\d+\.', '.',sThumbnail)
+        oGuiElement = cGuiElement(cUtil.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setMediaType('movie')
+        params.setParam('entryUrl', sUrl)
+        oGui.addFolder(oGuiElement, params, False, total)
+
+    pattern = '<a[^>]*class="nextpostslink"[^>]*rel="next"[^>]*href="([^"]+)"[^>]*>'
+    isMatch, aResult = cParser.parseSingleResult(sHtmlContent, pattern)
+    if isMatch:
+        params.setParam('sUrl', aResult)
         oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
     if not sGui:
-#        oGui.setView('movies') Weiß nicht was setzen wir hier????????
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = '"[^>]src="([^"]+)"[^>]frameborder='
-    aResult = cParser().parse(sHtmlContent, sPattern)
+    sPattern = '<iframe[^>]*src="([^"]+)"[^>]*allowfullscreen[^>]*>'
+    aResult = cParser.parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
         for sUrl in aResult[1]:
@@ -94,20 +106,6 @@ def getHosterUrl(sUrl=False):
     results.append(result)
     return results
 
-def showSearchEntries(entryUrl = False, sGui = False):
-    oGui = sGui if sGui else cGui()
-    params = ParameterHandler()
-    if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
-    pattern = 'title">[^>]<ahref="([^"]+)"[^>]title="([^"]+)'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    total = len(aResult[1])
-    for sUrl, sName in aResult[1]:
-        sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
-        params.setParam('entryUrl', sUrl)
-        oGui.addFolder(oGuiElement, params, False, total)
-
 def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
@@ -117,4 +115,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH + sSearchText.strip() , oGui)
+    showEntries(URL_SEARCH % sSearchText.strip() , oGui)
