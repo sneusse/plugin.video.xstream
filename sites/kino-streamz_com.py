@@ -79,10 +79,8 @@ def showHosters():
     hosters = []
     if aResult[1]:
         for sName, sUrl in aResult[1]:
-            hoster = {}
-            hoster['link'] = sUrl
-            hoster['name'] = sName.title()
-            hosters.append(hoster)
+            if sUrl.startswith('/hd/'): continue
+            hosters.append({'link': sUrl, 'name': sName.title()})
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
