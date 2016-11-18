@@ -15,7 +15,7 @@ URL_MAIN = 'http://kino-streamz.com/'
 URL_Filme = URL_MAIN + 'categorie/2/filme-stream-p1.html'
 URL_Kino = URL_MAIN + 'categorie/8/kinofilme-2016-online-stream-p1.html'
 URL_GENRE = URL_MAIN + 'genre'
-URL_SEARCH = URL_MAIN + '/?q=%s'
+URL_SEARCH = URL_MAIN + '?q=%s'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
