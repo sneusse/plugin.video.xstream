@@ -83,14 +83,14 @@ def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = '<a href="([^"]+)" target="videoPlayer" class="sinactive.*?src="/images/([^"]+)[^>]png'
+    sPattern = '<a[^>]*href="([^"]+)"[^>]*target="videoPlayer"[^>]*class="[^"]*sinactive[^"]*"[^>]*>\s*<img[^>]*src="\/images\/([^"]+)\.\w{1,3}"[^>]*>\s*</a>'
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
         for sUrl, sName in aResult[1]:
             hoster = {}
             hoster['link'] = sUrl
-            hoster['name'] = sName
+            hoster['name'] = sName.title()
             hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
