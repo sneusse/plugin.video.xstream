@@ -74,14 +74,14 @@ def showHosters():
     sUrl = oParams.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
     sPattern = '<tr[^>]*class="mygt"[^>]*>\s*<td[^>]*>\s*<img[^>]*src="\/images\/([^"]+)\.\w{1,3}"[^>]*>\s*' # name
-    sPattern += '</td>\s*<td[^>]*>\s*<img[^>]*src="[^"]*\/play.png"[^>]*onclick="[^\']*\'([^\']+)\'[^>]*>' # url
+    sPattern += '</td>\s*<td[^>]*>\s*<img[^>]*src="[^"]*\/play.png"[^>]*onclick=".*?\'([^\']+)\'\)"[^>]*>' # url
     aResult = cParser.parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
         for sName, sUrl in aResult[1]:
             hoster = {}
             hoster['link'] = sUrl
-            hoster['name'] = sName
+            hoster['name'] = sName.title()
             hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
