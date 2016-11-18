@@ -246,12 +246,13 @@ def showHosters():
 
     aJson = json.loads(sJson)
     for item in aJson['items']:
-        if item['id'] != title_id:
-            continue
+        if item['id'] != title_id: continue
         for link in item['link']:
             if sSeason and sEpisode:
                 if link['season'] != sSeason: continue
                 if link['episode'] != sEpisode: continue
+
+            if "download" in link['quality'].lower(): continue
 
             hoster = dict()
             hoster['link'] = link["url"]
