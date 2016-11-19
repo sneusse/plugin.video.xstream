@@ -14,8 +14,8 @@ SITE_ICON = 'flimmerstube.png'
 
 URL_MAIN_GER = 'http://flimmerstube.com'
 URL_MAIN_ENG = 'http://flimmerstube.do.am'
-URL_MOVIE_GER = URL_MAIN_GER + '/video'
-URL_MOVIE_ENG = URL_MAIN_ENG + '/video'
+URL_MOVIE_GER = URL_MAIN_GER + '/video/vic/alle_filme'
+URL_MOVIE_ENG = URL_MAIN_ENG + '/video/vic/alle_filme'
 URL_SEARCH = '/shv'
 
 def load():
