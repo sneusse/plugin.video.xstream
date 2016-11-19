@@ -131,13 +131,13 @@ def showHosters():
     sPattern = '<div[^>]*id="stream-links"[^>]*>\s*<a[^>]*href="([^"]+).*?"[^>]*>([^<]+)</a>\s*</div>'
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
-    if isMatch:
+    if not isMatch:
         return []
 
     hosters = []
     for sUrl, sName in aResult:
         hosters.append({'link': sUrl, 'name': sName})
-        
+
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
