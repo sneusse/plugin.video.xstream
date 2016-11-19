@@ -129,12 +129,12 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)')
-    if isMatchNextPage:
-        params.setParam('sUrl', sNextUrl)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<link[^>]*rel="next"[^>]*href="([^"]+)')
+        if isMatchNextPage:
+            params.setParam('sUrl', sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('tvshows' if 'staffel' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 

@@ -229,20 +229,21 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    # Pattern um die Aktuelle Seite zu ermitteln
-    pattern = '<ul[^>]*class="pagination[^>]*>.*'
-    pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
-
-    # Seite parsen
-    isMatch, sPageNr = cParser.parseSingleResult(sHtmlContent, pattern)
-
-    # Falls ein Ergebniss gefunden wurden "Next-Page" ergänzen
-    if isMatch:
-        params.setParam('page', int(sPageNr))
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
-    # Liste abschließen und View setzen
+    # Nur ausführen wenn das Gui-Element Plugin intern ist
     if not sGui:
+        # Pattern um die Aktuelle Seite zu ermitteln
+        pattern = '<ul[^>]*class="pagination[^>]*>.*'
+        pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
+
+        # Seite parsen
+        isMatch, sPageNr = cParser.parseSingleResult(sHtmlContent, pattern)
+
+        # Falls ein Ergebniss gefunden wurden "Next-Page" ergänzen
+        if isMatch:
+            params.setParam('page', int(sPageNr))
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
+        # Liste abschließen und View setzen
         oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 

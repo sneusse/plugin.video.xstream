@@ -79,15 +79,15 @@ def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = N
             params.setParam('entryUrl', sBaseUrl + sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
-    pattern = 'onclick="spages[^>][^>]([^"]+)[^>][^>];return[^>]false;"><span>&raquo;</span></a></span></td></tr></table>.*?location.href=[^>]([^"]+)[^>][^>]page[^>]'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        for sNr, Url in aResult[1]:
-            params.setParam('sBaseUrl', sBaseUrl)
-            params.setParam('sUrl', sBaseUrl + Url + sNr)
-            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        pattern = 'onclick="spages[^>][^>]([^"]+)[^>][^>];return[^>]false;"><span>&raquo;</span></a></span></td></tr></table>.*?location.href=[^>]([^"]+)[^>][^>]page[^>]'
+        aResult = cParser().parse(sHtmlContent, pattern)
+        if aResult[0] and aResult[1][0]:
+            for sNr, Url in aResult[1]:
+                params.setParam('sBaseUrl', sBaseUrl)
+                params.setParam('sUrl', sBaseUrl + Url + sNr)
+                oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('movies')
         oGui.setEndOfDirectory()
 

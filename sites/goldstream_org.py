@@ -131,14 +131,14 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
-    
-    pattern = '<div[^>]*class="right"><a[^>]*href="([^"]+)"[^>]*>'
-    aResult = parser.parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', aResult[1][0])
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-    
+
     if not sGui:
+        pattern = '<div[^>]*class="right"><a[^>]*href="([^"]+)"[^>]*>'
+        aResult = parser.parse(sHtmlContent, pattern)
+        if aResult[0] and aResult[1][0]:
+            params.setParam('sUrl', aResult[1][0])
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('episodes' if isSeason else 'movies')
         oGui.setEndOfDirectory()
         return

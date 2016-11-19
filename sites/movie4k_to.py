@@ -430,15 +430,16 @@ def __parseMovieSimpleList(sUrl, iPage, sGui, sHtmlContent = False):
                 oGui.addFolder(oGuiElement, oOutputParameterHandler, bIsFolder = False, iTotal = total)
             else:
                 oGui.addFolder(oGuiElement, oOutputParameterHandler, iTotal = total)
-    
-    sNextUrl = __checkForNextPage(sHtmlContent, iPage)
-    if (sNextUrl != False):      
-        if not (sNextUrl.startswith(URL_MAIN)):
-            sNextUrl = URL_MAIN +'/'+ sNextUrl     
-        params = ParameterHandler()
-        params.setParam('sUrl', sNextUrl)
-        params.setParam('iPage', int(iPage) + 1)
-        oGui.addNextPage(SITE_IDENTIFIER, 'parseMovieSimpleList',params)
+
+    if not sGui:
+        sNextUrl = __checkForNextPage(sHtmlContent, iPage)
+        if (sNextUrl != False):
+            if not (sNextUrl.startswith(URL_MAIN)):
+                sNextUrl = URL_MAIN +'/'+ sNextUrl
+            params = ParameterHandler()
+            params.setParam('sUrl', sNextUrl)
+            params.setParam('iPage', int(iPage) + 1)
+            oGui.addNextPage(SITE_IDENTIFIER, 'parseMovieSimpleList',params)
     return oGui
 
 def getTypeAndID(url):    

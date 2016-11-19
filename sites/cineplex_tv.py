@@ -79,12 +79,13 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
-    pattern = '<ul[^>]class="pagination">.*?</li>.*<li[^>]*><a[^>]*href="([^"]*)">Weiter<'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', aResult[1][0])
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
     if not sGui:
+        pattern = '<ul[^>]class="pagination">.*?</li>.*<li[^>]*><a[^>]*href="([^"]*)">Weiter<'
+        aResult = cParser().parse(sHtmlContent, pattern)
+        if aResult[0] and aResult[1][0]:
+            params.setParam('sUrl', aResult[1][0])
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('movies')
         oGui.setEndOfDirectory()
         return

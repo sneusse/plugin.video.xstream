@@ -126,11 +126,11 @@ def showEntries(searchString='', sGui=False):
         params.setParam('sUrl', sUrl)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    if float(aJson["totalPages"]) > iPage:
-        params.setParam('page', (iPage + 1))
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        if float(aJson["totalPages"]) > iPage:
+            params.setParam('page', (iPage + 1))
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('tvshows' if isTvShowfound else 'movies')
         oGui.setEndOfDirectory()
 

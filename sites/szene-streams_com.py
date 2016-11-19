@@ -96,19 +96,20 @@ def showEntries(sContent = False, sGui = False):
         params.setParam('entryUrl', URL_MAIN + sUrl)
         oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
-    pattern = '<a class="swchItem" href="([^"]+)".*?><span>(\d+)</span></a>'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0]:
-        currentPage = int(params.getValue('mediaTypePageId'))
-        for sUrl, sPage in aResult[1]:
-            page = int(sPage)
-            if page <= currentPage: continue
-            params.setParam('sUrl', URL_MAIN + sUrl)
-            params.setParam('mediaTypePageId', page)
-            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-            break
-    oGui.setView('movies')
     if not sGui:
+        pattern = '<a class="swchItem" href="([^"]+)".*?><span>(\d+)</span></a>'
+        aResult = cParser().parse(sHtmlContent, pattern)
+        if aResult[0]:
+            currentPage = int(params.getValue('mediaTypePageId'))
+            for sUrl, sPage in aResult[1]:
+                page = int(sPage)
+                if page <= currentPage: continue
+                params.setParam('sUrl', URL_MAIN + sUrl)
+                params.setParam('mediaTypePageId', page)
+                oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+                break
+
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 # Show the hosters dialog

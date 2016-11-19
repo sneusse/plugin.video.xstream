@@ -69,12 +69,12 @@ def showEntries(entryUrl=False, sGui=False):
             params.setParam('entryUrl', URL_MAIN + sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
-    pattern = '"><a href="([^"]+)"([^>]+)?>&raquo;'
-    aResult = cParser().parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0] and 'void' not in aResult[1][0][0]:
-        params.setParam('sUrl', URL_MAIN + aResult[1][0][0])
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
     if not sGui:
+        pattern = '"><a href="([^"]+)"([^>]+)?>&raquo;'
+        aResult = cParser().parse(sHtmlContent, pattern)
+        if aResult[0] and aResult[1][0] and 'void' not in aResult[1][0][0]:
+            params.setParam('sUrl', URL_MAIN + aResult[1][0][0])
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
         oGui.setView('movies')
         oGui.setEndOfDirectory()
 

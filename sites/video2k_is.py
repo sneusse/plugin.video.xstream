@@ -84,12 +84,12 @@ def showEntries(entryUrl = False, sGui = False):
             params.setParam('sUrl', URL_Hoster % sUrl)
             oGui.addFolder(oGuiElement, params, False, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '</strong>.*?<a[^>]*href="([^"]+)"[^>]*>\d+')
-    if isMatchNextPage:
-        params.setParam('sUrl', URL_MAIN + cUtil().unescape(sNextUrl))
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '</strong>.*?<a[^>]*href="([^"]+)"[^>]*>\d+')
+        if isMatchNextPage:
+            params.setParam('sUrl', URL_MAIN + cUtil().unescape(sNextUrl))
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setEndOfDirectory()
 
 def showHosters():

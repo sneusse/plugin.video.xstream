@@ -155,13 +155,13 @@ def showEntries(entryUrl = False, sGui = False):
         oParams.setParam('entryUrl', __checkUrl(sUrl))
         oGui.addFolder(oGuiElement, oParams, bIsFolder = (isTvshow and showEpisodes))
 
-    pattern = '<a[^>]*class="[^"]*pageing[^"]*"[^>]*href=\'([^\']*)\'[^>]*>[^\d+-]'
-    isMatch, sUrl = parser.parseSingleResult(sHtmlContent, pattern)
-    if isMatch:
-        params.setParam('sUrl', sUrl)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        pattern = '<a[^>]*class="[^"]*pageing[^"]*"[^>]*href=\'([^\']*)\'[^>]*>[^\d+-]'
+        isMatch, sUrl = parser.parseSingleResult(sHtmlContent, pattern)
+        if isMatch:
+            params.setParam('sUrl', sUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView(sView)
         oGui.setEndOfDirectory()
 

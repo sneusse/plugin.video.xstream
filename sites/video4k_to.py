@@ -73,13 +73,12 @@ def showEntries(sGui = False, sSearchText = None):
     for count, t in enumerate(threads):
         t.join()
 
-    maxEntries = json.loads(sHtmlContent).items()[3][1]
-
-    if maxEntries > int(oParams.getValue('iDisplayStart')) and maxEntries > 50:
-        oParams.setParam('iDisplayStart', int(oParams.getValue('iDisplayStart')) + 50)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', oParams)
-
     if not sGui:
+        maxEntries = json.loads(sHtmlContent).items()[3][1]
+        if maxEntries > int(oParams.getValue('iDisplayStart')) and maxEntries > 50:
+            oParams.setParam('iDisplayStart', int(oParams.getValue('iDisplayStart')) + 50)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', oParams)
+
         oGui.setEndOfDirectory()
 
 def _addEntry(oGui, sName, mId):

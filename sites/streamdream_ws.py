@@ -105,13 +105,13 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    pattern = '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"'
-    isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, pattern)
-    if isMatchNextPage:
-        params.setParam('sUrl', sBaseUrl + sNextUrl)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        pattern = '<a*[^>]class="righter"*[^>]href="(?:\.\.\/)*([^"]+)"'
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, pattern)
+        if isMatchNextPage:
+            params.setParam('sUrl', sBaseUrl + sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('tvshows' if 'serie' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 

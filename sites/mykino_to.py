@@ -101,12 +101,12 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
-    isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<a[^>]*href="([^"]+)"[^>]*>Weiter</a>')
-    if isMatchNextPage:
-        params.setParam('sUrl', sNextUrl)
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<a[^>]*href="([^"]+)"[^>]*>Weiter</a>')
+        if isMatchNextPage:
+            params.setParam('sUrl', sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('movies')
         oGui.setEndOfDirectory()
 

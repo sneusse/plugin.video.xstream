@@ -151,13 +151,13 @@ def showEntries(entryUrl = False, sGui = False):
         else:
             oGui.addFolder(oGuiElement, params, bIsFolder = False)
 
-    aResult = parser.parse(sHtmlContent, "<a[^>]class='active'.*?<a[^>]href='([^']*)'[^>]*>\d+<[^>]*>")
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', URL_MAIN + aResult[1][0])
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
-    oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
     if not sGui:
+        aResult = parser.parse(sHtmlContent, "<a[^>]class='active'.*?<a[^>]href='([^']*)'[^>]*>\d+<[^>]*>")
+        if aResult[0] and aResult[1][0]:
+            params.setParam('sUrl', URL_MAIN + aResult[1][0])
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
+        oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
 def showAllSeasons():

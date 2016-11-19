@@ -113,11 +113,11 @@ def searchRequest(dictFilter = False, sGui = False):
         oOutParms.setParam('lang', aEntry['language'])
         oGui.addFolder(oGuiElement, oOutParms, False, total, True)
 
-    if int(oResponse['current']) < int(oResponse['pages']):
-        params.setParam('page', int(oResponse['current']) + 1)
-        oGui.addNextPage(SITE_IDENTIFIER, 'searchRequest', params)
-
     if not sGui:
+        if int(oResponse['current']) < int(oResponse['pages']):
+            params.setParam('page', int(oResponse['current']) + 1)
+            oGui.addNextPage(SITE_IDENTIFIER, 'searchRequest', params)
+
         oGui.setView('movies')
         oGui.setEndOfDirectory()
 

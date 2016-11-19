@@ -100,12 +100,12 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('Thumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, bIsFolder="serie" in sUrl, iTotal=total)
 
-    isMatch, strPage = parser.parseSingleResult(sHtmlContent, "<a[^>]class='current'.*?<a[^>]href='[^']*'[^>]*>(\d+)<[^>]*>")
-    if isMatch:
-        params.setParam('page', int(strPage))
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        isMatch, strPage = parser.parseSingleResult(sHtmlContent, "<a[^>]class='current'.*?<a[^>]href='[^']*'[^>]*>(\d+)<[^>]*>")
+        if isMatch:
+            params.setParam('page', int(strPage))
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('tvshows' if 'serie' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
