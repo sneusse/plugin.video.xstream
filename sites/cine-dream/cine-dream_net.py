@@ -5,9 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.util import cUtil
-import re
 
 SITE_IDENTIFIER = 'cine-dream_net'
 SITE_NAME = 'CineDream'
@@ -33,6 +31,7 @@ def showCategory():
     params = ParameterHandler()
     oGui = cGui()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
+    logger.info("Load %s" % sHtmlContent)
     pattern = 'class="cat-item.*?a[^>]*href="([^"]+)" title="([^"]+)' # url / title
     aResult = cParser().parse(sHtmlContent, pattern)
     for sUrl, sTitle in aResult[1]:
@@ -44,8 +43,8 @@ def showEntries(entryUrl = False, sGui = False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False)).request()
+
     parser = cParser()
     aResult = parser.parse(sHtmlContent, '<h2[^>]*class="maintitle">(.*?)<center') # filter main content if needed
     if aResult[0]:
@@ -69,13 +68,12 @@ def showEntries(entryUrl = False, sGui = False):
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 
-    pattern = '<a[^>]*class="nextpostslink"[^>]*href="([^"]+)"'
-    aResult = parser.parse(sHtmlContent, pattern)
-    if aResult[0] and aResult[1][0]:
-        params.setParam('sUrl', aResult[1][0])
-        oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
     if not sGui:
+        aResult = parser.parse(sHtmlContent, '<a[^>]*class="nextpostslink"[^>]*href="([^"]+)"')
+        if aResult[0] and aResult[1][0]:
+            params.setParam('sUrl', aResult[1][0])
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+
         oGui.setView('movies')
         oGui.setEndOfDirectory()
         return
