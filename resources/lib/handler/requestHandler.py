@@ -30,8 +30,8 @@ class cRequestHandler:
         self.ignoreExpired(False)
         self.caching = caching
         self.ignoreErrors = ignoreErrors
-        self.cacheTime = int(cConfig().getSetting('cacheTime'))
-        self.requestTimeout = int(cConfig().getSetting('requestTimeout'))
+        self.cacheTime = int(cConfig().getSetting('cacheTime', 600))
+        self.requestTimeout = int(cConfig().getSetting('requestTimeout', 60))
         self.removeBreakLines(True)
         self.removeNewLines(True)
         self.__setDefaultHeader()
@@ -39,7 +39,7 @@ class cRequestHandler:
         self.__setCookiePath()
         self.__sResponseHeader = ''
 
-        if self.requestTimeout >= 60 or self.requestTimeout <= 0:
+        if self.requestTimeout >= 60 or self.requestTimeout <= 10:
             self.requestTimeout = 60
 
     def removeNewLines(self, bRemoveNewLines):

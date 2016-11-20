@@ -31,8 +31,6 @@
 	<setting default="true" id="plugin_anime-loads_org" label="30050" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
 	<setting default="true" id="plugin_burning_series_org" label="30050" type="bool" />
-	<setting label="CineDream" type="lsep" />
-	<setting default="true" id="plugin_cine-dream_net" label="30050" type="bool" />
 	<setting label="Cine" type="lsep" />
 	<setting default="true" id="plugin_cine_to" label="30050" type="bool" />
 	<setting label="Cineplex" type="lsep" />
