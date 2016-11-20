@@ -6,7 +6,7 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
-# import json
+import json
 
 SITE_IDENTIFIER = 'mykino_to'
 SITE_NAME = 'MyKino'
@@ -36,7 +36,7 @@ def load():
     params.setParam('sUrl', URL_MAIN)
     params.setParam('sGenreId', 2)
     oGui.addFolder(cGuiElement('Genre Serien', SITE_IDENTIFIER, 'showGenre'), params)
-    oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showAlphaNumeric'), params)
+    oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showAlphaNumeric'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -91,54 +91,59 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
-    parser = cParser()
-    pattern = '"><a[^<]href="([^"]+)/([^-]+)([^"]+).*?src="([^"]+).*?">([^<]+).*?<br>Jahr:[^<]([^<]+)<br>Genre: ([^<]+)'
 
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+    pattern = '<a[^<]*href="(?:[^"]+)?(/(\d+)-[^"]+)"[^<]*>\s*'  # url / news-id
+    pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?'  # thumbnail
+    pattern += '<div[^>]*class="boxgridtext"[^>]*>([^<]+)</div>\s*'  # name
+    pattern += '(?:<br>)*\s*Jahr:\s*([^<]+)\s*'  # year
+    pattern += '<br>\s*Genre:([^<]+)'  # genre
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
-    total = len(aResult)
+    containsTvShows = False
 
-    for sDummy, news_id, sUrl, sThumbnail, sName, sYear, sGenre in aResult:
+    total = len(aResult)
+    for sUrl, news_id, sThumbnail, sName, sYear, sGenre in aResult:
         isTvshow = True if "Serie" in sGenre else False
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
-                                  'showHosters')
+        if isTvshow:
+            containsTvShows = True
+        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8').strip()
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setYear(sYear)
-        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
-        params.setParam('entryUrl', URL_MAIN + news_id + sUrl)
+        params.setParam('entryUrl', URL_MAIN + sUrl)
         params.setParam('isTvshow', isTvshow)
         params.setParam('sThumbnail', sThumbnail)
-        params.setParam('TVShowTitle', sName)
-        params.setParam('sGenre', sGenre)
+        params.setParam('sName', sName)
         params.setParam('news_id', news_id)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
-        isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '<a[^>]*href="([^"]+)"[^>]*>Weiter</a>')
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, '<a[^>]*href="([^"]+)"[^>]*>Weiter</a>')
         if isMatchNextPage:
             params.setParam('sUrl', sNextUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-        sGenre = params.getValue('sGenre')
-        oGui.setView('tvshows' if 'Serie' in sGenre else 'movies')
+
+        oGui.setView('tvshows' if containsTvShows else 'movies')
         oGui.setEndOfDirectory()
 
 
 def showHosters():
     params = ParameterHandler()
-    entryUrl = params.getValue('entryUrl')
     isTvshowEntry = params.getValue('isTvshow')
 
     if isTvshowEntry == 'True':
+        entryUrl = params.getValue('entryUrl')
         sHtmlContent = cRequestHandler(entryUrl).request()
         pattern = '<select[^>]*id="sseriesSeason">.*?</select>'
         isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, pattern)
         if not isMatch:
             return
-        pattern = '<option value="([^"]+)">([^<]+)'
+        pattern = '<option[^>]*value="([^"]+)"[^>]*>([^<]+)'
         isMatch, aResult = cParser().parse(sContainer, pattern)
         if isMatch:
             showSeason(aResult, params)
@@ -149,11 +154,13 @@ def showHosters():
 def showSeason(aResult, params):
     oGui = cGui()
     sThumbnail = params.getValue('sThumbnail')
+    sTVShowTitle = params.getValue('sName')
 
     total = len(aResult)
     for sId, sSeason in aResult:
-        oGuiElement = cGuiElement(sSeason, SITE_IDENTIFIER, 'showEpisodes')
+        oGuiElement = cGuiElement("Staffel " + str(sId), SITE_IDENTIFIER, 'showEpisodes')
         oGuiElement.setMediaType('season')
+        oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sId)
         oGuiElement.setThumbnail(sThumbnail)
         params.setParam('sSeason', sId)
@@ -169,72 +176,70 @@ def showEpisodes():
     sThumbnail = params.getValue('sThumbnail')
     sSeason = params.getValue('sSeason')
     news_id = params.getValue('news_id')
-    sTVShowTitle = params.getValue('TVShowTitle')
+    sTVShowTitle = params.getValue('sName')
+
     oRequest = cRequestHandler(URL_EPISODE)
     oRequest.addParameters('news_id', news_id)
     oRequest.addParameters('season', sSeason)
-
     oRequest.setRequestType(1)
     sHtmlContent = oRequest.request()
-    parser = cParser()
-    pattern = '<option value=[^>]"([^"]+)[^>]">([^ ]+)([^<]+)'
 
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
+    if not sHtmlContent:
+        return
+
+    data = json.loads(sHtmlContent)
+    if "options" in data:
+        sHtmlContent = data["options"]
+
+    pattern = '<option[^>]*value="(\d+)"[^>]*>([^<]+(\d+))\s*</option>'
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         return
 
     total = len(aResult)
-
-    for series, sName, Episodenr in aResult:
-        oGuiElement = cGuiElement(sName + Episodenr, SITE_IDENTIFIER,
-                                  'getSerienHosters')
+    for seriesId, sName, Episodenr in aResult:
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(Episodenr)
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('episode')
-        params.setParam('series', series)
+        params.setParam('seriesId', seriesId)
         oGui.addFolder(oGuiElement, params, False, total)
+
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
 
-def getSerienHosters():
-    params = ParameterHandler()
-    series = params.getValue('series')
-    news_id = params.getValue('news_id')
-
-    oRequest = cRequestHandler(URL_EPISODE)
-    oRequest.addParameters('news_id', news_id)
-    oRequest.addParameters('series', series)
-    oRequest.setRequestType(1)
-    sHtmlContent = oRequest.request()
-
-    isMatch, aResult = cParser().parse(sHtmlContent, 'data-href=[^"]"([^"]+).*?<span>([^<]+)')
-    if not isMatch:
-        return []
-
-    hosters = []
-    for sUrl, sName in aResult:
-        for idx, sLink in enumerate(sUrl.split('#,')):
-            hoster = {'name': sName, 'link': sLink.replace('\/', '/'),
-                      'displayedName': '%s - Mirror %s' % (sName, idx + 1)}
-            hosters.append(hoster)
-    if hosters:
-        hosters.append('getHosterUrl')
-    return hosters
-
-
 def getHosters():
-    sUrl = ParameterHandler().getValue('entryUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
-
-    isMatch, aResult = cParser().parse(sHtmlContent, '<a[^>]*data-href="([^"]+)"[^>]*>.*?<span>([^<]*)<\/span>')
-    if not isMatch:
-        return []
+    params = ParameterHandler()
+    seriesId = params.getValue('seriesId')
+    news_id = params.getValue('news_id')
+    sHtmlContent = ''
 
     hosters = []
+    if seriesId and news_id:
+        oRequest = cRequestHandler(URL_EPISODE)
+        oRequest.addParameters('news_id', news_id)
+        oRequest.addParameters('series', seriesId)
+        oRequest.setRequestType(1)
+        sJson = oRequest.request()
+
+        if not sJson:
+            return
+
+        data = json.loads(sJson)
+        if "links" in data:
+            sHtmlContent = data["links"]
+    else:
+        sUrl = ParameterHandler().getValue('entryUrl')
+        sHtmlContent = cRequestHandler(sUrl).request()
+
+    isMatch, aResult = cParser.parse(sHtmlContent, '<a[^>]*data-href="([^"]+)"[^>]*>.*?<span>([^<]*)<\/span>')
+    if not isMatch:
+        return hosters
+
     for sUrls, sName in aResult:
         for idx, sLink in enumerate(sUrls.split(',')):
             hoster = {'name': sName, 'link': sLink, 'displayedName': '%s - Mirror %s' % (sName, idx + 1)}
@@ -247,10 +252,7 @@ def getHosters():
 
 def getHosterUrl(sUrl=False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
-    results = []
-    result = {'streamUrl': sUrl, 'resolved': False}
-    results.append(result)
-    return results
+    return {'streamUrl': sUrl, 'resolved': False}
 
 
 def showSearchEntries(entryUrl=False, sGui=False):
@@ -268,7 +270,6 @@ def showSearchEntries(entryUrl=False, sGui=False):
         return
 
     total = len(aResult)
-
     for sDummy, news_id, sUrl, sThumbnail, sName, sYear in aResult:
         sHtmlContent = cRequestHandler(URL_MAIN + news_id + sUrl, ignoreErrors=(sGui is not False)).request()
         parser = cParser()
