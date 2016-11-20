@@ -96,7 +96,7 @@ def showEntries(entryUrl=False, sGui=False):
     pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?'  # thumbnail
     pattern += '<div[^>]*class="boxgridtext"[^>]*>([^<]+)</div>\s*'  # name
     pattern += '(?:<br>)*\s*Jahr:\s*([^<]+)\s*'  # year
-    pattern += '<br>\s*Genre:([^<]+)'  # genre
+    pattern += '(?:<br>\s*Genre:([^<]+))?'  # genre (optional for search)
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -108,6 +108,9 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, news_id, sThumbnail, sName, sYear, sGenre in aResult:
         isTvshow = True if "Serie" in sGenre else False
+        if not sGenre:
+            sHtmlContent = cRequestHandler(URL_MAIN + sUrl, ignoreErrors=(sGui is not False)).request()
+            isTvshow, aDummyResult = cParser.parse(sHtmlContent, '<select[^>]*id="sseriesSeason"[^>]*>')
         if isTvshow:
             containsTvShows = True
         sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8').strip()
@@ -255,44 +258,6 @@ def getHosterUrl(sUrl=False):
     return {'streamUrl': sUrl, 'resolved': False}
 
 
-def showSearchEntries(entryUrl=False, sGui=False):
-    oGui = sGui if sGui else cGui()
-    params = ParameterHandler()
-    if not entryUrl: entryUrl = params.getValue('sUrl')
-    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
-    parser = cParser()
-    pattern = 'caption2"><a[^<]href="([^"]+)/([^-]+)([^"]+).*?src="([^"]+).*?">([^<]+).*?Jahr: ([^<]+)'
-
-    isMatch, aResult = parser.parse(sHtmlContent, pattern)
-
-    if not isMatch:
-        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
-        return
-
-    total = len(aResult)
-    for sDummy, news_id, sUrl, sThumbnail, sName, sYear in aResult:
-        sHtmlContent = cRequestHandler(URL_MAIN + news_id + sUrl, ignoreErrors=(sGui is not False)).request()
-        parser = cParser()
-        pattern = '<select[^>]*id="sseriesSeason">.*?</select>'
-
-        isTvshow, aResult = parser.parse(sHtmlContent, pattern)
-
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
-                                  'showHosters')
-        oGuiElement.setThumbnail(sThumbnail)
-        oGuiElement.setYear(sYear)
-        params.setParam('entryUrl', URL_MAIN + news_id + sUrl)
-        params.setParam('isTvshow', isTvshow)
-        params.setParam('sThumbnail', sThumbnail)
-        params.setParam('TVShowTitle', sName)
-        params.setParam('news_id', news_id)
-        oGui.addFolder(oGuiElement, params, isTvshow, total)
-
-    if not sGui:
-        oGui.setView('movies')
-        oGui.setEndOfDirectory()
-
-
 def showSearch():
     oGui = cGui()
     sSearchText = oGui.showKeyBoard()
@@ -303,4 +268,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH % sSearchText.strip(), oGui)
+    showEntries(URL_SEARCH % sSearchText.strip(), oGui)
