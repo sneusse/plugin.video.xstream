@@ -4,6 +4,7 @@ import os
 import json
 import zipfile
 import logger
+import xbmc
 from resources.lib.common import addonPath, profilePath
 from resources.lib.download import cDownload
 
@@ -84,7 +85,7 @@ def update(LocalDir, REMOTE_PATH, Title, localFileName):
             f.write(data)
             f.close()
     updateFile.close()
-
+    xbmc.executebuiltin("XBMC.UpdateLocalAddons()")
     logger.info("Update Successful")
 
 def removeFilesNotInRepo(updateFile, LocalDir):
