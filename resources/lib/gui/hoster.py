@@ -46,6 +46,9 @@ class cHosterGui:
                 elif mediaId:
                     logger.info('resolve: hoster: %s - mediaID: %s' % (siteResult['host'], mediaId))
                     link = urlresolver.HostedMediaFile(host=siteResult['host'].lower(), media_id=mediaId).resolve()
+                else:
+                    oGui.showError('xStream', 'kein Hosterlink übergeben', 5)
+                    return False
             elif mediaUrl:
                 logger.info('resolve: ' + mediaUrl)
                 link = urlresolver.resolve(mediaUrl)
