@@ -5,7 +5,7 @@
     provider-name="xStream-Team (originator: Lynx187, murphy, MaxMustermann)">
  <requires>
    <import addon="xbmc.python"                 version="2.14.0"/>
-   <import addon="script.module.urlresolver"   version="2.9.0"/>
+   <import addon="script.module.urlresolver"   version="3.0.0"/>
    <import addon="script.module.metahandler"   version="1.0.0"/>
    <import addon="script.module.mechanize"     version="0.2.6"/>
  </requires>
