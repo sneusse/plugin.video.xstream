@@ -41,7 +41,7 @@ class cCFScrape:
             params["pass"] = re.search(r'name="pass" value="(.+?)"', body).group(1)
 
             js = self._extract_js(body)
-        except mechanize.HTTPError as e:
+        except:
             return None
 
         params["jschl_answer"] = str(js + len(parsed_url.netloc))
