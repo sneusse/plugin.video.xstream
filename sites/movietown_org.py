@@ -12,7 +12,7 @@ SITE_NAME = 'MovieTown'
 SITE_ICON = 'movietown.png'
 
 URL_MAIN = 'http://movietown.org/'
-URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&genres[]=%s&type=%s&query=%s&availToStream=true'
+URL_LIST = URL_MAIN + 'titles/paginate?_token=%s&perPage=%s&page=%s&order=%s&genres[]=%s&type=%s&query=%s'
 
 
 def load():
@@ -110,6 +110,8 @@ def showEntries(searchString='', sGui=False):
 
     total = len(aJson['items'])
     for item in aJson["items"]:
+        if 'link' not in item or len(item['link']) == 0:
+            continue
         isTvshow = True if item['type'] == 'series' else False
         if isTvshow: isTvShowfound = True
         oGuiElement = cGuiElement(item['title'].encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
