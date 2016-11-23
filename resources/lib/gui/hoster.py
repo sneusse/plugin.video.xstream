@@ -179,7 +179,7 @@ class cHosterGui:
                 priority = False
                 for resolver in hmf.get_resolvers():
                     # prefer individual priority
-                    if resolver.domains[0] != '*':
+                    if not resolver.isUniversal():
                         priority = resolver._get_priority()
                         break
                     if not priority:
