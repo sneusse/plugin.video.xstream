@@ -14,9 +14,9 @@ SITE_NAME = 'MeinKino'
 SITE_ICON = 'meinkino_to.png'
 
 URL_MAIN = 'http://meinkino.to/'
-URL_MOVIES = URL_MAIN + 'filme?type=filme'
-URL_SHOWS = URL_MAIN + 'filme?type=tv'
-URL_SEARCH = URL_MAIN + 'filme?suche=%s&type=alle'
+URL_MOVIES = URL_MAIN + 'filter?type=filme'
+URL_SHOWS = URL_MAIN + 'filter?type=tv'
+URL_SEARCH = URL_MAIN + 'filter?suche=%s&type=alle'
 URL_GET_URL = URL_MAIN + 'geturl/'
 
 URL_PARMS_ORDER_ID = '&order=neueste'
