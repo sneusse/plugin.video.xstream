@@ -174,7 +174,6 @@ def showSeasons():
 def showEpisodes():
     oGui = cGui()
     params = ParameterHandler()
-    entryUrl = params.getValue('entryUrl')
     sThumbnail = params.getValue('sThumbnail')
     sSeasonNr = params.getValue('sSeasonNr')
     sId = params.getValue('sId')
@@ -183,8 +182,6 @@ def showEpisodes():
     sDesc = params.getValue('sDesc')
 
     oRequest = cRequestHandler(URL_DROP)
-    oRequest.addHeaderEntry("Referer", entryUrl)
-    oRequest.addHeaderEntry("X-Requested-With", 'XMLHttpRequest')
     oRequest.addParameters('ceck', 'sec')
     oRequest.addParameters('option', sId)
     oRequest.addParameters('pid', postID)
