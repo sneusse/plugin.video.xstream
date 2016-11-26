@@ -233,8 +233,6 @@ def showHosters():
     sPattern += '</li>'  # container end
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
-    print sHtmlContent
-
     if not isMatch:
         return []
 
