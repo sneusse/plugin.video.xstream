@@ -99,6 +99,8 @@ def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
         sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         if sThumbnail and not sThumbnail.startswith('http'):
             sThumbnail = URL_MAIN + sThumbnail
+        if sDesc:
+            sDesc = cUtil.removeHtmlTags(sDesc).strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)
