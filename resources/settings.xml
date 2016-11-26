@@ -52,7 +52,7 @@
 	<setting default="true" id="plugin_goldstream_org" label="30050" type="bool" />
 	<setting label="HDfilme" type="lsep" />
 	<setting default="true" id="plugin_hdfilme_tv" label="30050" type="bool" />
-	<setting label="iload" type="lsep" />
+	<setting label="iLoad" type="lsep" />
 	<setting default="true" id="plugin_iload_to" label="30050" type="bool" />
 	<setting label="KinoStreamz" type="lsep" />
 	<setting default="true" id="plugin_kino-streamz_com" label="30050" type="bool" />

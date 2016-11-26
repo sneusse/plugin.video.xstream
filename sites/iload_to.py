@@ -15,7 +15,7 @@ URL_MAIN = 'http://iload.to'
 URL_FILME = URL_MAIN + '/category/3/filme/'
 URL_SHOWS = URL_MAIN + '/category/7/serien/'
 URL_SEARCH_MOVIE = URL_MAIN + '/suche/%s/Filme'
-URL_SEARCH_TV = URL_MAIN + '/suche/%s/Serie'
+URL_SEARCH_TV = URL_MAIN + '/suche/%s/Serien'
 
 ORDER_DESC = '/order/%s-0'
 ORDER_ASC = '/order/%s-1'
@@ -71,25 +71,25 @@ def showGenre():
     oGui.setEndOfDirectory()
 
 
-def showEntries(entryUrl=False, sGui=False):
+def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
     print entryUrl
 
-    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=not isInternalSearch).request()
 
     sPattern = '<table[^>]*class="row"[^>]*>.*?'  # container start
     sPattern += '<td[^>]*class="list-cover"[^>]*>.*?<img[^>]*src="([^"]*)"[^>]*[^>]*>.*?</td>.*?'  # thumbnail
-    sPattern += '<a[^>]*href="([^"]*)"[^>]*>([^<]+).*?'  # url
+    sPattern += '<a[^>]*href="([^"]*)"[^>]*>([^<]*).*?'  # url
     sPattern += '(?:<span[^>]*class="list-year"[^>]*>\s*(?:\((\d+)\))</span>.*?)?'  # year
-    sPattern += '<td[^>]*class="description"[^>]*>(.*?)</t.*?'  # year
+    sPattern += '<td[^>]*class="description"[^>]*>(.*?)</t.*?'  # desc
     sPattern += '</table>'  # container end
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        if isInternalSearch: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     isTvshow = True if "serien" in entryUrl.lower() else False
@@ -97,6 +97,8 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
         sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
+        if sThumbnail and not sThumbnail.startswith('http'):
+            sThumbnail = URL_MAIN + sThumbnail
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)
@@ -110,13 +112,14 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
-    if not sGui:
+    if isInternalSearch:
         sPattern = '<span[^>]*class="selected">\d+</span>\s*<a[^>]*href="([^"]+)">\d+</a>'
         isMatchNextPage, aResult = cParser.parse(sHtmlContent, sPattern)
         if isMatchNextPage:
             params.setParam('sUrl', URL_MAIN + aResult[0])
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
+    if not sGui:
         oGui.setView('tvshows' if 'serien' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
@@ -247,4 +250,15 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showEntries(URL_SEARCH_MOVIE % sSearchText.strip(), oGui)
+
+    isInternalSearch = (oGui == False)
+
+    if isInternalSearch:
+        oGui = cGui()
+
+    showEntries(URL_SEARCH_MOVIE % sSearchText.strip(), oGui, isInternalSearch)
+    showEntries(URL_SEARCH_TV % sSearchText.strip(), oGui, isInternalSearch)
+
+    if isInternalSearch:
+        oGui.setView('movies')
+        oGui.setEndOfDirectory()
