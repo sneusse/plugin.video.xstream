@@ -8,7 +8,7 @@ from resources.lib.parser import cParser
 from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'iload_to'
-SITE_NAME = 'iload'
+SITE_NAME = 'iLoad'
 SITE_ICON = 'iload.png'
 
 URL_MAIN = 'http://iload.to'
