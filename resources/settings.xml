@@ -27,6 +27,8 @@
     <setting default="30" id="requestTimeout" label="30014" option="int" range="10,5,60" type="slider" />
   </category> 
   <category label="30021">
+	<setting label="1Kino" type="lsep" />
+	<setting default="true" id="plugin_1kino_in" label="30050" type="bool" />
 	<setting label="AnimeLoads" type="lsep" />
 	<setting default="true" id="plugin_anime-loads_org" label="30050" type="bool" />
 	<setting label="BurningSeries" type="lsep" />
@@ -50,6 +52,8 @@
 	<setting default="true" id="plugin_goldstream_org" label="30050" type="bool" />
 	<setting label="HDfilme" type="lsep" />
 	<setting default="true" id="plugin_hdfilme_tv" label="30050" type="bool" />
+	<setting label="iload" type="lsep" />
+	<setting default="true" id="plugin_iload_to" label="30050" type="bool" />
 	<setting label="KinoStreamz" type="lsep" />
 	<setting default="true" id="plugin_kino-streamz_com" label="30050" type="bool" />
 	<setting label="KinoX" type="lsep" />
