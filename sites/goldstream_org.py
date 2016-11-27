@@ -10,7 +10,7 @@ from resources.lib.config import cConfig
 
 SITE_IDENTIFIER = 'goldstream_org'
 SITE_NAME = 'Goldstream'
-SITE_ICON = 'goldstream_org.png'
+SITE_ICON = 'goldstream.png'
 
 URL_MAIN = 'http://goldstream.org/'
 URL_Kinofilme = URL_MAIN + 'Stream/kinofilme/'

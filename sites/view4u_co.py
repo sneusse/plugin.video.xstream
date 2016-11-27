@@ -8,7 +8,7 @@ from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'view4u_co'
-SITE_NAME = 'View4u'
+SITE_NAME = 'View4U'
 SITE_ICON = 'view4u.png'
 
 URL_MAIN = 'http://view4u.co/'

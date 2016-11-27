@@ -14,7 +14,7 @@ from resources.lib.parser import cParser
 
 SITE_IDENTIFIER = 'cine_to'
 SITE_NAME = 'Cine'
-SITE_ICON = 'cine_to.png'
+SITE_ICON = 'cine.png'
 
 URL_PROTOCOL = 'https:'
 URL_MAIN = URL_PROTOCOL + '//cine.to'

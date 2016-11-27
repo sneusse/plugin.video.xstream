@@ -11,7 +11,7 @@ import json, re
 
 SITE_IDENTIFIER = 'meinkino_to'
 SITE_NAME = 'MeinKino'
-SITE_ICON = 'meinkino_to.png'
+SITE_ICON = 'meinkino.png'
 
 URL_MAIN = 'http://meinkino.to/'
 URL_MOVIES = URL_MAIN + 'filter?type=filme'

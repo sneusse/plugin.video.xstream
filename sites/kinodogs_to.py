@@ -8,7 +8,7 @@ from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'kinodogs_to'
-SITE_NAME = 'Kinodogs'
+SITE_NAME = 'KinoDogs'
 SITE_ICON = 'kinodogs.png'
 
 URL_MAIN = 'http://kinodogs.to/'
