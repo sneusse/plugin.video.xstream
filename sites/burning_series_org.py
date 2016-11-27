@@ -38,6 +38,9 @@ def showSeries():
     sChar = oParams.getValue('char')
     if sChar: sChar = sChar.lower()
     series = _getJsonContent("series")
+    if not series:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
     total = len(series)
     for serie in series:
         sTitle = serie["series"].encode('utf-8')
@@ -81,6 +84,9 @@ def showGenres():
     oParams = ParameterHandler()
     sGenre = oParams.getValue('genreID')
     genres = _getJsonContent("series:genre")
+    if not genres:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
     total = len(genres)
     for genre in sorted(genres):
         genreID = str(genres[genre]["id"])
@@ -140,6 +146,9 @@ def _search(sGui, sSearchText):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     series = _getJsonContent("series", ignoreErrors = (sGui is not False))
+    if not series:
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
     total = len(series)
     sSearchText = sSearchText.lower()
     for serie in series:
@@ -161,6 +170,11 @@ def showSeasons():
     logger.info("%s: show seasons of '%s' " % (SITE_NAME, sTitle))
 
     data = _getJsonContent("series/%s/1" % seriesId)
+
+    if not data:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
     rangeStart = not int(data["series"]["movies"])
     total = int(data["series"]["seasons"])
     for i in range(rangeStart, total + 1):
@@ -196,6 +210,11 @@ def showEpisodes():
     logger.info("%s: show episodes of '%s' season '%s' " % (SITE_NAME, sShowTitle, sSeason))
 
     data = _getJsonContent("series/%s/%s" % (seriesId, sSeason))
+
+    if not data:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
     total = len(data['epi'])
     for episode in data['epi']:
         title = "%d - " % int(episode['epi'])
@@ -221,8 +240,12 @@ def showCinemaMovies():
     seriesId = oParams.getValue('seriesID')
 
     data = _getJsonContent("series/%s/0" % (seriesId))
-    total = len(data['epi'])
 
+    if not data:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(data['epi'])
     for movie in data['epi']:
         if movie['german']:
             title = movie['german'].encode('utf-8')
@@ -253,7 +276,11 @@ def showRandom():
 def randomSerie():
     oGui = cGui()
     oParams = ParameterHandler()
-    serie = random.choice(_getJsonContent('series'))
+    series = _getJsonContent('series')
+    if not series:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+    serie = random.choice(series)
     sTitle = serie["series"].encode('utf-8')
     guiElement = cGuiElement(sTitle, SITE_IDENTIFIER, 'showSeasons')
     guiElement.setMediaType('tvshow')
@@ -271,6 +298,9 @@ def randomSeason():
         return
 
     data = _getJsonContent("series/%s/1" % oParams.getValue('seriesID'))
+    if not data:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
 
     seasons = int(data["series"]["seasons"])+1
 
@@ -304,6 +334,9 @@ def randomEpisode():
         series = {'id': oParams.getValue('seriesID'), 'series': oParams.getValue('Title')}
 
     season = _getJsonContent("series/%s/1" % series['id'])
+    if not season:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
     randomEpisodeNr = (random.choice(season['epi']))['epi']
     randomEpisode = filter(lambda person: person['epi'] == randomEpisodeNr, season['epi'])[0]
 
@@ -336,6 +369,10 @@ def showHosters():
     episode = oParams.getValue('EpisodeNr')
 
     data = _getJsonContent("series/%s/%s/%s" % (seriesId, season, episode))
+
+    if not data:
+        return []
+
     hosters = []
     for link in data['links']:
         hoster = dict()
@@ -354,6 +391,10 @@ def getHosterUrl(sUrl = False):
     oParams = ParameterHandler()
     if not sUrl: sUrl = oParams.getValue('url')
     data = _getJsonContent(sUrl.replace(URL_MAIN, ''))
+
+    if not data:
+        return []
+
     results = []
     result = {}
     if data['fullurl'].startswith('http'):
