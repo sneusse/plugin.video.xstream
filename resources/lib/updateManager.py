@@ -53,13 +53,6 @@ def urlResolverUpdate():
     commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
     commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver", LOCAL_FILE_NAME_RESOLVER)
 
-    try:
-        import urlresolver
-        urlresolver.lib.cache.reset_cache()
-    except Exception as e:
-        logger.info("Exception while resetting URLResolver cache")
-        logger.info(e)
-
 def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title, localFileName):
     try:
         if not os.path.exists(offlineFile) or open(offlineFile).read() != \
