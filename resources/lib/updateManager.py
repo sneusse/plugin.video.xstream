@@ -96,6 +96,7 @@ def update(LocalDir, REMOTE_PATH, Title, localFileName):
     logger.info("Update Successful")
 
 def removeFilesNotInRepo(updateFile, LocalDir):
+    ignored_files = ['settings.xml']
     updateFileNameList = [i.split("/")[-1] for i in updateFile.namelist()]
 
     for root, dirs, files in os.walk(LocalDir):
@@ -103,5 +104,7 @@ def removeFilesNotInRepo(updateFile, LocalDir):
             continue
         else:
             for file in files:
+                if file in ignored_files:
+                    continue
                 if file not in updateFileNameList:
                     os.remove(os.path.join(root, file))
