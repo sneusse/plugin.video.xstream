@@ -56,6 +56,8 @@
 	<setting default="true" id="plugin_iload_to" label="30050" type="bool" />
 	<setting label="KinoStreamz" type="lsep" />
 	<setting default="true" id="plugin_kino-streamz_com" label="30050" type="bool" />
+	<setting label="KinoDogs" type="lsep" />
+	<setting default="true" id="plugin_kinodogs_to" label="30050" type="bool" />
 	<setting label="KinoX" type="lsep" />
 	<setting default="true" id="plugin_kinox_to" label="30050" type="bool" />
 	<setting default="kinox.to" enable="!eq(-1,false)" id="kinox_to-domain" label="30051" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
@@ -88,7 +90,7 @@
 	<setting default="true" id="plugin_video2k_is" label="30050" type="bool" />
 	<setting label="Video4k" type="lsep" />
 	<setting default="true" id="plugin_video4k_to" label="30050" type="bool" />
-	<setting label="View4u" type="lsep" />
+	<setting label="View4U" type="lsep" />
 	<setting default="true" id="plugin_view4u_co" label="30050" type="bool" />
 </category>
   <category label="30022">
