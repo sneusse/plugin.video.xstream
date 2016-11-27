@@ -95,6 +95,7 @@ def showEntries(entryUrl=False, sGui=False):
             sThumbnail = 'http:' + sThumbnail
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
+        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)
         if sYear:
             oGuiElement.setYear(sYear)
