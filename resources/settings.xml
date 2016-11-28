@@ -72,6 +72,8 @@
 	<setting default="true" id="plugin_movietown_org" label="30050" type="bool" />
 	<setting label="MyKino" type="lsep" />
 	<setting default="true" id="plugin_mykino_to" label="30050" type="bool" />
+	<setting label="RapidStream" type="lsep" />
+	<setting default="true" id="plugin_rapidstream_to" label="30050" type="bool" />
 	<setting label="SerienStream" type="lsep" />
 	<setting default="true" id="plugin_serienstream_to" label="30050" type="bool" />
 	<setting label="SeriesEver" type="lsep" />
