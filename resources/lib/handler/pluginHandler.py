@@ -111,12 +111,12 @@ class cPluginHandler:
         for pluginID in sorted(pluginData):
             plugin = pluginData[pluginID]
             subEl = ET.SubElement(pluginElem,'setting', {'type': 'lsep', 'label':plugin['name']})
-            subEl.tail = '\n\t'
+            subEl.tail = '\n    '
             attrib = {'default': 'true', 'type': 'bool'}
             attrib['id'] = 'plugin_%s' % pluginID
             attrib['label'] = '30050'
             subEl = ET.SubElement(pluginElem, 'setting', attrib)
-            subEl.tail = '\n\t'
+            subEl.tail = '\n    '
             if 'settings' in plugin:
                 customSettings = []
                 try:
@@ -124,8 +124,10 @@ class cPluginHandler:
                 except:
                     logger.info('Parsing of custom settings for % failed.' % plugin['name'])
                 for setting in customSettings:
-                    setting.tail = '\n\t'
+                    setting.tail = '\n    '
                     pluginElem.append(setting)
+            subEl = ET.SubElement(pluginElem, 'setting', {'type': 'sep'})
+            subEl.tail = '\n    '
         pluginElements = pluginElem.findall('setting')[-1].tail = '\n'
         try:
             ET.dump(pluginElem)
