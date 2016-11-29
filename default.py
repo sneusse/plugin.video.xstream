@@ -17,7 +17,7 @@ path.append(join(__cwd__, "resources", "art", "sites"))
 path.append(join(__cwd__, "sites"))
 
 # Run xstream
-from xstream import run
+from xstream2 import run
 
 logger.info('*---- Running xStream, version %s ----*' % __settings__.getAddonInfo('version'))
 logger.info('Python-Version: %s' % platform.python_version())
