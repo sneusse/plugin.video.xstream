@@ -1,4 +1,4 @@
-![xStream logo](https://github.com/StoneOffStones/plugin.video.xstream/blob/wiki/graphics/website/logo/logo_512.png?raw=true)
+![xStream logo](https://github.com/xStream-Kodi/plugin.video.xstream/blob/wiki/graphics/web/logo-dark.png?raw=true)
 
 
 ## Willkommen bei xStream für Kodi!
