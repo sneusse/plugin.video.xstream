@@ -39,7 +39,7 @@ def urlResolverUpdate():
 
     urlResolverPaths = []
     for child in os.listdir(ADDON_DIR):
-        if not child.startswith('script.module.urlresolver'): continue
+        if not child.lower().startswith('script.module.urlresolver'): continue
         resolver_path = os.path.join(ADDON_DIR, child)
         if os.path.isdir(resolver_path):
             urlResolverPaths.append(resolver_path)
@@ -47,6 +47,11 @@ def urlResolverUpdate():
     if len(urlResolverPaths) > 1:
         from resources.lib.gui.gui import cGui
         cGui().showError('xStream', 'Es ist mehr als ein URLResolver installiert. Bitte löschen!', 5)
+        logger.info("Its more the one URLResolver installed!")
+        return
+    elif urlResolverPaths < 1:
+        from resources.lib.gui.gui import cGui
+        cGui().showError('xStream', 'Es wurde kein URLResolver-Ordner gefunden!', 5)
         logger.info("Its more the one URLResolver installed!")
         return
 
