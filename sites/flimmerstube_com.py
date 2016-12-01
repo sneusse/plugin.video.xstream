@@ -11,6 +11,7 @@ from resources.lib.util import cUtil
 SITE_IDENTIFIER = 'flimmerstube_com'
 SITE_NAME = 'Flimmerstube'
 SITE_ICON = 'flimmerstube.png'
+SITE_GLOBAL_SEARCH = False
 
 URL_MAIN_GER = 'http://flimmerstube.com'
 URL_MAIN_ENG = 'http://flimmerstube.do.am'
