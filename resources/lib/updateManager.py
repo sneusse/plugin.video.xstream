@@ -49,10 +49,10 @@ def urlResolverUpdate():
         cGui().showError('xStream', 'Es ist mehr als ein URLResolver installiert. Bitte löschen!', 5)
         logger.info("Its more the one URLResolver installed!")
         return
-    elif urlResolverPaths < 1:
+    elif len(urlResolverPaths) < 1:
         from resources.lib.gui.gui import cGui
-        cGui().showError('xStream', 'Es wurde kein URLResolver-Ordner gefunden!', 5)
-        logger.info("Its more the one URLResolver installed!")
+        cGui().showError('xStream', 'Es wurde kein URLResolver gefunden!', 5)
+        logger.info("No URLResolver installed/found!")
         return
 
     commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
