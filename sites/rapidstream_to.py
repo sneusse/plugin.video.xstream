@@ -11,6 +11,7 @@ import re, json
 SITE_IDENTIFIER = 'rapidstream_to'
 SITE_NAME = 'RapidStream'
 SITE_ICON = 'rapidstream.png'
+SITE_GLOBAL_SEARCH = False
 
 URL_MAIN = 'http://rapidstream.to/'
 URL_MOVIES = URL_MAIN + 'filme'
@@ -31,7 +32,7 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('sUrl', URL_SHOWS)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
-    #oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
+    oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
@@ -67,17 +68,17 @@ def showValueList():
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
-    sPattern = '<a[^>]*href="([^"]+)"[^>]*>([^<]+)</a>'
+    sPattern = '<a[^>]*href="([^"]+)"[^>]*>([^<]+)</a>\s*<i>(\d+)</i>'
     isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
 
     if not isMatch:
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
-    for sUrl, sName in aResult:
+    for sUrl, sName, sCount in aResult:
         sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         params.setParam('sUrl', sUrl)
-        oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
+        oGui.addFolder(cGuiElement('%s (%s) ' % (sName, sCount), SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
 
@@ -90,7 +91,7 @@ def showEntries(entryUrl=False, sGui=False):
     sPattern = '<article[^>]*class="item ([^"]+)"[^>]*>.*?'  # typ
     sPattern += '<a[^>]*href="([^"]+)"[^>]*>\s*<img[^>]*src="([^"]+)"[^>]*>.*?'  # url / thumbnail
     sPattern += '<h3>\s*<a[^>]*>([^<]*)</a>\s*</h3>.*?'  # name
-    sPattern += '(?:<span>(\d+)</span>.*?)?'  # url / thumbnail
+    sPattern += '(?:<span>(\d+)</span>.*?)?'  # Year
     sPattern += '</article>'  # container end
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
@@ -122,6 +123,89 @@ def showEntries(entryUrl=False, sGui=False):
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
         oGui.setView('tvshows' if 'tvshows' in entryUrl else 'movies')
+        oGui.setEndOfDirectory()
+
+
+def showSearchEntries(entryUrl=False, sGui=False):
+    oGui = sGui if sGui else cGui()
+    params = ParameterHandler()
+    if not entryUrl: entryUrl = params.getValue('sUrl')
+
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
+    sPattern = '<article[^>]*>.*?'  # typ
+    sPattern += '<a[^>]*href="([^"]+)"[^>]*>\s*'  # url
+    sPattern += '<img[^>]*src="([^"]+)"[^>]*alt="([^"]+)"[^>]*>.*?'  # thumbnail / name
+    sPattern += '<span[^>]*class="([^"]+)"[^>]*>.*?'  # typ
+    sPattern += '(?:<span[^>]*class="year"[^>]*>(\d+)</span>.*?)?'  # Year
+    sPattern += '(?:<div[^>]*class="contenido"[^>]*>\s*<p>([^<]*)</p>.*?)?'  # desc
+    sPattern += '</article>'  # container end
+    isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
+
+    if not isMatch:
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(aResult)
+    for sUrl, sThumbnail, sName, sTyp, sYear, sDesc in aResult:
+        isFolder = False
+        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
+        sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
+
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setDescription(sDesc)
+        if sYear:
+            oGuiElement.setYear(sYear)
+
+        if sTyp == 'movies':
+            oGuiElement.setFunction('showHosters')
+            oGuiElement.setMediaType('movie')
+            isFolder = False
+        elif sTyp == 'tvshows':
+            oGuiElement.setFunction('showSeasons')
+            oGuiElement.setMediaType('tvshow')
+            isFolder = True
+            oGuiElement.setTVShowTitle(sName)
+        elif sTyp == 'seasons':
+            oGuiElement.setFunction('showEpisodes')
+            oGuiElement.setMediaType('season')
+            isFolder = True
+
+            res = re.search('([^>]*):\s*\w+\s*(\d+)', sName, re.I)
+            if res:
+                oGuiElement.setTVShowTitle(res.group(1))
+                oGuiElement.setSeason(res.group(2))
+                oGuiElement.setTitle('%s - Staffel %s' % (res.group(1), res.group(2)))
+                params.setParam('sSeasonNr', int(res.group(2)))
+                sUrl = sUrl.replace('/staffeln/', '/tvshows/')
+                sUrl = sUrl.replace('-staffel-%s' % res.group(2), '/')
+        elif sTyp == 'episodes':
+            oGuiElement.setFunction('showHosters')
+            oGuiElement.setMediaType('episode')
+            isFolder = False
+
+            res = re.search('([^>]*) (\d+)×(\d+)', sName, re.I)
+            if res:
+                oGuiElement.setTVShowTitle(res.group(1))
+                oGuiElement.setSeason(res.group(2))
+                oGuiElement.setEpisode(res.group(3))
+                oGuiElement.setTitle('%s - S%s E%s' % (res.group(1), res.group(2), res.group(3)))
+        else:
+            continue
+
+        params.setParam('entryUrl', sUrl)
+        params.setParam('sThumbnail', sThumbnail)
+        params.setParam('sName', sName)
+        oGui.addFolder(oGuiElement, params, isFolder, total)
+
+    if not sGui:
+        sPattern = '<link[^>]*rel="next"[^>]*href="([^"]+)'
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
+        if isMatchNextPage:
+            params.setParam('sUrl', sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showSearchEntries', params)
+
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
 
 
@@ -168,9 +252,6 @@ def showEpisodes():
     if not isMatch:
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
-
-    print sSeasonNr
-    print sContainer
 
     pattern = '<li>.*?'
     pattern += '<a[^>]*href="([^"]+)"[^>]*>\s*(?:<img[^>]*src="([^"]+)"[^>]*>)?.*?'  # url / thumbnail
@@ -251,4 +332,4 @@ def showSearch():
 
 def _search(oGui, sSearchText):
     if not sSearchText: return
-    showEntries(URL_SEARCH % sSearchText.strip(), oGui)
+    showSearchEntries(URL_SEARCH % sSearchText.strip(), oGui)
