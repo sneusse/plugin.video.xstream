@@ -117,6 +117,13 @@ class cPluginHandler:
             attrib['label'] = '30050'
             subEl = ET.SubElement(pluginElem, 'setting', attrib)
             subEl.tail = '\n    '
+
+            attrib = {'default': str(plugin['globalsearch']).lower(), 'type': 'bool'}
+            attrib['id'] = 'global_search_%s' % pluginID
+            attrib['label'] = '30052'
+            subEl = ET.SubElement(pluginElem, 'setting', attrib)
+            subEl.tail = '\n    '
+
             if 'settings' in plugin:
                 customSettings = []
                 try:
@@ -160,5 +167,10 @@ class cPluginHandler:
         try:
             pluginData['settings'] = plugin.SITE_SETTINGS
         except:
+            pass
+        try:
+            pluginData['globalsearch'] = plugin.SITE_GLOBAL_SEARCH
+        except:
+            pluginData['globalsearch'] = True
             pass
         return pluginData
