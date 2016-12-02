@@ -76,8 +76,6 @@ def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    print entryUrl
-
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=not isInternalSearch).request()
 
     sPattern = '<table[^>]*class="row"[^>]*>.*?'  # container start

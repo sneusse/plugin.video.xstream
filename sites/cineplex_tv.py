@@ -108,7 +108,6 @@ def showEntries(entryUrl=False, sGui=False):
         pattern = '<ul[^>]*class="pagination">.*?<li><a[^>]*href="([^"]*)">[^\d]+</a>\s*</li>\s*</ul>'
         isMatch, sPageUrl = cParser.parseSingleResult(sHtmlContent, pattern)
         if isMatch:
-            print sPageUrl
             params.setParam('sUrl', sPageUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
