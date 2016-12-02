@@ -574,10 +574,12 @@ def showHosters():
                 sHoster = aEntry[2].strip()
                 hoster = {}
                 hoster['name'] = sHoster
-                hoster['link'] = URL_MAIN +'/'+ aEntry[0]
+                hoster['link'] = URL_MAIN + '/' + aEntry[0]
                 hoster['displayedName'] = aEntry[1] + ' - ' + sHoster + ' - Quality: ' + aEntry[3]
                 hoster['quality'] = aEntry[3]
                 hoster['date'] = aEntry[1].strip()
+                if sHoster == 'Stream4k':
+                    hoster['resolveable'] = True
                 hosters.append(hoster)
            
     sPattern = '<SELECT name="hosterlist".*?>(.*?)</SELECT>'
@@ -624,11 +626,14 @@ def showHoster(sUrl=False):
         for aEntry in aResult[1]:
             result = parseHosterDirect(sHtmlContent)#, sHoster.lower(), sMovieTitle)
             result['title'] = sMovieTitle + ' Part ' + aEntry[2]
-            results.append(result)  
+            results.append(result)
         return results
     else:
         result = parseHosterDirect(sHtmlContent)#, sHoster.lower(), sMovieTitle)
-        results.append(result)
+        if type(result) is list:
+            results.extend(result)
+        else:
+            results.append(result)
         return results
   
             
@@ -653,12 +658,42 @@ def parseHosterDirect(sHtmlContent, sHoster = '', sMovieTitle = ''):
     sPattern = 'id="maincontent5".*?(?:target="_blank" href|iframe[^<]+src|value)="([^"]+)".*?id="underplayer">'
     aResult = oParser.parse(sHtmlContent, sPattern)
     if (aResult[0] == True):
-        sStreamUrl = aResult[1][0]    
-        result = {}
-        result['streamUrl'] = sStreamUrl
-        result['resolved'] = False
-        return result
+        sStreamUrl = aResult[1][0]
+
+        # Stream4k
+        if 'http' not in sStreamUrl:
+            oRequest = cRequestHandler(URL_MAIN + '/' + sStreamUrl)
+            oRequest.removeBreakLines(False)
+            oRequest.removeNewLines(False)
+            sHtml = oRequest.request()
+
+            isMatch, aResult = cParser.parse(sHtml, '(eval\(function.*?)</script>')
+
+            if isMatch:
+                from resources.lib import jsunpacker
+                import json
+
+                unpacked = jsunpacker.unpack(aResult[0])
+                isMatch, sJson = cParser.parseSingleResult(unpacked, '(\[{".*?}\])')
+
+                if isMatch:
+                    results = []
+                    for entry in json.loads(sJson):
+                        if 'file' not in entry or 'label' not in entry: continue
+                        result = dict()
+                        result['streamUrl'] = entry['file']
+                        result['title'] = entry['label'].encode('utf-8')
+                        result['resolved'] = False
+                        results.append(result)
+                    return results
+        else:
+            result = {}
+            result['streamUrl'] = sStreamUrl
+            result['resolved'] = False
+            return result
     return False
+
+
     
 def __getLanguage(sString):
     if 'us_ger_small' in sString:
