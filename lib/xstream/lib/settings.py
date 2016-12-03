@@ -16,11 +16,14 @@ class Settings:
         return category in self._xml_data
 
     def _create_setting(self, category='', **kwargs):
-        if not category and not self._parent:
-            raise
+        if not category:
+            if not self._parent:
+                raise Exception
+            else:
+                category = self._parent
 
         if not self._has_category(category):
-            raise # or create???
+            raise Exception # or create???
 
         setting = '<setting'
 
@@ -78,7 +81,7 @@ class Settings:
         """
         self._create_setting(category, type='lsep', label=label)
 
-    def create_input_text(self, id, label, option='', default='', category=''):
+    def create_input_text(self, id, label, option='', default='', category='', enable=''):
         """
         Allow a user to enter one line of text.
 
@@ -89,7 +92,7 @@ class Settings:
         :param category:
         :return:
         """
-        self._create_setting(category, type='text', id=id, label=label, option=option, default=default)
+        self._create_setting(category, type='text', id=id, label=label, option=option, default=default, enable=enable)
 
     def create_input_ipaddress(self, id, label, default='', category=''):
         pass
@@ -106,8 +109,8 @@ class Settings:
     def create_input_time(self, id, label, default='', category=''):
         pass
 
-    def create_input_bool(self, id, label, default='', category=''):
-        pass
+    def create_input_bool(self, id, label, default='', category='', enable=''):
+        self._create_setting(category, type='bool', id=id, label=label, default=default, enable=enable)
 
     def create_select(self, id, label, values, category=''):
         pass

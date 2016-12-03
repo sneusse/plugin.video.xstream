@@ -9,7 +9,7 @@
    <import addon="script.module.metahandler"   version="1.0.0"/>
    <import addon="script.module.mechanize"     version="0.2.6"/>
  </requires>
- <extension point="xbmc.python.pluginsource" library="default.py">
+ <extension point="xbmc.python.pluginsource" library="lib/default.py">
    <provides>video</provides>
  </extension>
  <extension point="xbmc.addon.metadata">

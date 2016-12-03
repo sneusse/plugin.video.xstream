@@ -17,10 +17,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from xstream.site_plugin import SitePlugin
-from lib.settings import Settings
+from xstream.lib.settings import Settings
 
-def main():
-    pass
+from xstream.plugins import *
+
+
+def get_plugin(id):
+    plugins = get_plugins()
+
+    for plugin in plugins:
+        if plugin.id == id:
+            return plugin
+
+    return None
+
 
 def get_plugins(include_disabled=False):
     classes = SitePlugin.__class__.__subclasses__(SitePlugin)
@@ -33,16 +43,13 @@ def get_plugins(include_disabled=False):
 
     return plugins
 
-def _generate_settings():
-    settings = Settings()
-
+def generate_plugin_settings(settings):
     settings.create_category('30021')
+
     for plugin in get_plugins(include_disabled=True):
-        addon_id = 'plugin_%s' % plugin.id
+        plugin_id = 'plugin_%s' % plugin.id
         settings.create_lsep(plugin.name)
-        settings.create_input_bool(addon_id, '30050', 'true')
-        settings.set_prefix(addon_id)
+        settings.create_input_bool(plugin_id, '30050', 'true')
+        settings.set_prefix(plugin_id)
         plugin.custom_settings(settings)
         settings.clear_prefix()
-
-    settings.generate_xml()
