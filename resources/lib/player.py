@@ -29,7 +29,7 @@ class XstreamPlayer(xbmc.Player):
         if cConfig().getSetting('metahandler')=='true':
             META = True
             try:
-                from metahandler import metahandlers
+                from xstream import get_metahandler
             except Exception as e:
                 META = False
                 logger.info("Could not import package 'metahandler'")
@@ -42,7 +42,7 @@ class XstreamPlayer(xbmc.Player):
                 logger.info('Watched percent '+str(int(percent*100)))                   
                 if percent >= 0.80:
                     logger.info('Attemt to change watched status')
-                    meta = metahandlers.MetaData()
+                    meta = get_metahandler()
                     params = ParameterHandler()
                     season = ''
                     episode = ''

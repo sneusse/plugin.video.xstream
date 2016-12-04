@@ -209,7 +209,7 @@ class cGuiElement:
             episode = self._episode
 
         try:
-            from metahandler import metahandlers
+            from xstream import get_metahandler
         except:
             import traceback
             logger.info(traceback.format_exc())
@@ -217,7 +217,7 @@ class cGuiElement:
         if not self._mediaType:
             logger.info('Could not get MetaInformations for %s, mediaType not defined' % self.getTitle())
             return False
-        oMetaget = metahandlers.MetaData()
+        oMetaget = get_metahandler()
         if self._mediaType == 'movie' or self._mediaType == 'tvshow':
             if self._mediaType == 'tvshow' and self.__aItemValues.get('TVShowTitle',False):
                 meta = oMetaget.get_meta(self._mediaType, self.__aItemValues['TVShowTitle'])

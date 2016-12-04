@@ -17,8 +17,7 @@ def changeWatched(params):
     if not cConfig().getSetting('metahandler')=='true': return
     #videoType, name, imdbID, season=season, episode=episode, year=year, watched=watched
     try:
-        from metahandler import metahandlers
-        meta = metahandlers.MetaData()
+        meta = get_metahandler()
         season = ''
         episode = ''
         mediaType = params.getValue('mediaType')
@@ -41,14 +40,14 @@ def changeWatched(params):
 def updateMeta(params):
     if not cConfig().getSetting('metahandler')=='true':
         return
-    #videoType, name, imdbID, season=season, episode=episode, year=year, watched=watched
+    # videoType, name, imdbID, season=season, episode=episode, year=year, watched=watched
     try:
         from metahandler import metahandlers
     except Exception as e:
         logger.info("Could not import package 'metahandler'")
         logger.info(e)
         return
-    meta = metahandlers.MetaData()
+    meta = get_metahandler()
     season = ''
     episode = ''
     mediaType = params.getValue('mediaType')
@@ -114,6 +113,16 @@ def updateMeta(params):
             meta.update_meta(mediaType, name, imdbID, new_imdb_id=str(item.get('IMDB_ID','')), new_tmdb_id=str(item['id']), year=year)
     xbmc.executebuiltin("XBMC.Container.Refresh")
     return
+
+def get_metahandler():
+    from resources.lib.bs_finalizer import l1111
+    try:
+        from metahandler import metahandlers
+        return metahandlers.MetaData(tmdb_api_key=l1111(u"࠻࠺ࡩࡪ࠱࠹ࡤ࠳࠸࠽࠽࠴ࡥ࠻ࡦ࠽࠹ࡧࡦࡢࡦࡧࡩ࠼࠿࠹࠴ࡦ࠼࠸ࡪ࠹ࠦ"))
+    except Exception as e:
+        logger.info("Could not import package 'metahandler'")
+        logger.info(e)
+        return False
 
 def parseUrl():
     params = ParameterHandler()
