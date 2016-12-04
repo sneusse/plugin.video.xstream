@@ -224,7 +224,7 @@ class cGuiElement:
             else:
                 meta = oMetaget.get_meta(self._mediaType, self.__sTitle)         
         elif self._mediaType == 'season':
-            meta = oMetaget.get_seasons(TVShowTitle, imdbID, str(season))
+            meta = oMetaget.get_seasons(TVShowTitle, imdbID, [str(season)])
         elif self._mediaType == 'episode':
             meta = oMetaget.get_episode_meta(TVShowTitle, imdbID, str(season), str(episode))
         else:

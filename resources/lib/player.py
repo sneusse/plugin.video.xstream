@@ -60,7 +60,7 @@ class XstreamPlayer(xbmc.Player):
                         if mediaType == 'movie' or mediaType == 'tvshow':
                             metaInfo = meta.get_meta(self._mediaType, self.__sTitle, imdbID)
                         elif mediaType == 'season':
-                            metaInfo = meta.get_seasons(TVShowTitle, imdbID, str(season))
+                            metaInfo = meta.get_seasons(TVShowTitle, imdbID, [str(season)])
                         elif mediaType == 'episode' and TVShowTitle:
                             metaInfo = meta.get_episode_meta(TVShowTitle, imdbID, str(season), str(episode))
                         if metaInfo and int(metaInfo['overlay']) == 6:
