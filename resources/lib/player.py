@@ -26,50 +26,44 @@ class XstreamPlayer(xbmc.Player):
             logger.error('Kodi failed to open stream')
 
         self.streamFinished = True
-        if cConfig().getSetting('metahandler')=='true':
-            META = True
-            try:
-                from xstream import get_metahandler
-            except Exception as e:
-                META = False
-                logger.info("Could not import package 'metahandler'")
-                logger.info(e)
-        else:
-            META = False
-        if META:
-            try:                       
-                percent = self.playedTime/self.totalTime
-                logger.info('Watched percent '+str(int(percent*100)))                   
-                if percent >= 0.80:
-                    logger.info('Attemt to change watched status')
-                    meta = get_metahandler()
-                    params = ParameterHandler()
-                    season = ''
-                    episode = ''
-                    mediaType = params.getValue('mediaType')
-                    imdbID = params.getValue('imdbID')
-                    name = params.getValue('Title')
-                    TVShowTitle = params.getValue('TVShowTitle')
-                    if params.exist('season'):
-                        season = params.getValue('season')
-                        if int(season) > 0:mediaType = 'season'
-                    if params.exist('episode'):
-                        episode = params.getValue('episode')
-                        if int(episode) > 0: mediaType = 'episode'
-                    if imdbID and mediaType:
-                        if mediaType == 'movie' or mediaType == 'tvshow':
-                            metaInfo = meta.get_meta(self._mediaType, self.__sTitle, imdbID)
-                        elif mediaType == 'season':
-                            metaInfo = meta.get_seasons(TVShowTitle, imdbID, [str(season)])
-                        elif mediaType == 'episode' and TVShowTitle:
-                            metaInfo = meta.get_episode_meta(TVShowTitle, imdbID, str(season), str(episode))
-                        if metaInfo and int(metaInfo['overlay']) == 6:
-                            meta.change_watched(mediaType, name, imdbID, season=season, episode=episode)
-                            xbmc.executebuiltin("XBMC.Container.Refresh")
-                    else:
-                        logger.info('Could not change watched status; imdbID or mediaType missing')
-            except Exception as e:
-                logger.info(e)
+
+        if cConfig().getSetting('metahandler') == 'true':
+            from xstream import get_metahandler
+            meta = get_metahandler()
+
+            if meta:
+                try:
+                    percent = self.playedTime/self.totalTime
+                    logger.info('Watched percent '+str(int(percent*100)))
+                    if percent >= 0.80:
+                        logger.info('Attemt to change watched status')
+                        params = ParameterHandler()
+                        season = ''
+                        episode = ''
+                        mediaType = params.getValue('mediaType')
+                        imdbID = params.getValue('imdbID')
+                        name = params.getValue('Title')
+                        TVShowTitle = params.getValue('TVShowTitle')
+                        if params.exist('season'):
+                            season = params.getValue('season')
+                            if int(season) > 0:mediaType = 'season'
+                        if params.exist('episode'):
+                            episode = params.getValue('episode')
+                            if int(episode) > 0: mediaType = 'episode'
+                        if imdbID and mediaType:
+                            if mediaType == 'movie' or mediaType == 'tvshow':
+                                metaInfo = meta.get_meta(self._mediaType, self.__sTitle, imdbID)
+                            elif mediaType == 'season':
+                                metaInfo = meta.get_seasons(TVShowTitle, imdbID, [str(season)])
+                            elif mediaType == 'episode' and TVShowTitle:
+                                metaInfo = meta.get_episode_meta(TVShowTitle, imdbID, str(season), str(episode))
+                            if metaInfo and int(metaInfo['overlay']) == 6:
+                                meta.change_watched(mediaType, name, imdbID, season=season, episode=episode)
+                                xbmc.executebuiltin("XBMC.Container.Refresh")
+                        else:
+                            logger.info('Could not change watched status; imdbID or mediaType missing')
+                except Exception as e:
+                    logger.info(e)
                 
     def onPlayBackEnded(self):
         logger.info('Playback completed')

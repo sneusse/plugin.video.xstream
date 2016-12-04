@@ -16,8 +16,8 @@ def run():
 def changeWatched(params):
     if not cConfig().getSetting('metahandler')=='true': return
     #videoType, name, imdbID, season=season, episode=episode, year=year, watched=watched
-    try:
-        meta = get_metahandler()
+    meta = get_metahandler()
+    if meta:
         season = ''
         episode = ''
         mediaType = params.getValue('mediaType')
@@ -30,10 +30,9 @@ def changeWatched(params):
         if imdbID:
             meta.change_watched(mediaType, name, imdbID, season=season, episode=episode)
             xbmc.executebuiltin("XBMC.Container.Refresh")
-    except Exception as e:
+    else:
         META = False
         logger.info("Could not import package 'metahandler'")
-        logger.info(e)
     return
 
 
@@ -48,6 +47,8 @@ def updateMeta(params):
         logger.info(e)
         return
     meta = get_metahandler()
+    if not meta:
+        return
     season = ''
     episode = ''
     mediaType = params.getValue('mediaType')

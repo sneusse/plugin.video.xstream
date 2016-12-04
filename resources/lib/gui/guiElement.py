@@ -208,16 +208,13 @@ class cGuiElement:
         if not episode and self._episode:
             episode = self._episode
 
-        try:
-            from xstream import get_metahandler
-        except:
-            import traceback
-            logger.info(traceback.format_exc())
-            return False
         if not self._mediaType:
             logger.info('Could not get MetaInformations for %s, mediaType not defined' % self.getTitle())
             return False
+        from xstream import get_metahandler
         oMetaget = get_metahandler()
+        if not oMetaget:
+            return False
         if self._mediaType == 'movie' or self._mediaType == 'tvshow':
             if self._mediaType == 'tvshow' and self.__aItemValues.get('TVShowTitle',False):
                 meta = oMetaget.get_meta(self._mediaType, self.__aItemValues['TVShowTitle'])
