@@ -127,7 +127,10 @@ class cGuiElement:
         self.__aItemValues['plot'] = sDescription
 
     def getDescription(self):
-        return self.__sDescription
+        if 'plot' not in self.__aItemValues:
+            return self.__sDescription
+        else:
+            return self.__aItemValues['plot']
 
     def setThumbnail(self, sThumbnail):
         self.__sThumbnail = sThumbnail
@@ -155,7 +158,7 @@ class cGuiElement:
 
     def getItemValues(self):
         self.__aItemValues['title'] = self.getTitle()
-        if self.getDescription() != '' and 'plot' not in self.__aItemValues:
+        if self.getDescription():
             self.__aItemValues['plot'] = self.getDescription()
         for sPropertyKey in self.__aProperties.keys():
             self.__aItemValues[sPropertyKey] = self.__aProperties[sPropertyKey]
