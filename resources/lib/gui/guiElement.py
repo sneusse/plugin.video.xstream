@@ -155,7 +155,7 @@ class cGuiElement:
 
     def getItemValues(self):
         self.__aItemValues['title'] = self.getTitle()
-        if self.getDescription() != '':
+        if self.getDescription() != '' and 'plot' not in self.__aItemValues:
             self.__aItemValues['plot'] = self.getDescription()
         for sPropertyKey in self.__aProperties.keys():
             self.__aItemValues[sPropertyKey] = self.__aProperties[sPropertyKey]
