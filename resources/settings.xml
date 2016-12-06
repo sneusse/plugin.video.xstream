@@ -100,7 +100,7 @@
     <setting label="Movie4k" type="lsep" />
     <setting default="true" id="plugin_movie4k_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie4k_to" label="30052" type="bool" />
-    <setting default="movie4k.to" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
+    <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
     <setting type="sep" />
     <setting label="MoviesEver" type="lsep" />
     <setting default="true" id="plugin_moviesever_com" label="30050" type="bool" />
