@@ -37,16 +37,16 @@ def showContentMenu():
     params = ParameterHandler()
     sType = params.getValue('sType')
 
-    # if sType=='movies':
-    #    params.setParam('sUrl', URL_GENERIC_URL % (sType, '-100newest', ''))
-    #    oGui.addFolder(cGuiElement('100 Neusten', SITE_IDENTIFIER, 'showEntries'), params)
+    if sType == 'movies':
+        params.setParam('sUrl', URL_GENERIC_URL % (sType, '-100newest', ''))
+        oGui.addFolder(cGuiElement('100 Neusten', SITE_IDENTIFIER, 'showEntries'), params)
 
     params.setParam('sUrl', URL_GENERIC_URL % (sType, '', 'alle/'))
     oGui.addFolder(cGuiElement('Alle', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_GENERIC_URL % (sType, '', ''))
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'), params)
-    #params.setParam('sUrl', URL_GENERIC_URL % (sType, '-mostview', ''))
-    #oGui.addFolder(cGuiElement('Meistgesehen', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_GENERIC_URL % (sType, '-mostview', ''))
+    oGui.addFolder(cGuiElement('Meistgesehen', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_GENERIC_URL % (sType, '', ''))
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'), params)
     oGui.setEndOfDirectory()
@@ -138,9 +138,20 @@ def showEntries(entryUrl=False, sGui=False, sSearchText=None):
     sPattern += '<td><a[^>]*href="([^"]+)"[^>]*rel="([^"]+)"[^>]*>([^<]+)</a></td>.*?'  # url / thumbnail / Name
     sPattern += '(?:<td[^>]*>(\d+)[^<]+</td>.*?)?'  # duration
     sPattern += '(?:<td[^>]*>([\d|\.]+).*?)?'  # rating
-    sPattern += '(?:<img[^>]*src="[^"]+flaggs[^"]+"[^>]*alt="(\w+)"[^>]*>.*?)?'
+    sPattern += '(?:<img[^>]*src="[^"]+flaggs[^"]+"[^>]*alt="(\w+)"[^>]*>.*?)?'  # language
     sPattern += '</tr>'  # container end
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
+
+    if not isMatch:
+        sPattern = '<div[^>]*class="[^"]*mtop20[^"]*text-center[^"]*">'  # container start
+        sPattern += '<a[^>]*href="([^"]+)"[^>]*>\s*<img[^>]*src="([^"]*)"[^>]*>\s*'  # url / thumbnail
+        sPattern += '(?:<div[^>]*class="[^"]*flag_(\w+)[^"]*"></div>.*?)?'  # language
+        sPattern += '<a[^>]*class="lnk-white bold"[^>]*>([^<]+)</a>'  # name
+        isMatch, aResultPoster = cParser.parse(sHtmlContent, sPattern)
+
+        aResult = []
+        for sUrl, sThumbnail, sLang, sName in aResultPoster:
+            aResult.append((sUrl, sThumbnail, sName, False, False, sLang))
 
     if not isMatch:
         if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
