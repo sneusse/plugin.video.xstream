@@ -7,6 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.config import cConfig
 from resources.lib.util import cUtil
+import threading
 
 SITE_IDENTIFIER = 'movie2z_to'
 SITE_NAME = 'Movie2z'
@@ -294,34 +295,43 @@ def showHosters():
         return []
 
     hosters = []
+    threads = []
     for sUrl in aResult:
-        sHtmlContent = cRequestHandler(sUrl).request()
-        sPattern = '<select[^>]*id="selecthost"[^>]*>(.*?)</select>'
-        isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
+        t = threading.Thread(target=_addHosterThread, args=(hosters, sUrl))
+        threads += [t]
+        t.start()
 
-        if not isMatch:
-            continue
-
-        sPattern = '<option[^>]*value="([^"]+)">([^\d]+)(\d+)[^>]*(?:(\d+))?</option>'
-        isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
-
-        if not isMatch:
-            continue
-
-        for sUrl, sHoster, sMirror, sQualy in aResult:
-            sHoster = sHoster.strip()
-            hoster = {}
-            hoster['name'] = sHoster
-            hoster['link'] = cUtil.unescape(sUrl)
-            hoster['displayedName'] = sHoster + ' #' + sMirror
-            if sQualy:
-                hoster['displayedName'] = hoster['displayedName'] + ' - Quality: ' + sQualy
-                hoster['quality'] = sQualy
-            hosters.append(hoster)
+    for count, t in enumerate(threads):
+        t.join()
 
     if hosters:
         hosters.append('getHosterUrl')
         return hosters
+
+def _addHosterThread(hosters, sUrl):
+    sHtmlContent = cRequestHandler(sUrl).request()
+    sPattern = '<select[^>]*id="selecthost"[^>]*>(.*?)</select>'
+    isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
+
+    if not isMatch:
+        return
+
+    sPattern = '<option[^>]*value="([^"]+)">([^\d]+)(\d+)[^>]*(?:(\d+))?</option>'
+    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
+
+    if not isMatch:
+        return
+
+    for sUrl, sHoster, sMirror, sQualy in aResult:
+        sHoster = sHoster.strip()
+        hoster = {}
+        hoster['name'] = sHoster
+        hoster['link'] = cUtil.unescape(sUrl)
+        hoster['displayedName'] = sHoster + ' #' + sMirror
+        if sQualy:
+            hoster['displayedName'] = hoster['displayedName'] + ' - Quality: ' + sQualy
+            hoster['quality'] = sQualy
+        hosters.append(hoster)
 
 
 def getHosterUrl(sUrl=False):
