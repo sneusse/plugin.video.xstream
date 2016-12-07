@@ -98,7 +98,7 @@ class cRequestHandler:
 
         sParameters = urllib.urlencode(self.__aParameters, True)
 
-        handlers = [SmartRedirectHandler,
+        handlers = [SmartRedirectHandler(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired),
                     mechanize.HTTPEquivProcessor,
                     mechanize.HTTPRefreshProcessor]
         if sys.version_info >= (2, 7, 9) and sys.version_info < (2, 7, 11):
@@ -305,6 +305,10 @@ class newHTTPSConnection(httplib.HTTPSConnection):
 
 # get more control over redirect (extract further cookies)
 class SmartRedirectHandler(mechanize.HTTPRedirectHandler):
+    def __init__(self, ignore_discard=False, ignore_expires=False):
+        self._ignore_discard = ignore_discard
+        self._ignore_expires = ignore_expires
+
     def http_error_301(self, req, fp, code, msg, headers):
         result = mechanize.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
         result.status = code
@@ -321,8 +325,8 @@ class SmartRedirectHandler(mechanize.HTTPRedirectHandler):
         resp = mechanize._response.closeable_response(fp, headers, req.get_full_url(), code, msg)
         cookieJar = mechanize.LWPCookieJar()
         try:
-            cookieJar.load(oRequest._cookiePath)
+            cookieJar.load(oRequest._cookiePath, ignore_discard=self._ignore_discard, ignore_expires=self._ignore_expires)
         except Exception as e:
             logger.info(e)
         cookieJar.extract_cookies(resp, req)
-        cookieJar.save(oRequest._cookiePath)
+        cookieJar.save(oRequest._cookiePath, ignore_discard=self._ignore_discard, ignore_expires=self._ignore_expires)
