@@ -98,7 +98,7 @@ class cRequestHandler:
 
         sParameters = urllib.urlencode(self.__aParameters, True)
 
-        handlers = [SmartRedirectHandler(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired),
+        handlers = [mechanize.HTTPCookieProcessor(cookiejar=cookieJar),
                     mechanize.HTTPEquivProcessor,
                     mechanize.HTTPRefreshProcessor]
         if sys.version_info >= (2, 7, 9) and sys.version_info < (2, 7, 11):
@@ -152,7 +152,6 @@ class cRequestHandler:
             oResponse = checked_response
             sContent = oResponse.read()
 
-        cookieJar.extract_cookies(oResponse, oRequest)
         cookie_helper.check_cookies(cookieJar)
         cookieJar.save(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired)
 
@@ -301,32 +300,3 @@ class newHTTPSConnection(httplib.HTTPSConnection):
         context = ssl._create_unverified_context()
         httplib.HTTPSConnection.__init__(self, host, port, key_file, cert_file, strict, timeout, source_address,
                                          context)
-
-
-# get more control over redirect (extract further cookies)
-class SmartRedirectHandler(mechanize.HTTPRedirectHandler):
-    def __init__(self, ignore_discard=False, ignore_expires=False):
-        self._ignore_discard = ignore_discard
-        self._ignore_expires = ignore_expires
-
-    def http_error_301(self, req, fp, code, msg, headers):
-        result = mechanize.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
-        result.status = code
-        return result
-
-    def http_error_302(self, req, fp, code, msg, headers):
-        result = mechanize.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
-        result.status = code
-        self.export_cookies(req, fp, code, msg, headers)
-        return result
-
-    def export_cookies(self, req, fp, code, msg, headers):
-        oRequest = cRequestHandler('dummy')
-        resp = mechanize._response.closeable_response(fp, headers, req.get_full_url(), code, msg)
-        cookieJar = mechanize.LWPCookieJar()
-        try:
-            cookieJar.load(oRequest._cookiePath, ignore_discard=self._ignore_discard, ignore_expires=self._ignore_expires)
-        except Exception as e:
-            logger.info(e)
-        cookieJar.extract_cookies(resp, req)
-        cookieJar.save(oRequest._cookiePath, ignore_discard=self._ignore_discard, ignore_expires=self._ignore_expires)
