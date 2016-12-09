@@ -237,8 +237,7 @@ def getHosterUrl(sUrl=False):
     oRequest = cRequestHandler(sUrl, caching=False)
     oRequest.request()
 
-    return {'streamUrl': oRequest.getRealUrl(), 'resolved': False}
-
+    return [{'streamUrl': oRequest.getRealUrl(), 'resolved': False}]
 
 def showSearch():
     oGui = cGui()
@@ -246,7 +245,6 @@ def showSearch():
     if not sSearchText: return
     _search(False, sSearchText)
     oGui.setEndOfDirectory()
-
 
 def _search(oGui, sSearchText):
     if not sSearchText: return

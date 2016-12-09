@@ -211,7 +211,7 @@ def getHosterUrl(sUrl=False):
     oRequest.addHeaderEntry("Referer", refUrl)
     oRequest.request()
 
-    return {'streamUrl': oRequest.getRealUrl(), 'resolved': False}
+    return [{'streamUrl': oRequest.getRealUrl(), 'resolved': False}]
 
 
 def showSearch():

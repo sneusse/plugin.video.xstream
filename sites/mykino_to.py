@@ -255,7 +255,7 @@ def getHosters():
 
 def getHosterUrl(sUrl=False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
-    return {'streamUrl': sUrl, 'resolved': False}
+    return [{'streamUrl': sUrl, 'resolved': False}]
 
 
 def showSearch():
