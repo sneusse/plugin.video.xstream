@@ -204,7 +204,9 @@ def getHosters(sUrl=False):
 
     hosters = []
     if isMatch:
-        sJson = _getRequestHandler(sStreamUrl).request()
+        oRequestHandler = _getRequestHandler(sStreamUrl)
+        oRequestHandler.addHeaderEntry('Referer', sUrl)
+        sJson = oRequestHandler.request()
         if not sJson:
             return []
         data = json.loads(sJson)
