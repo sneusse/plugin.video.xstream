@@ -175,7 +175,7 @@ class cHosterGui:
             if not hmf.valid_url():
                 hmf = urlresolver.HostedMediaFile(host=hoster['name'].lower(), media_id='dummy')
 
-            if hmf.valid_url():
+            if len(hmf.get_resolvers()):
                 priority = False
                 for resolver in hmf.get_resolvers():
                     # prefer individual priority
