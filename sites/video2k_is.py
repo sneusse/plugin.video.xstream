@@ -15,7 +15,7 @@ URL_MAIN = 'http://www.video2k.is/'
 URL_MOVIE = URL_MAIN + '?c=movie&m=filter&order_by=%s'
 URL_GENRE = URL_MAIN + '?c=movie&m=filter&genre=%s'
 URL_SEARCH = URL_MAIN + '?keyword=%s&c=movie&m=filter'
-URL_Hoster = URL_MAIN + '?c=ajax&m=movieStreams2&id=%s'
+URL_Hoster = URL_MAIN + '?c=ajax&m=movieStreams&id=%s'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -38,7 +38,7 @@ def showGenre():
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
     parser = cParser()
-    isMatch, sHtmlContainer = parser.parseSingleResult(sHtmlContent, 'Genre</option>[^>].*?</select>')
+    isMatch, sHtmlContainer = parser.parseSingleResult(sHtmlContent, '<select[^>]*class="sorter_genre"[^>]*>.*?</select>')
 
     if not isMatch: 
         oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
@@ -65,10 +65,12 @@ def showEntries(entryUrl = False, sGui = False):
     sHtmlContent = oRequestHandler.request()
 
     parser = cParser()
-    pattern = '<li[^>]*title="(.*?)\((:?\d+)?\).*?(:?\s+-\s+(:?[^"]+))?"[^>]*>.*?' # name / year / desc
-    pattern += "<a[^>]*href='[^>]*-(\d+).[^>]*'[^>]*>.*?" # url
-    pattern += "<img[^>]*src='([^']*)'[^>]*>.*?" # img
-    pattern += "</li>" # title
+    pattern = '<li[^>]*>\s*'  # container start
+    pattern += "<a[^>]*href='[^>]*-(\d+).[^>]*'[^>]*>.*?"  # entryId
+    pattern += "<img[^>]*src='([^']*)'[^>]*>.*?</a>.*?" # thumbnail
+    pattern += '<a[^>]*title="([^"]*)"[^>]*>([^<]*)</a>.*?'  # desc, title
+    pattern += '<p>(\d+)</p>.*?'  # year
+    pattern += '</li[^>]*>' # container end
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
@@ -76,13 +78,19 @@ def showEntries(entryUrl = False, sGui = False):
         return
 
     total = len (aResult)
-    for sName, sYear, sUglyDesc, sDesc, sUrl, sThumbnail in aResult:
-            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
-            oGuiElement.setThumbnail(sThumbnail)
-            oGuiElement.setDescription(cUtil().unescape(sDesc.decode('utf-8')).encode('utf-8'))
-            oGuiElement.setYear(sYear)
-            params.setParam('sUrl', URL_Hoster % sUrl)
-            oGui.addFolder(oGuiElement, params, False, total)
+    for sEntryId, sThumbnail, sDesc, sName, sYear  in aResult:
+        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
+        sDesc = cUtil.unescape(sDesc.decode('utf-8')).encode('utf-8')
+
+        if sDesc.startswith(sName):
+            sDesc = sDesc[len(sName)+3:].strip()
+
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setDescription(sDesc)
+        oGuiElement.setYear(sYear)
+        params.setParam('sUrl', URL_Hoster % sEntryId)
+        oGui.addFolder(oGuiElement, params, False, total)
 
     if not sGui:
         isMatchNextPage, sNextUrl = parser.parseSingleResult(sHtmlContent, '</strong>.*?<a[^>]*href="([^"]+)"[^>]*>\d+')
@@ -95,14 +103,16 @@ def showEntries(entryUrl = False, sGui = False):
 def showHosters():
     sUrl = ParameterHandler().getValue('sUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = "<a[^>]*href='([^']+)'(:?[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='?url'?[^>]*>(.*?)</span>"
+
+    sPattern = "<a[^>]*href='([^']+)'(?:[^>]*player.*?, \"([^\"]+)\")?.*?<span[^>]*class='?url'?[^>]*>(.*?)</span>"
     isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
 
     hosters = []
     if isMatch:
-        for sHref, sUglyEmbeded, sEmbeded, sName in aResult:
+        for sHref, sEmbeded, sName in aResult:
             hoster = {}
             hoster['link'] = (sHref if sHref != '#player' else sEmbeded)
+            hoster['displayedName'] = sName.title()
             hoster['name'] = sName
             hosters.append(hoster)
     if hosters:
