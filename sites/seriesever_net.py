@@ -4,6 +4,7 @@ import json
 import re
 import urllib
 
+from resources.lib import common
 from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
@@ -54,7 +55,7 @@ def __getHtmlContent(sUrl=None):
             sUrl = oParams.getValue('sUrl')
     # Make the request
     oRequest = cRequestHandler(sUrl)
-    oRequest.addHeaderEntry('User-Agent', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.99 Safari/535.1')
+    oRequest.addHeaderEntry('User-Agent', common.ANDROID_USER_AGENT)
     oRequest.addHeaderEntry('Referer', URL_MAIN)
     oRequest.addHeaderEntry('Accept', '*/*')
 

@@ -18,7 +18,7 @@ from resources.lib.config import cConfig
 
 
 class cRequestHandler:
-    def __init__(self, sUrl, caching=True, ignoreErrors=False):
+    def __init__(self, sUrl, caching=True, ignoreErrors=False, compression=True):
         self.__sUrl = sUrl
         self.__sRealUrl = ''
         self.__cType = 0
@@ -30,6 +30,7 @@ class cRequestHandler:
         self.ignoreExpired(False)
         self.caching = caching
         self.ignoreErrors = ignoreErrors
+        self.compression = compression
         self.cacheTime = int(cConfig().getSetting('cacheTime', 600))
         self.requestTimeout = int(cConfig().getSetting('requestTimeout', 60))
         self.removeBreakLines(True)
@@ -79,10 +80,11 @@ class cRequestHandler:
         return self.__sUrl + '?' + urllib.urlencode(self.__aParameters)
 
     def __setDefaultHeader(self):
-        self.addHeaderEntry('User-Agent',
-                            'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        self.addHeaderEntry('User-Agent', common.FF_USER_AGENT)
         self.addHeaderEntry('Accept-Language', 'de-de,de;q=0.8,en-us;q=0.5,en;q=0.3')
         self.addHeaderEntry('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+        if self.compression:
+            self.addHeaderEntry('Accept-Encoding', 'gzip')
 
     def __callRequest(self):
         if self.caching and self.cacheTime > 0:
@@ -113,8 +115,7 @@ class cRequestHandler:
             oRequest.add_header(key, value)
         cookieJar.add_cookie_header(oRequest)
 
-        user_agent = self.__headerEntries.get('User-Agent',
-                                              'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        user_agent = self.__headerEntries.get('User-Agent', common.FF_USER_AGENT)
 
         try:
             oResponse = opener.open(oRequest, timeout=self.requestTimeout)

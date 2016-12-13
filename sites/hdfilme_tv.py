@@ -36,9 +36,6 @@ URL_PARMS_ORDER_HDRATE_ASC = URL_PARMS_ORDER_HDRATE +'&order_d=asc'
 
 QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
 
-# User-Agent für HTTP-Requests
-HD_USER_AGENT = 'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0'
-
 def load():
     # Logger-Eintrag
     logger.info("Load %s" % SITE_NAME)
@@ -99,7 +96,7 @@ def showGenreList():
     entryUrl = params.getValue('sUrl')
 
     # Movie-Seite laden
-    sHtmlContent = _getRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl).request()
 
     # Select für Generes-Container
     pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
@@ -143,7 +140,7 @@ def showEntries(entryUrl = False, sGui = False):
     iPage = int(params.getValue('page'))
 
     # Daten ermitteln
-    oRequest = _getRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, (sGui is not False))
+    oRequest = cRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
     
     # Filter out the main section
@@ -255,7 +252,7 @@ def showHosters():
     entryUrl = params.getValue('entryUrl').replace("-info","-stream")
 
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(entryUrl).request()
+    sHtmlContent = cRequestHandler(entryUrl).request()
 
     # Prüfen ob Episoden gefunden werden
     pattern = '<a[^>]*episode="([^"]*)"[^>]*href="([^"]*)"[^>]*>([^<]*)<\/a'
@@ -314,7 +311,7 @@ def getHosters(sUrl = False):
     sUrl = sUrl if sUrl else params.getValue('sUrl')
 
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(sUrl).request()
+    sHtmlContent = cRequestHandler(sUrl).request()
 
     # Servername und Episoden pro Server ermitteln
     pattern = "<ul[^>]*class=['\"]list-inline list-film['\"][^>]*>.*?([a-zA-Z0-9_ ]+)</div>(.*?)</ul>"
@@ -349,7 +346,7 @@ def getHosters(sUrl = False):
 
 def _getHostFromUrl(sUrl, sServername):
     # Seite abrufen
-    sHtmlContent = _getRequestHandler(sUrl).request()
+    sHtmlContent = cRequestHandler(sUrl).request()
 
     # JSon mit den Links ermitteln
     pattern = '(\[{".*?}\])'
@@ -428,9 +425,3 @@ def _search(oGui, sSearchText):
 
     # URL-Übergeben und Ergebniss anzeigen
     showEntries(URL_SEARCH % sSearchText, oGui)
-
-# RequestHandler mit passenden User-Agent erzeugen
-def _getRequestHandler(sUrl, ignoreErrors = False):
-    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
-    oRequest.addHeaderEntry('User-Agent', HD_USER_AGENT)
-    return oRequest
