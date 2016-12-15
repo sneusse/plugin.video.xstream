@@ -197,7 +197,11 @@ def parseUrl():
         showHosterGui(sFunction)
     # If global search is called
     elif sSiteName == 'globalSearch':
-        searchGlobal()
+        searchterm = False
+        if params.exist('searchterm'):
+            searchterm = params.getValue('searchterm')
+
+        searchGlobal(searchterm)
     elif sSiteName == 'favGui':
         showFavGui(sFunction)
     # If addon settings are called
@@ -325,12 +329,13 @@ def showHosterGui(sFunction):
     #function()
     #return True
 
-def searchGlobal():
+def searchGlobal(sSearchText=False):
     import threading
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
-    sSearchText = oGui.showKeyBoard()
+    if not sSearchText:
+        sSearchText = oGui.showKeyBoard()
     if not sSearchText: return True
     aPlugins = []
     aPlugins = cPluginHandler().getAvailablePlugins()
