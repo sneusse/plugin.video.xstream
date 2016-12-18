@@ -31,8 +31,12 @@ LOCAL_FILE_NAME_RESOLVER = 'update_urlresolver.zip'
 
 def xStreamUpdate():
     logger.info("xStream xStreamUpdate")
-    nightlycommitsXML = urllib.urlopen(REMOTE_XSTREAM_COMMITS).read()
-    commitUpdate(nightlycommitsXML, LOCAL_NIGHTLY_VERSION, REMOTE_XSTREAM_NIGHTLY, ROOT_DIR, "Updating xStream", LOCAL_FILE_NAME_XSTREAM)
+    commitXML = _getXmlString(REMOTE_XSTREAM_COMMITS)
+    if commitXML:
+        commitUpdate(commitXML, LOCAL_NIGHTLY_VERSION, REMOTE_XSTREAM_NIGHTLY, ROOT_DIR, "Updating xStream", LOCAL_FILE_NAME_XSTREAM)
+    else:
+        from resources.lib.gui.gui import cGui
+        cGui().showError('xStream', 'Fehler beim xStream-Update.', 5)
 
 def urlResolverUpdate():
     logger.info("xStream urlResolverUpdate")
@@ -55,15 +59,19 @@ def urlResolverUpdate():
         logger.info("No URLResolver installed/found!")
         return
 
-    commitXML = urllib.urlopen(REMOTE_URLRESOLVER_COMMITS).read()
-    commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver", LOCAL_FILE_NAME_RESOLVER)
+    commitXML = _getXmlString(REMOTE_URLRESOLVER_COMMITS)
+    if commitXML:
+        commitUpdate(commitXML, LOCAL_RESOLVER_VERSION, REMOTE_URLRESOLVER_DOWNLOADS, urlResolverPaths[0], "Updating URLResolver", LOCAL_FILE_NAME_RESOLVER)
+    else:
+        from resources.lib.gui.gui import cGui
+        cGui().showError('xStream', 'Fehler beim URLResolver-Update.', 5)
 
 def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title, localFileName):
     try:
-        if not os.path.exists(offlineFile) or open(offlineFile).read() != \
-                json.loads(onlineFile)['sha']:
+        jsData = json.loads(onlineFile)
+        if not os.path.exists(offlineFile) or open(offlineFile).read() != jsData['sha']:
             update(LocalDir, downloadLink, Title, localFileName)
-            open(offlineFile, 'w').write(json.loads(onlineFile)['sha'])
+            open(offlineFile, 'w').write(jsData['sha'])
     except Exception as e:
         logger.info("Ratelimit reached")
         logger.info(e)
@@ -106,3 +114,14 @@ def removeFilesNotInRepo(updateFile, LocalDir):
                     continue
                 if file not in updateFileNameList:
                     os.remove(os.path.join(root, file))
+
+def _getXmlString(xml_url):
+    try:
+        xmlString = urllib.urlopen(xml_url).read()
+        if "sha" in json.loads(xmlString):
+            return xmlString
+        else:
+            logger.info("Update-URL incorrect")
+    except Exception as e:
+        logger.info(e)
+
