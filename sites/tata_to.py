@@ -142,7 +142,6 @@ def showEntries(entryUrl=False, sGui=False):
         params.setParam('sUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
-        params.setParam('isTvshow', isTvshow)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
@@ -232,9 +231,9 @@ def play(sUrl=False):
     return [{'streamUrl': sUrl, 'resolved': True}]
 
 
-def _getRequestHandler(sUrl, ignoreErrors = False):
-    sUrl = sUrl.replace('https:','http:')
-    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
+def _getRequestHandler(sUrl, ignoreErrors=False):
+    sUrl = sUrl.replace('https:', 'http:')
+    oRequest = cRequestHandler(sUrl, ignoreErrors=ignoreErrors)
     return oRequest
 
 
