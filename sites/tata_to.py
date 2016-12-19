@@ -123,7 +123,7 @@ def showEntries(entryUrl=False, sGui=False):
         sDesc = cUtil.unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
         sDesc = cUtil.removeHtmlTags(sDesc).strip()
 
-        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEpisodes' if isTvshow else 'showHosters')
         if isTvshow:
             res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
             if res:
@@ -139,7 +139,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGuiElement.addItemValue('rating', sImdb)
         if sDuration:
             oGuiElement.addItemValue('duration', int(sDuration) * 60)
-        params.setParam('entryUrl', sUrl)
+        params.setParam('sUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
         params.setParam('isTvshow', isTvshow)
@@ -156,31 +156,25 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.setEndOfDirectory()
 
 
-def showHosters():
-    params = ParameterHandler()
-    entryUrl = params.getValue('entryUrl')
-    isTvshowEntry = params.getValue('isTvshow')
-
-    if isTvshowEntry == 'True':
-        sHtmlContent = _getRequestHandler(entryUrl).request()
-        isMatch, aResult = cParser.parse(sHtmlContent, '<li[^>].*?<a[^>]*href="([^"]*)"[^>]*>(\d+)</a>')
-        if isMatch:
-            showEpisodes(aResult, params)
-    else:
-        return getHosters(entryUrl)
-
-
-def showEpisodes(aResult, params):
+def showEpisodes():
     oGui = cGui()
-
+    params = ParameterHandler()
+    entryUrl = params.getValue('sUrl')
     sTVShowTitle = params.getValue('TVShowTitle')
     sThumbnail = params.getValue('sThumbnail')
     sSeason = params.getValue('sSeason')
 
+    sHtmlContent = _getRequestHandler(entryUrl).request()
+    isMatch, aResult = cParser.parse(sHtmlContent, '<li[^>].*?<a[^>]*href="([^"]*)"[^>]*>(\d+)</a>')
+
+    if not isMatch:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
     total = len(aResult)
     for sUrl, iEpisode in aResult:
         sName = 'Folge ' + str(iEpisode)
-        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeason)
@@ -194,7 +188,7 @@ def showEpisodes(aResult, params):
     oGui.setEndOfDirectory()
 
 
-def getHosters(sUrl=False):
+def showHosters(sUrl=False):
     params = ParameterHandler()
     sUrl = sUrl if sUrl else params.getValue('sUrl')
     sHtmlContent = _getRequestHandler(sUrl).request()
