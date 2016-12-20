@@ -22,10 +22,6 @@ def fatal(sInfo):
 
 def __writeLog(sLog, cLogLevel=xbmc.LOGDEBUG):
     params = ParameterHandler()
-    try:
-        sLog = str(sLog)
-    except UnicodeEncodeError:
-        sLog = sLog.encode('utf-8')
 
     try:
         if isinstance(sLog, unicode):
