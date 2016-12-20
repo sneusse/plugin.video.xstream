@@ -134,7 +134,7 @@ class cRequestHandler:
                 oResponse = e
         except mechanize.URLError, e:
             if not self.ignoreErrors:
-                if e.reason.args[0] == 1 and sys.version_info < (2, 7, 9):
+                if hasattr(e.reason, 'args') and e.reason.args[0] == 1 and sys.version_info < (2, 7, 9):
                     xbmcgui.Dialog().ok('xStream', str(e.reason), '','For this request is Python v2.7.9 or higher required.')
                 else:
                     xbmcgui.Dialog().ok('xStream', str(e.reason))
