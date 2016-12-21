@@ -18,11 +18,11 @@ SITE_ICON = 'hdfilme.png'
 URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
-URL_SEARCH = URL_MAIN + 'movie/search?key=%s'
+URL_SEARCH = URL_MAIN + 'movie-search?key=%s'
 
 # Parameter für die Sortierung
-URL_PARMS_ORDER_ID = 'order_f=id'
-URL_PARMS_ORDER_ID_ASC = URL_PARMS_ORDER_ID +'&order_d=asc'
+URL_PARMS_ORDER_UPDATE = 'order_f=last_update'
+URL_PARMS_ORDER_UPDATE_ASC = URL_PARMS_ORDER_UPDATE +'&order_d=asc'
 URL_PARMS_ORDER_YEAR = 'order_f=year'
 URL_PARMS_ORDER_YEAR_ASC = URL_PARMS_ORDER_YEAR +'&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
@@ -67,7 +67,7 @@ def showContentMenu():
     baseURL = params.getValue('sUrl')
 
     # Einträge anlegen
-    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_ID)
+    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_UPDATE)
     oGui.addFolder(cGuiElement('Neu hinzugefügt', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_YEAR_ASC)
     oGui.addFolder(cGuiElement('Herstellungsjahr', SITE_IDENTIFIER, 'showEntries'), params)
