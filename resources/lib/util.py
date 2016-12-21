@@ -41,24 +41,42 @@ class cUtil:
 
     # Removes HTML character references and entities from a text string.
     @staticmethod
-    def unescape(sText):
+    def unescape(text):
         def fixup(m):
-            sText = m.group(0)
-            if sText[:2] == "&#":
+            text = m.group(0)
+            if not text.endswith(';'): text += ';'
+            if text[:2] == "&#":
                 # character reference
                 try:
-                    if sText[:3] == "&#x":
-                        return unichr(int(sText[3:-1], 16))
+                    if text[:3] == "&#x":
+                        return unichr(int(text[3:-1], 16))
                     else:
-                        return unichr(int(sText[2:-1]))
+                        return unichr(int(text[2:-1]))
                 except ValueError:
                     pass
             else:
                 # named entity
                 try:
-                    sText = unichr(htmlentitydefs.name2codepoint[sText[1:-1]])
+                    text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
                 except KeyError:
                     pass
-            return sText  # leave as is
 
-        return re.sub("&#?\w+;", fixup, sText)
+            # replace nbsp with a space
+            text = text.replace(u'\xa0', u' ')
+            return text
+
+        if isinstance(text, str):
+            try: text = text.decode('utf-8')
+            except:
+                try: text = text.decode('utf-8', 'ignore')
+                except: pass
+
+        return re.sub("&(\w+;|#x?\d+;?)", fixup, text.strip())
+
+    @staticmethod
+    def cleanse_text(text):
+        if text is None: text = ''
+        text = unescape(text)
+        if isinstance(text, unicode):
+            text = text.encode('utf-8')
+        return text
