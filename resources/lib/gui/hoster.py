@@ -156,6 +156,17 @@ class cHosterGui:
         logger.info('call send to JDownloader: ' + sMediaUrl)
         cJDownloaderHandler().sendToJDownloader(sMediaUrl)
 
+    def sendToJDownloader2(self, sMediaUrl=False):
+        from resources.lib.handler.jdownloader2Handler import cJDownloader2Handler
+        params = ParameterHandler()
+        if not sMediaUrl:
+            sMediaUrl = params.getValue('sMediaUrl')
+        sFileName = params.getValue('sFileName')
+        if self.dialog:
+            self.dialog.close()
+        logger.info('call send to JDownloader2: ' + sMediaUrl)
+        cJDownloader2Handler().sendToJDownloader2(sMediaUrl)
+
     def __getPriorities(self, hosterList, filter=True):
         '''
         Sort hosters based on their resolvers priority.
@@ -235,7 +246,7 @@ class cHosterGui:
                 return
 
             self.dialog.update(60, 'prepare hosterlist..')
-            if (playMode != 'jd') and (playMode != 'pyload') and \
+            if (playMode != 'jd') and (playMode != 'jd2') and (playMode != 'pyload') and \
                             cConfig().getSetting('presortHoster') == 'true':
                 # filter and sort hosters
                 siteResult = self.__getPriorities(siteResult)
@@ -289,6 +300,8 @@ class cHosterGui:
             self.addToPlaylist(siteResult)
         elif playMode == 'jd':
             self.sendToJDownloader(siteResult['streamUrl'])
+        elif playMode == 'jd2':
+            self.sendToJDownloader2(siteResult['streamUrl'])
         elif playMode == 'pyload':
             self.sendToPyLoad(siteResult)
 

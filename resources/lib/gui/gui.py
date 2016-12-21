@@ -186,6 +186,9 @@ class cGui:
             if cConfig().getSetting('jd_enabled') == 'true':
                 oContextItem.setTitle("send to JDownloader")
                 aContextMenus+= [ ( oContextItem.getTitle(), "XBMC.RunPlugin(%s&playMode=jd)" % (sItemUrl,),)]   
+            if cConfig().getSetting('jd2_enabled') == 'true':
+                oContextItem.setTitle("send to JDownloader2")
+                aContextMenus+= [ ( oContextItem.getTitle(), "XBMC.RunPlugin(%s&playMode=jd2)" % (sItemUrl,),)]   
             if cConfig().getSetting('pyload_enabled') == 'true':
                 oContextItem.setTitle("send to PyLoad")     
                 aContextMenus+= [ ( oContextItem.getTitle(), "XBMC.RunPlugin(%s&playMode=pyload)" % (sItemUrl,),)]
