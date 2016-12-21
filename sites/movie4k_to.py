@@ -1,5 +1,4 @@
 ﻿# -*- coding: utf-8 -*-
-from resources.lib.util import cUtil
 from resources.lib.parser import cParser
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.handler.ParameterHandler import ParameterHandler
@@ -374,18 +373,12 @@ def __parseMovieSimpleList(sUrl, iPage, sGui, sHtmlContent = False):
         id, thumb = set.groups()
         thumbs.update({id:thumb})
     if aResult[0]:
-        util = cUtil()
         total = len(aResult[1])
         for aEntry in aResult[1]:
             newUrl = aEntry[0].strip()
             if not (newUrl.startswith('http')):
                 newUrl = URL_MAIN +'/'+ newUrl
-            #quick fix to avoid errors due to fucking other encodings
-            try:
-                sMovieTitle = util.unescape(aEntry[1].strip().decode('utf-8')).encode('utf-8')
-            except UnicodeDecodeError as e:
-                logger.error(e)
-                continue
+            sMovieTitle = aEntry[1]
             sMovieTitle = ' '.join(sMovieTitle.split())
             sMovieTitle = ' '.join(sMovieTitle.split())
             sLanguageToken = aEntry[2]
@@ -471,16 +464,14 @@ def showFeaturedMovies():
                     newUrl = URL_MAIN +'/'+ newUrl
                 
                 sThumbnail = aEntry[1]             
-                sMovieTitle = cUtil().unescape(aEntry[2].strip().replace('kostenlos', ''))                
+                sMovieTitle = aEntry[2].replace('kostenlos', '')
                 
                 oGuiElement = cGuiElement()
                 oGuiElement.setSiteName(SITE_IDENTIFIER)
                 oGuiElement.setFunction('showHosters')
                 oGuiElement.setMediaType('movie')
                 fRating = float(aEntry[4])
-                sDescription = cUtil().unescape(aEntry[6].strip().decode('utf-8')).encode('utf-8')
-                sDescription = cUtil().removeHtmlTags(sDescription)
-                oGuiElement.setDescription(sDescription)
+                oGuiElement.setDescription(aEntry[6])
                 oGuiElement.addItemValue('Rating',fRating)
                 oGuiElement.setThumbnail(sThumbnail.replace('https','http'))           
                 oGuiElement.setTitle(sMovieTitle)

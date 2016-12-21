@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 import re
 
 SITE_IDENTIFIER = 'streamkiste_tv'
@@ -104,7 +103,6 @@ def showEntries(entryUrl=False, sGui=False):
 
     total = len(aResult)
     for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setMediaType('movie')

@@ -6,7 +6,6 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
-from resources.lib.util import cUtil
 import re, base64
 
 SITE_IDENTIFIER = 'moviesever_com'
@@ -150,10 +149,8 @@ def __getMovies(oGui, sHtmlContent):
     # parse content
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sBlockPattern)
-    unescape = cUtil().unescape
     if aResult[0]:
         for link, span, img, title in aResult[1]:
-            title = unescape(title.decode('utf-8')).encode('utf-8')
             # TODO: Looking for span isn't the best way, but the only difference I found
             if "span" not in span:
                 if __isSeriesEverAvaiable():

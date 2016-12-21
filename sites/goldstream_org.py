@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from resources.lib.config import cConfig
 
 SITE_IDENTIFIER = 'goldstream_org'
@@ -66,12 +65,10 @@ def showSeries():# Danke Lynx187
         oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
     total = len(aResult[1])
-    util = cUtil()
     for name in aResult[1]:
-        title = util.unescape(name.decode('utf-8')).encode('utf-8')
-        oGuiElement = cGuiElement(title, SITE_IDENTIFIER, 'showSeasons')
+        oGuiElement = cGuiElement(name, SITE_IDENTIFIER, 'showSeasons')
         oGuiElement.setMediaType('tvshow')
-        oGuiElement.setTVShowTitle(title)
+        oGuiElement.setTVShowTitle(name)
         params.setParam('selectedShow', name)
         oGui.addFolder(oGuiElement, params, True, total)
     oGui.setView('tvshows')
@@ -89,10 +86,9 @@ def showSeasons():# Danke Lynx187
     if not aResult[0]:
         oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
         return
-    util = cUtil()
     total = len(aResult[1])
     for link, name in aResult[1]:
-        oGuiElement = cGuiElement(util.unescape(name.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showEntries')
+        oGuiElement = cGuiElement(name, SITE_IDENTIFIER, 'showEntries')
         oGuiElement.setSeason(name.split(' ')[-1])
         oGuiElement.setMediaType('season')
         params.setParam('sUrl', link)
@@ -118,7 +114,7 @@ def showEntries(entryUrl = False, sGui = False):
     episodePattern = '(.+?)\sStaffel\s([\d]+)\sEpisode\s([\d]+)'
     total = len(aResult[1])
     for sEntryUrl, sName, sDescription in aResult[1]:
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         aResult = parser.parse(sName, episodePattern)
         if aResult[0]:
             sTVShowTitle, sSeason, sEpisode = aResult[1][0]
@@ -128,7 +124,7 @@ def showEntries(entryUrl = False, sGui = False):
             oGuiElement.setMediaType('episode')
         else:
             oGuiElement.setMediaType('movie')
-        oGuiElement.setDescription(cUtil().unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(sDescription)
         params.setParam('entryUrl', sEntryUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 

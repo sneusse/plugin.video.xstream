@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from resources.lib.config import cConfig
 import re
 
@@ -103,7 +102,6 @@ def showEntries(entryUrl=False, sGui=False):
         if not isShowAdult and 'porn' in sGenreUrl.lower():
             continue
 
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')

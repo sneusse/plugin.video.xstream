@@ -2,7 +2,8 @@
 from os import path
 from resources.lib.common import addon
 from resources.lib.config import cConfig
-import logger
+from resources.lib.util import cUtil
+from resources.lib import logger
 
 class cGuiElement:
     '''
@@ -23,7 +24,7 @@ class cGuiElement:
     def __init__(self, sTitle = '', sSite = None, sFunction = None):
         self.__sType = 'video'
         self.__sMediaUrl = ''
-        self.__sTitle = sTitle
+        self.__sTitle = cUtil.cleanse_text(sTitle)
         self.__sTitleSecond = ''
         self.__sDescription = ''
         self.__sThumbnail = ''
@@ -70,7 +71,7 @@ class cGuiElement:
         return self.__sFunctionName
 
     def setTitle(self, sTitle):
-        self.__sTitle = sTitle
+        self.__sTitle = cUtil.cleanse_text(sTitle)
 
     def getTitle(self):
         return self.__sTitle
@@ -117,12 +118,13 @@ class cGuiElement:
             return False
 
     def setTitleSecond(self, sTitleSecond):
-        self.__sTitleSecond = str(sTitleSecond)
+        self.__sTitleSecond = cUtil.cleanse_text(str(sTitleSecond))
 
     def getTitleSecond(self):
         return self.__sTitleSecond
 
     def setDescription(self, sDescription):
+        sDescription = cUtil.cleanse_text(sDescription)
         self.__sDescription = sDescription
         self.__aItemValues['plot'] = sDescription
 

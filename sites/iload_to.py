@@ -5,7 +5,6 @@ from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'iload_to'
 SITE_NAME = 'iLoad'
@@ -94,11 +93,8 @@ def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
 
     total = len(aResult)
     for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         if sThumbnail and not sThumbnail.startswith('http'):
             sThumbnail = URL_MAIN + sThumbnail
-        if sDesc:
-            sDesc = cUtil.removeHtmlTags(sDesc).strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)

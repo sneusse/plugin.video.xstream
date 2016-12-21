@@ -76,7 +76,8 @@ class cUtil:
     @staticmethod
     def cleanse_text(text):
         if text is None: text = ''
-        text = unescape(text)
+        text = cUtil.unescape(text)
+        text = cUtil.removeHtmlTags(text)
         if isinstance(text, unicode):
             text = text.encode('utf-8')
         return text

@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from resources.lib.cCFScrape import cCFScrape
 import re
 
@@ -62,7 +61,7 @@ def showGenre():
 
     for sUrl, sTitle in aResult:
         params.setParam('sUrl', URL_MAIN + '/' + sUrl)
-        oGui.addFolder(cGuiElement(cUtil().unescape(sTitle.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showEntries'), params)
+        oGui.addFolder(cGuiElement(sTitle, SITE_IDENTIFIER, 'showEntries'), params)
 
     oGui.setEndOfDirectory()
 
@@ -92,7 +91,7 @@ def showEntries(entryUrl=False, sGui=False):
         sFunction = "showHosters" if not "serie" in sUrl else "showSeasons"
         sThumbnail = cCFScrape().createUrl(URL_MAIN + sThumbnail, oRequestHandler)
 
-        oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, sFunction)
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, sFunction)
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('serie' if 'serie' in sUrl else 'movie')
         params.setParam('entryUrl', URL_MAIN + sUrl)

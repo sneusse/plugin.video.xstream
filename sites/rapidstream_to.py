@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 import re, json
 
 SITE_IDENTIFIER = 'rapidstream_to'
@@ -76,7 +75,6 @@ def showValueList():
         return
 
     for sUrl, sName, sCount in aResult:
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         params.setParam('sUrl', sUrl)
         oGui.addFolder(cGuiElement('%s (%s) ' % (sName, sCount), SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
@@ -102,7 +100,6 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sTyp, sUrl, sThumbnail, sName, sYear in aResult:
         isTvshow = True if sTyp == 'tvshows' else False
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
@@ -148,7 +145,6 @@ def showSearchEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, sThumbnail, sName, sTyp, sYear, sDesc in aResult:
         isFolder = False
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
@@ -266,7 +262,6 @@ def showEpisodes():
 
     total = len(aResult)
     for sUrl, sThumbnail, sEpisodeNr, sName in aResult:
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
 
         oGuiElement = cGuiElement("%s - %s" % (sEpisodeNr, sName.strip()), SITE_IDENTIFIER, 'showHosters')

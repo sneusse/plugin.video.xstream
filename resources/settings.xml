@@ -31,10 +31,6 @@
     <setting default="true" id="plugin_1kino_in" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_1kino_in" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="AnimeLoads" type="lsep" />
-    <setting default="true" id="plugin_anime-loads_org" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_anime-loads_org" label="30052" type="bool" />
-    <setting type="sep" />
     <setting label="BurningSeries" type="lsep" />
     <setting default="true" id="plugin_burning_series_org" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_burning_series_org" label="30052" type="bool" />
@@ -42,10 +38,6 @@
     <setting label="Cine" type="lsep" />
     <setting default="true" id="plugin_cine_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_cine_to" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="Cineplex" type="lsep" />
-    <setting default="true" id="plugin_cineplex_tv" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_cineplex_tv" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="DirectDownLoad" type="lsep" />
     <setting default="true" id="plugin_ddl_me" label="30050" type="bool" />
@@ -91,7 +83,7 @@
     <setting label="KinoX" type="lsep" />
     <setting default="true" id="plugin_kinox_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_kinox_to" label="30052" type="bool" />
-    <setting default="kinox.to" enable="!eq(-2,false)" id="kinox_to-domain" label="30051" type="labelenum" values="kinox.to|kinox.me|kinox.tv" />
+    <setting default="kinox.to" enable="!eq(-2,false)" id="kinox_to-domain" label="30051" type="labelenum" values="kinox.to|kinox.me|kinox.tv|kinox.ag|kinox.am|kinox.nu|kinox.pe|kinox.sg" />
     <setting type="sep" />
     <setting label="MeinKino" type="lsep" />
     <setting default="true" id="plugin_meinkino_to" label="30050" type="bool" />
@@ -100,7 +92,7 @@
     <setting label="Movie4k" type="lsep" />
     <setting default="true" id="plugin_movie4k_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie4k_to" label="30052" type="bool" />
-    <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.me|movie4k.tv" />
+    <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am" />
     <setting type="sep" />
     <setting label="MoviesEver" type="lsep" />
     <setting default="true" id="plugin_moviesever_com" label="30050" type="bool" />

@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'kinodogs_to'
 SITE_NAME = 'KinoDogs'
@@ -90,7 +89,6 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sYear, sUrl, sName, sThumbnail in aResult:
         isTvshow = True if "serien" in sUrl else False
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8')
         if sThumbnail and sThumbnail.startswith('/'):
             sThumbnail = 'http:' + sThumbnail
 

@@ -4,7 +4,6 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.util import cUtil
 from resources.lib.config import cConfig
 from resources.lib import logger
 from json import loads
@@ -272,7 +271,7 @@ def __displayItems(sGui, sHtmlContent):
     # Go throught all items and create a gui element for them.
     total = len(aResult[1])
     for aEntry in aResult[1]:
-        sTitle = cUtil().unescape(aEntry[3])
+        sTitle = aEntry[3]
         # split title and subtitle language
         sTitle, subLang = __checkSubLanguage(sTitle)
         # get audio language
@@ -366,7 +365,7 @@ def parseNews():
     # Create an entry for every news line
     for aEntry in aResult[1]:
         sLang = __createLanguage(aEntry[0])
-        sTitle = cUtil().unescape(aEntry[3]).strip()
+        sTitle = aEntry[3]
         if sTitle.endswith(':'):
             sTitle = sTitle[:-1]
         sTitle, subLang = __checkSubLanguage(sTitle)
@@ -556,8 +555,7 @@ def __createMovieTitle(sHtmlContent):
     aResult = oParser.parse(sHtmlContent, sPattern)
 
     if aResult[0]:
-        sTitle = cUtil().removeHtmlTags(str(aResult[1][0]))
-        return sTitle
+        return str(aResult[1][0])
     return False
 
 
@@ -658,7 +656,7 @@ def ajaxCall():
             aResult = oParser.parse(aEntry[2], sPattern)
             if aResult[0]:
                 sYear = str(aResult[1][0][2]).strip()
-                sTitle = cUtil().unescape(aResult[1][0][1]).encode('utf-8')
+                sTitle = aResult[1][0][1]
                 sLang = aEntry[0]
                 sUrl = URL_MAIN + str(aResult[1][0][0])
                 sUrl = sUrl.replace('\\', '')

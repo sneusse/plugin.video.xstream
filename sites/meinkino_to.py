@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from urlparse import urlparse
 import json, re
 
@@ -109,8 +108,7 @@ def showEntries(entryUrl = False, sGui = False):
     total = len (aResult)
     for sUrl, sId, sName, sThumbnail, sYear in aResult:
         isTvshow = True if "staffel" in sUrl else False
-        sName = cUtil.removeHtmlTags(sName.strip())
-        oGuiElement = cGuiElement(sName.strip(), SITE_IDENTIFIER, "showHosters")
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, "showHosters")
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')

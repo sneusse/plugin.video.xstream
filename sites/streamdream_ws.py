@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from urlparse import urlparse
 
 SITE_IDENTIFIER = 'streamdream_ws'
@@ -95,7 +94,6 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, sThumbnail, sName in aResult:
         isTvshow = True if 'serie' in sUrl else False
-        sName = cUtil().unescape(sName.decode('utf-8')).encode('utf-8').strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         oGuiElement.setMediaType("tvshow" if isTvshow else "movie")
@@ -131,10 +129,6 @@ def showHosters():
 
         if isMatch:
             isMatchDesc, aResultDesc = cParser.parse(sHtmlContent, '<p[^>]*style=[^>]*>(.*?)</p>')
-
-            if isMatchDesc:
-                aResultDesc[0] = cUtil().unescape(aResultDesc[0].decode('utf-8')).encode('utf-8').strip()
-
             showSeason(aResult, params, '' if not isMatchDesc else aResultDesc[0])
     else:
         return getHosters(entryUrl)
@@ -193,7 +187,7 @@ def showEpisodes():
     sDesc = ''
 
     if isMatchDesc:
-        sDesc = cUtil().unescape(aResultDesc[0].decode('utf-8')).encode('utf-8').strip()
+        sDesc = aResultDesc[0]
 
     total = len(aResult)
     for sEpisode, imdbid, slanguage, sSeason in aResult:

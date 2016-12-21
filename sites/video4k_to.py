@@ -166,7 +166,7 @@ def loadInformation(mID = None):
     
     plot = jContent[0]['plot']
     year = jContent[0]['year']
-    name = jContent[0]['name'].encode('utf-8')
+    name = jContent[0]['name']
     cover = '' if jContent[0]['cover'] == '//static.video4k.to/covers/' else ('http:' + jContent[0]['cover'])
     language = jContent[0]['languages'][0]['symbol'] if jContent[0]['languages'] else '' # later fix this because if there are two lang we should pick the correct one
     seasons = jContent[0]['seasons'] if 'seasons' in jContent[0] else False

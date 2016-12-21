@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'view4u_co'
 SITE_NAME = 'View4U'
@@ -77,9 +76,9 @@ def showEntries(entryUrl = False, sGui = False):
     total = len (aResult)
     for sUrl, sThumbnail, sName, sYear, sDescription in aResult:
         isTvshow = True if "serie" in entryUrl or "show" in sUrl else False
-        oGuiElement = cGuiElement(cUtil.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-        oGuiElement.setDescription(cUtil.unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(sDescription)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')        
         params.setParam('isTvshow', isTvshow)
@@ -143,9 +142,9 @@ def showSearchEntries(entryUrl = False, sGui = False):
 
     total = len (aResult)
     for sUrl, sThumbnail, sName, sDescription in aResult:
-        oGuiElement = cGuiElement(cUtil.removeHtmlTags(sName), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-        oGuiElement.setDescription(cUtil.unescape(sDescription.decode('utf-8')).encode('utf-8'))
+        oGuiElement.setDescription(sDescription)
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
 

@@ -6,7 +6,6 @@ from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.config import cConfig
-from resources.lib.util import cUtil
 
 SITE_IDENTIFIER = 'flimmerstube_com'
 SITE_NAME = 'Flimmerstube'
@@ -73,7 +72,7 @@ def showEntries(entryUrl = False, sGui = False, sSearchText = None, sBaseUrl = N
     if aResult[0] and aResult[1][0]:
         total = len (aResult[1])
         for sName, sJahr, sThumbnail, sUrl in aResult[1]:
-            oGuiElement = cGuiElement(cUtil().unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail if sThumbnail.startswith("http") else sBaseUrl + sThumbnail)
             oGuiElement.setYear(sJahr)
             params.setParam('sBaseUrl', sBaseUrl)

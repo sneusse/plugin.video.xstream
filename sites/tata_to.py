@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 from resources.lib.cCFScrape import cCFScrape
 import re, json
 
@@ -117,11 +116,7 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, sQuality, sThumbnail, sSeason, sName, sDuration, sYear, sImdb, sDesc in aResult:
         isTvshow = True if sSeason else False
-
-        sName = cUtil.removeHtmlTags(sName.strip())
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
-        sDesc = cUtil.unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
-        sDesc = cUtil.removeHtmlTags(sDesc).strip()
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEpisodes' if isTvshow else 'showHosters')
         if isTvshow:

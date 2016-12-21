@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 import json
 
 SITE_IDENTIFIER = 'mykino_to'
@@ -113,7 +112,6 @@ def showEntries(entryUrl=False, sGui=False):
             isTvshow, aDummyResult = cParser.parse(sHtmlContent, '<select[^>]*id="sseriesSeason"[^>]*>')
         if isTvshow:
             containsTvShows = True
-        sName = cUtil.unescape(sName.decode('utf-8')).encode('utf-8').strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)

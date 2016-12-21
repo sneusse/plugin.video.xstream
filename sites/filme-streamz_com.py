@@ -5,8 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
-
 
 SITE_IDENTIFIER = 'filme-streamz_com'
 SITE_NAME = 'FilmeStreamz'
@@ -59,10 +57,8 @@ def showEntries(entryUrl=False, sGui=False):
 
     if aResult[0] and aResult[1][0]:
         total = len(aResult[1])
-        util = cUtil()
         for sThumbnail, sUrl, sName, sJahr in aResult[1]:
-            oGuiElement = cGuiElement(util.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER,
-                                      'showHosters')
+            oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
             oGuiElement.setThumbnail(sThumbnail)
             oGuiElement.setYear(sJahr)
             oGuiElement.setMediaType('movie')

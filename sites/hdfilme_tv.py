@@ -5,7 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
+
 from resources.lib.cCFScrape import cCFScrape
 import re, json
 
@@ -210,7 +210,6 @@ def showEntries(entryUrl = False, sGui = False):
         # Thumbnail und Beschreibung für Anzeige anpassen
         sThumbnail = sThumbnail.replace('_thumb', '')
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
-        sDesc = cUtil.unescape(sDesc.decode('utf-8', 'ignore')).encode('utf-8', 'ignore').strip()
 
         # Falls vorhanden Jahr ergänzen
         if iYear:

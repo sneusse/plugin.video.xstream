@@ -5,7 +5,6 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.util import cUtil
 import re
 
 SITE_IDENTIFIER = 'dokustreamer_de'
@@ -64,7 +63,7 @@ def showEntries(entryUrl=False, sGui=False):
     for sUrl, sName, sThumbnail in aResult:
         sUrl = sUrl if sUrl.startswith('http') else URL_MAIN + sUrl
         sThumbnail = re.sub('-\d+x\d+\.', '.',sThumbnail)
-        oGuiElement = cGuiElement(cUtil.unescape(sName.decode('utf-8')).encode('utf-8'), SITE_IDENTIFIER, 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('movie')
         params.setParam('entryUrl', sUrl)
