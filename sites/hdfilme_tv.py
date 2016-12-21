@@ -140,7 +140,7 @@ def showEntries(entryUrl = False, sGui = False):
     iPage = int(params.getValue('page'))
 
     # Daten ermitteln
-    oRequest = cRequestHandler(entryUrl + '&per_page=' + str(iPage * 50) if iPage > 0 else entryUrl, ignoreErrors=(sGui is not False))
+    oRequest = cRequestHandler(entryUrl + '&page=' + str(iPage) if iPage > 0 else entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
     
     # Filter out the main section
@@ -228,15 +228,15 @@ def showEntries(entryUrl = False, sGui = False):
     # Nur ausführen wenn das Gui-Element Plugin intern ist
     if not sGui:
         # Pattern um die Aktuelle Seite zu ermitteln
-        pattern = '<ul[^>]*class="pagination[^>]*>.*'
-        pattern += '<li[^>]*class="active"[^>]*><a>(\d*)</a>.*</ul>'
+        pattern = '<ul[^>]*class="pagination[^>]*>.*?'
+        pattern += '<li[^>]*class="\s*active\s*"[^>]*>.*?</li>.*?<a[^>]*>(\d*)</a>.*?</ul>'
 
         # Seite parsen
-        isMatch, sPageNr = cParser.parseSingleResult(sHtmlContent, pattern)
+        isMatch, sPageNr = cParser.parse(sHtmlContent, pattern)
 
         # Falls ein Ergebniss gefunden wurden "Next-Page" ergänzen
         if isMatch:
-            params.setParam('page', int(sPageNr))
+            params.setParam('page', int(sPageNr[0]))
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
         # Liste abschließen und View setzen
