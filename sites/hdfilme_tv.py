@@ -210,7 +210,7 @@ def showEntries(entryUrl = False, sGui = False):
         # Thumbnail und Beschreibung für Anzeige anpassen
         sThumbnail = sThumbnail.replace('_thumb', '')
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
-        sDesc = cUtil.unescape(sDesc.decode('utf-8')).encode('utf-8').strip()
+        sDesc = cUtil.unescape(sDesc.decode('utf-8', 'ignore')).encode('utf-8', 'ignore').strip()
 
         # Falls vorhanden Jahr ergänzen
         if iYear:
