@@ -832,6 +832,7 @@ def getHosterUrlandPlay(sUrl=False):
     oRequest.addHeaderEntry('Cookie', sSecurityValue)
     oRequest.addHeaderEntry('Referer', URL_MAIN)
     sHtmlContent = oRequest.request()
+
     # pattern for multipart stream
     sPattern = '<a rel=\\\\"(.*?)\\\\"'
     oParser = cParser()
@@ -860,16 +861,12 @@ def getHosterUrlandPlay(sUrl=False):
                 ii += 1
     else:
         # pattern for stream url (single part)
-        sPattern = '<a\shref=\\\\".*?(http:.*?)\\\\"'
-        oParser = cParser()
-        aResult = oParser.parse(sHtmlContent, sPattern)
-        if aResult[0]:
-            aMovieParts = aResult[1]
-            sPartUrl = aMovieParts[0].replace('\\/', '/')
-            result = {}
-            result['streamUrl'] = sPartUrl
-            result['resolved'] = False
-            results.append(result)
+        isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(http:.*?)\\\\"')
+        if not isMatch:
+            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(http:.*?)\\\\"')
+
+        if isMatch:
+            results.append({'streamUrl': sStreamUrl.replace('\\/', '/'), 'resolved': False})
     return results
 
 
