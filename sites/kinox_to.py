@@ -847,7 +847,7 @@ def getHosterUrlandPlay(sUrl=False):
             oRequest.addHeaderEntry('Referer', URL_MAIN)
             sHtmlContent = oRequest.request()
             # pattern for stream url (single part)
-            sPattern = '<a\shref=\\\\".*?(http:.*?)\\\\"'
+            sPattern = '<a\shref=\\\\".*?(https?:.*?)\\\\"'
             oParser = cParser()
             aResult = oParser.parse(sHtmlContent, sPattern)
             if aResult[0]:
@@ -860,10 +860,12 @@ def getHosterUrlandPlay(sUrl=False):
                 results.append(result)
                 ii += 1
     else:
+        print 'HALLO'
+        print sHtmlContent
         # pattern for stream url (single part)
-        isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(http:.*?)\\\\"')
+        isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(https?:.*?)\\\\"')
         if not isMatch:
-            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(http:.*?)\\\\"')
+            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(https?:.*?)\\\\"')
 
         if isMatch:
             results.append({'streamUrl': sStreamUrl.replace('\\/', '/'), 'resolved': False})
