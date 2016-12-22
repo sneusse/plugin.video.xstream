@@ -263,6 +263,13 @@ def showHosters():
 def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
 
+    if not sUrl.startswith('http'):
+        refUrl = ParameterHandler().getValue('sUrl')
+        oRequest = cRequestHandler(URL_MAIN + sUrl, caching=False)
+        oRequest.addHeaderEntry("Referer", refUrl)
+        oRequest.request()
+        sUrl = oRequest.getRealUrl()
+
     results = []
     result = {}
     result['streamUrl'] = sUrl
