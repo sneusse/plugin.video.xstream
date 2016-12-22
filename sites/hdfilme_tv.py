@@ -339,13 +339,21 @@ def getHosters(sUrl = False):
 
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult:
-            # Nur Links für die gewünschte Episode ermitteln
-            pattern = "<a[^>]*_episode=['\"]%s['\"][^>]*href=['\"]([^'\"]*)['\"][^>]*>" % sEpisode
-            isMatch, sServerUrl = cParser.parseSingleResult(sInnerHtml, pattern)
+            # Alle Links für diesen Server ermitteln
+            isMatch, aResult = cParser.parse(sInnerHtml, "href=['\"]([^'\"]*)['\"][^>]*>")
 
-            # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
-            if isMatch:
-                hosters.extend(_getHostFromUrl(sServerUrl, sServername))
+            # Keine Links gefunden? => weiter machen
+            if not isMatch:
+                continue
+
+            # Alle Links durchlaufen
+            for singleUrl in aResult:
+                # Link auf korrekte Episode prüfen
+                aMatches = re.compile("episode=(%s)&" % sEpisode).findall(singleUrl)
+
+                # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
+                if aMatches:
+                    hosters.extend(_getHostFromUrl(singleUrl, sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
