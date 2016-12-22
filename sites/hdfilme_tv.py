@@ -119,7 +119,7 @@ def showGenreList():
         return
 
     # Alle Genres durchlaufen und Liste erzeugen
-    for sID,sGenre in aResult:
+    for sID,sGenre in sorted(aResult, key=lambda k: k[1]):
         params.setParam('sUrl',entryUrl + '&cat=' + sID)
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     
