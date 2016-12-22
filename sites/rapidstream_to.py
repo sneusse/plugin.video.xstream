@@ -5,6 +5,7 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
+from resources.lib import jsunpacker
 import re, json
 
 SITE_IDENTIFIER = 'rapidstream_to'
@@ -289,22 +290,31 @@ def showHosters():
         return []
 
     sHtmlContent = cRequestHandler(streamUrl).request()
-    isMatch, sJson = cParser.parseSingleResult(sHtmlContent, '(\[{".*?}\])')
+    isMatch, aResult = cParser.parse(sHtmlContent, '(eval\(function.*?)</script>')
+    if isMatch:
+        for packed in aResult:
+            sHtmlContent += jsunpacker.unpack(packed)
 
+    print sHtmlContent
+
+    isMatch, aResult = cParser.parse(sHtmlContent, '(\[{".*?}\])')
     if not isMatch:
         logger.info("hoster pattern did not match")
         return []
 
     hosters = []
-    for entry in json.loads(sJson):
-        if 'file' not in entry or 'label' not in entry: continue
-        sLabel = entry['label'].encode('utf-8')
-        hoster = dict()
-        hoster['link'] = entry['file']
-        if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
-            hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
-        hoster['name'] = sLabel
-        hosters.append(hoster)
+    for sJson in aResult:
+        for entry in json.loads(sJson):
+            if 'file' not in entry or 'label' not in entry or 'type' not in entry:
+                continue
+            sLabel = entry['label'].encode('utf-8')
+            hoster = dict()
+            hoster['link'] = entry['file']
+            print entry['file']
+            if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
+                hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
+            hoster['name'] = sLabel
+            hosters.append(hoster)
 
     if hosters:
         hosters.append('playStream')
