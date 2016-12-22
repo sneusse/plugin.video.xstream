@@ -860,8 +860,6 @@ def getHosterUrlandPlay(sUrl=False):
                 results.append(result)
                 ii += 1
     else:
-        print 'HALLO'
-        print sHtmlContent
         # pattern for stream url (single part)
         isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(https?:.*?)\\\\"')
         if not isMatch:
