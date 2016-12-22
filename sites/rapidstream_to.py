@@ -295,8 +295,6 @@ def showHosters():
         for packed in aResult:
             sHtmlContent += jsunpacker.unpack(packed)
 
-    print sHtmlContent
-
     isMatch, aResult = cParser.parse(sHtmlContent, '(\[{".*?}\])')
     if not isMatch:
         logger.info("hoster pattern did not match")
@@ -310,7 +308,6 @@ def showHosters():
             sLabel = entry['label'].encode('utf-8')
             hoster = dict()
             hoster['link'] = entry['file']
-            print entry['file']
             if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
                 hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
             hoster['name'] = sLabel
