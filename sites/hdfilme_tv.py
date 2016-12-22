@@ -177,7 +177,7 @@ def showEntries(entryUrl = False, sGui = False):
     pattern += '<span[^>]*class="name"[^>]*>([^<>]*)</span>.*?'
 
     # Beschreibung ermitteln
-    pattern += '<div[^>]*class="popover-content"[^>]*>\s*<p[^>]*>([^<>]*)</p>'
+    pattern += '<div[^>]*class="popover-content"[^>]*>.*?<p>([^<]+)</p>'
 
     # HTML parsen
     isMatch, aResult = cParser.parse(sMainContent, pattern)
