@@ -118,12 +118,14 @@ def showEntries(entryUrl=False, sGui=False):
         isTvshow = True if sSeason else False
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
 
-        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showEpisodes' if isTvshow else 'showHosters')
-        if isTvshow:
-            res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
-            if res:
-                sName = res.group(1)
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
+        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
+        if res:
+            sName = res.group(1)
+            sSeason = res.group(2)
+            isTvshow = True
             oGuiElement.setTVShowTitle(sName)
+            oGuiElement.setFunction('showEpisodes')
             oGuiElement.setTitle('%s - Staffel %s' % (sName, sSeason))
             params.setParam('sSeason', sSeason)
 
