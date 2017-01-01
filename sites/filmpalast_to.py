@@ -261,6 +261,8 @@ def showHosters():
                 if not parts[0]: continue
                 hoster['link'] = parts[0]
                 hoster['name'] = aHosters[0]
+                if hoster['name'].lower() == "openload hd":
+                    hoster['name'] = "OpenLoad"
                 hoster['displayedName'] = aHosters[0] + ' - ' + parts[1]
                 hosters.append(hoster)
 
@@ -275,6 +277,8 @@ def showHosters():
             if not iId: continue
             hoster['link'] = iId
             hoster['name'] = sHost
+            if hoster['name'].lower() == "openload hd":
+                hoster['name'] = "OpenLoad"
             hoster['displayedName'] = sHost
             hosters.append(hoster)
 
