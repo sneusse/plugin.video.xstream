@@ -159,6 +159,16 @@ def parseUrl():
             updateManager.xStreamUpdate()
             updateManager.urlResolverUpdate()
             return
+    elif params.exist('remoteplayurl'):
+       import urlresolver
+       oGui = cGui()
+       remotePlayUrl = params.getValue('remoteplayurl')
+       sLink = urlresolver.resolve(remotePlayUrl)
+       if isinstance(sLink, basestring):
+         xbmc.executebuiltin( "PlayMedia(" + sLink + ")" )
+       else:
+         logger.info("Could not play remote url '%s'" % (sLink))
+       return         
     else:
       sFunction = 'load'
 
