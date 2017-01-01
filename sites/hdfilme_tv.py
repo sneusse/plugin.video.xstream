@@ -402,7 +402,7 @@ def play(sUrl = False):
     results = []
     result = {}
     result['streamUrl'] = sUrl
-    result['resolved'] = False
+    result['resolved'] = True
     results.append(result)
 
     # Ergebniss zurückliefern
