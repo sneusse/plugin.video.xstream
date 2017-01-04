@@ -83,7 +83,7 @@ def showValueList():
         return
 
     for sID, sName in aResult:
-        params.setParam('sUrl', entryUrl + '&' + valueType + '[]=' + sID)
+        params.setParam('sUrl', entryUrl + '?&' + valueType + '[]=' + sID)
         oGui.addFolder(cGuiElement(sName.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
