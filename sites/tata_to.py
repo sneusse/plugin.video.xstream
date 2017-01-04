@@ -13,16 +13,16 @@ SITE_NAME = 'Tata'
 SITE_ICON = 'tata.png'
 
 URL_MAIN = 'http://www.tata.to/'
-URL_MOVIES = URL_MAIN + 'filme?type=filme'
-URL_SHOWS = URL_MAIN + 'filme?type=tv'
-URL_SEARCH = URL_MAIN + 'filme?suche=%s&type=alle'
+URL_MOVIES = URL_MAIN + 'filme'
+URL_SHOWS = URL_MAIN + 'tv'
+URL_SEARCH = URL_MAIN + 'filme?&suche=%s&type=alle'
 
-URL_PARMS_ORDER_ALL = '&order=alle'
-URL_PARMS_ORDER_ID = '&order=neueste'
-URL_PARMS_ORDER_MOSTVIEWED = '&order=ansichten'
-URL_PARMS_ORDER_MOSTRATED = '&order=ratingen'
-URL_PARMS_ORDER_TOPIMDB = '&order=imdb'
-URL_PARMS_ORDER_RELEASEDATE = '&order=veröffentlichung'
+URL_PARMS_ORDER_ALL = '?&order=alle'
+URL_PARMS_ORDER_ID = '?&order=neueste'
+URL_PARMS_ORDER_MOSTVIEWED = '?&order=ansichten'
+URL_PARMS_ORDER_MOSTRATED = '?&order=ratingen'
+URL_PARMS_ORDER_TOPIMDB = '?&order=imdb'
+URL_PARMS_ORDER_RELEASEDATE = '?&order=veröffentlichung'
 
 QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
@@ -148,7 +148,7 @@ def showEntries(entryUrl=False, sGui=False):
             params.setParam('sUrl', sPageUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
-        oGui.setView('tvshows' if 'type=tv' in entryUrl else 'movies')
+        oGui.setView('tvshows' if '/tv' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
 
