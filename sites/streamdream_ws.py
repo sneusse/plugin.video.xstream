@@ -147,7 +147,8 @@ def showSeason(aResult, params, sDesc):
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeason)
         oGuiElement.setDescription(sDesc)
-        oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
+        if sThumbnail:
+            oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         params.setParam('Season', sSeason)
         params.setParam('imdbid', imdbid)
         params.setParam('language', slanguage)
@@ -198,7 +199,8 @@ def showEpisodes():
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setDescription(sDesc)
-        oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
+        if sThumbnail:
+            oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
         params.setParam('Episode', sEpisode)
         params.setParam('Season', sSeason)
         params.setParam('imdbid', imdbid)
