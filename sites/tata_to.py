@@ -116,6 +116,7 @@ def showEntries(entryUrl=False, sGui=False):
     total = len(aResult)
     for sUrl, sQuality, sThumbnail, sSeason, sName, sDuration, sYear, sImdb, sDesc in aResult:
         isTvshow = True if sSeason else False
+        sName = sName.strip()
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
 
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
