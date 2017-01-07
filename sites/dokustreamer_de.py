@@ -34,12 +34,17 @@ def showKategorien():
     oGui = cGui()
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    aResult = cParser().parse(sHtmlContent, 'cat-item.*?"><ahref="([^"]+).*?">([^"]+)</a>([^<]+)')
-    if aResult[0] and aResult[1][0]:
-        total = len(aResult[1])
-        for sUrl, sName, sNr in aResult[1]:
-            params.setParam('sUrl', sUrl)
-            oGui.addFolder(cGuiElement((sName + sNr), SITE_IDENTIFIER, 'showEntries'), params, True, total)
+    isMatch, aResult = cParser.parse(sHtmlContent, '<li[^>]*class="cat-item.*?"[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>([^"]+)</a>\s*\((\d+)\)')
+
+    if not isMatch:
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        return
+
+    total = len(aResult)
+    for sUrl, sName, sNr in aResult:
+        params.setParam('sUrl', sUrl)
+        oGui.addFolder(cGuiElement("%s (%s)" % (sName, sNr), SITE_IDENTIFIER, 'showEntries'), params, True, total)
+
     oGui.setEndOfDirectory()
 
 def showEntries(entryUrl=False, sGui=False):
