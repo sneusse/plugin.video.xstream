@@ -160,15 +160,17 @@ def parseUrl():
             updateManager.urlResolverUpdate()
             return
     elif params.exist('remoteplayurl'):
-       import urlresolver
-       oGui = cGui()
-       remotePlayUrl = params.getValue('remoteplayurl')
-       sLink = urlresolver.resolve(remotePlayUrl)
-       if isinstance(sLink, basestring):
-         xbmc.executebuiltin( "PlayMedia(" + sLink + ")" )
-       else:
-         logger.info("Could not play remote url '%s'" % (sLink))
-       return         
+        try:
+            import urlresolver
+            remotePlayUrl = params.getValue('remoteplayurl')
+            sLink = urlresolver.resolve(remotePlayUrl)
+            if sLink:
+                xbmc.executebuiltin( "PlayMedia(" + sLink + ")" )
+            else:
+                logger.info("Could not play remote url '%s'" % (sLink))
+        except urlresolver.resolver.ResolverError as e:
+	        logger.info('ResolverError: %s' % e)
+        return         
     else:
       sFunction = 'load'
 
