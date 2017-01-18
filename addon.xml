@@ -5,6 +5,7 @@
     provider-name="xStream-Team (originator: Lynx187, murphy, MaxMustermann)">
  <requires>
    <import addon="xbmc.python"                 version="2.14.0"/>
+   <import addon="repository.xstream"          version="1.1.1" />
    <import addon="script.module.urlresolver"   version="3.0.0"/>
    <import addon="script.module.metahandler"   version="1.0.0"/>
    <import addon="script.module.mechanize"     version="0.2.6"/>
@@ -41,6 +42,7 @@ FIXES…
  - [tata] fix useless spaces
 
 NEW…
+ - [general] add the new repo as dependency
  - [general] add support for remote resolving of streams (e.g. via web interfaces)
  - [filmpalast] show openload hd as hoster
  

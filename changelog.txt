@@ -15,6 +15,7 @@ FIXES…
  - [tata] fix useless spaces
 
 NEW…
+ - [general] add the new repo as dependency
  - [general] add support for remote resolving of streams (e.g. via web interfaces)
  - [filmpalast] show openload hd as hoster
 
