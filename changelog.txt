@@ -2,6 +2,23 @@ Big THX to all contributors!
 For more information check out the commit history at GitHub.
 
 
+xStream v3.3.0 - 18.01.2017
+================================================================================
+
+FIXES…
+ - [dokustream] fix for kategories
+ - [hdfilme] don’t resolve the google-links anymore
+ - [streamdream] fix for series
+ - [tata] fix for series
+ - [tata] fix for genres
+ - [tata] fix links in plugin
+ - [tata] fix useless spaces
+
+NEW…
+ - [general] add support for remote resolving of streams (e.g. via web interfaces)
+ - [filmpalast] show openload hd as hoster
+
+
 xStream v3.2.0 - 23.12.2016
 ================================================================================
 

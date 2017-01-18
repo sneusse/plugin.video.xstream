@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.xstream"
     name="xStream"
-    version="3.2.0"
+    version="3.3.0"
     provider-name="xStream-Team (originator: Lynx187, murphy, MaxMustermann)">
  <requires>
    <import addon="xbmc.python"                 version="2.14.0"/>
@@ -28,6 +28,23 @@
    For more information check out the commit history at GitHub.
 
 
+xStream v3.3.0 - 18.01.2017
+================================================================================
+
+FIXES…
+ - [dokustream] fix for kategories
+ - [hdfilme] don’t resolve the google-links anymore
+ - [streamdream] fix for series
+ - [tata] fix for series
+ - [tata] fix for genres
+ - [tata] fix links in plugin
+ - [tata] fix useless spaces
+
+NEW…
+ - [general] add support for remote resolving of streams (e.g. via web interfaces)
+ - [filmpalast] show openload hd as hoster
+ 
+ 
 xStream v3.2.0 - 23.12.2016
 ================================================================================
 
