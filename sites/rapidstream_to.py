@@ -289,7 +289,9 @@ def showHosters():
     if not isMatch:
         return []
 
-    sHtmlContent = cRequestHandler(streamUrl).request()
+    oRequest = cRequestHandler(streamUrl)
+    oRequest.addHeaderEntry('Referer', sUrl)
+    sHtmlContent = oRequest.request()
     isMatch, aResult = cParser.parse(sHtmlContent, '(eval\(function.*?)</script>')
     if isMatch:
         for packed in aResult:
