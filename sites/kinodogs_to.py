@@ -10,11 +10,11 @@ SITE_IDENTIFIER = 'kinodogs_to'
 SITE_NAME = 'KinoDogs'
 SITE_ICON = 'kinodogs.png'
 
-URL_MAIN = 'http://kinodogs.to/'
-URL_NEUE_FILME = URL_MAIN + 'stream-neueste-filme'
-URL_SHOWS = URL_MAIN + 'tv-serien'
-URL_NEW_SHOWS = URL_MAIN + 'stream-neueste-tv-serien'
-URL_SEARCH = URL_MAIN + 'search?q=%s'
+URL_MAIN = 'http://kinodogs.to'
+URL_NEUE_FILME = URL_MAIN + '/stream-neueste-filme'
+URL_SHOWS = URL_MAIN + '/tv-serien'
+URL_NEW_SHOWS = URL_MAIN + '/stream-neueste-tv-serien'
+URL_SEARCH = URL_MAIN + '/search?q=%s'
 
 
 def load():
@@ -36,11 +36,11 @@ def load():
 def showMostRatedMenu():
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('sUrl', URL_MAIN + 'stream-meist-bewertete-filme')
+    params.setParam('sUrl', URL_MAIN + '/stream-meist-bewertete-filme')
     oGui.addFolder(cGuiElement('30 Tage', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MAIN + 'stream-meist-bewertete-filme-woche')
+    params.setParam('sUrl', URL_MAIN + '/stream-meist-bewertete-filme-woche')
     oGui.addFolder(cGuiElement('7 Tage', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MAIN + 'stream-meist-bewertete-filme-tag')
+    params.setParam('sUrl', URL_MAIN + '/stream-meist-bewertete-filme-tag')
     oGui.addFolder(cGuiElement('24 Stunden', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
