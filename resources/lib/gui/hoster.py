@@ -370,9 +370,9 @@ class cHosterGui:
         titles = []
         for result in siteResult:
             if 'displayedName' in result:
-                titles.append(result['displayedName'])
+                titles.append(str(result['displayedName']))
             else:
-                titles.append(result['name'])
+                titles.append(str(result['name']))
         index = dialog.select('Hoster wählen', titles)
         if index > -1:
             siteResult = siteResult[index]
@@ -385,7 +385,7 @@ class cHosterGui:
         self.dialog = xbmcgui.Dialog()
         titles = []
         for result in siteResult:
-            titles.append(result['title'])
+            titles.append(str(result['title']))
         index = self.dialog.select('Part wählen', titles)
         if index > -1:
             siteResult = siteResult[index]
