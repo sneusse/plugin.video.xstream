@@ -283,7 +283,7 @@ def showHosters():
     sUrl = params.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
 
-    sPattern = '<iframe[^>]*class="metaframe"[^>]*src="([^"]+)"[^>]*>'  # url
+    sPattern = '<iframe[^>]*class="[^"]*metaframe[^"]*"[^>]*src="([^"]+)"[^>]*>'  # url
     isMatch, streamUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
