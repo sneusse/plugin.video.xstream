@@ -94,7 +94,7 @@ def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
     total = len(aResult)
     for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
         if sThumbnail and not sThumbnail.startswith('http'):
-            sThumbnail = URL_MAIN + sThumbnail
+            sThumbnail = 'http:' + sThumbnail
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setDescription(sDesc)
