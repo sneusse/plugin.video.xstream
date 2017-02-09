@@ -11,10 +11,13 @@ from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
+from resources.lib.config import cConfig
 
 SITE_IDENTIFIER = 'seriesever_net'
 SITE_NAME = 'SeriesEver'
 SITE_ICON = 'seriesever.png'
+SITE_SETTINGS = '<setting id="seriesever.user" type="text" label="30083" default="" /><setting id="seriesever.pass" type="text" option="hidden" label="30084" default="" />'
+
 
 URL_MAIN = 'http://seriesever.net/'
 URL_SERIES = URL_MAIN + 'andere-serien/'
@@ -26,6 +29,7 @@ URL_GENRE = URL_MAIN + 'genre/'
 URL_SEARCH = URL_MAIN + 'service/search'
 URL_GETVIDEOPART = URL_MAIN + 'service/get_video_part'
 URL_PLAYER = URL_MAIN + 'play/plugins/playerphp.php'
+URL_LOGIN = URL_MAIN + 'service/login'
 
 
 def load():
@@ -338,6 +342,9 @@ def showHosters():
     logger.info('load showHosters')
     oParams = ParameterHandler()
     hosters = []
+
+    __login()
+
     try:
         sHtmlContent = __getHtmlContent()
         video_id = re.findall('var video_id.*?(\d+)', sHtmlContent)[0]
@@ -449,6 +456,20 @@ def getHosterUrl(sUrl=False):
     result['resolved'] = False
     results.append(result)
     return results
+
+def __login():
+    username = cConfig().getSetting('seriesever.user')
+    password = cConfig().getSetting('seriesever.pass')
+
+    if (username == '' or password == ''): return
+
+    if cRequestHandler(URL_MAIN + '/api').request() != '1':
+        oRequestHandler = cRequestHandler(URL_LOGIN)
+        oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
+        oRequestHandler.addParameters('username', username)
+        oRequestHandler.addParameters('password', password)
+        oRequestHandler.setRequestType(1)
+        oRequestHandler.request()
 
 
 def __getVideoPage(video_id, part_name, page):

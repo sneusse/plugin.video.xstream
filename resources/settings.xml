@@ -117,6 +117,8 @@
     <setting label="SeriesEver" type="lsep" />
     <setting default="true" id="plugin_seriesever_net" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_seriesever_net" label="30052" type="bool" />
+    <setting default="" id="seriesever.user" label="Username" type="text" />
+    <setting default="" id="seriesever.pass" label="Passwort" option="hidden" type="text" />
     <setting type="sep" />
     <setting label="StreamDream" type="lsep" />
     <setting default="true" id="plugin_streamdream_ws" label="30050" type="bool" />
