@@ -31,6 +31,7 @@ URL_GETVIDEOPART = URL_MAIN + 'service/get_video_part'
 URL_PLAYER = URL_MAIN + 'play/plugins/playerphp.php'
 URL_LOGIN = URL_MAIN + 'service/login'
 
+QUALITY_ENUM = {'240p': 0, '360p': 1, '480p': 2, '720p': 3, '1080p': 4, '2160p': 5}
 
 def load():
     oParams = ParameterHandler()
@@ -350,38 +351,23 @@ def showHosters():
         video_id = re.findall('var video_id.*?(\d+)', sHtmlContent)[0]
         # 720p seems to be the best on this site, even if 1080p is avaible for selection, only the 720p stream2k links contain a 1080p stream
         part_name = '720p'
-        parts = re.findall('class="changePart" data-part="(.*?)">', sHtmlContent)
-        if len(parts) == 1:
-            part_name = parts[0]
-        # last part is usually 1080p which is premium only
-        #if oParams.exist('from_moviesever') and len(parts) == 2:
-        #    part_name = parts[1]
 
-        app = re.findall('<script src="(%sassets/js/app.js.*?)"></script>' % URL_MAIN, sHtmlContent)
+        parts = re.findall('class="changePart" data-part="(\d+p)">', sHtmlContent)
 
-        domain_list = []
-        #try:
-        #    domain_list = __get_domain_list(app, domain_list)
-        #except:
-        #    logger.info('Could not get domain list')
-        #if not domain_list:
-        #    domain_list = ['se1.seriesever.net', 'se2.seriesever.net']
-        #import random
-        #random.shuffle(domain_list)
+        for part in parts:
+            json_data = __getVideoPage(video_id, part, '0')
 
-        json_data = __getVideoPage(video_id, part_name, '0')
+            try:
+                part_count = json_data['part_count']
+            except:
+                part_count = 0
 
-        try:
-            part_count = json_data['part_count']
-        except:
-            part_count = 0
+            hosters = parseHosterResponse(json_data, hosters, part)
 
-        hosters = parseHosterResponse(json_data, hosters)
-
-        if part_count > 1:
-            for i in range(1, part_count):
-                json_data = __getVideoPage(video_id, part_name, str(i))
-                hosters = parseHosterResponse(json_data, hosters)
+            if part_count > 1:
+                for i in range(1, part_count):
+                    json_data = __getVideoPage(video_id, part_name, str(i))
+                    hosters = parseHosterResponse(json_data, hosters, part)
 
         hosters.sort()
 
@@ -393,7 +379,7 @@ def showHosters():
     return hosters
 
 
-def parseHosterResponse(json_data, hosters):
+def parseHosterResponse(json_data, hosters, part):
     if (json_data['part']['source'] != 'url') and (json_data['part']['source'] != 'other'):
         logger.error("Unknown data: %s" % json_data['part']['source'])
         return
@@ -428,6 +414,9 @@ def parseHosterResponse(json_data, hosters):
 
         hoster['name'] = hname[0]
         hoster['link'] = hoster['link']
+        hoster['displayedName'] = '%s  [%s]' % (hoster['name'], part)
+        if part in QUALITY_ENUM:
+            hoster['quality'] = QUALITY_ENUM[part]
 
         hosters.append(hoster)
 
@@ -463,7 +452,7 @@ def __login():
 
     if (username == '' or password == ''): return
 
-    if cRequestHandler(URL_MAIN + '/api').request() != '1':
+    if cRequestHandler(URL_MAIN + '/api', caching=False).request() != '1':
         oRequestHandler = cRequestHandler(URL_LOGIN)
         oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
         oRequestHandler.addParameters('username', username)
