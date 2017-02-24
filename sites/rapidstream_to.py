@@ -14,8 +14,8 @@ SITE_ICON = 'rapidstream.png'
 SITE_GLOBAL_SEARCH = False
 
 URL_MAIN = 'http://rapidstream.to/'
-URL_MOVIES = URL_MAIN + 'filme'
-URL_SHOWS = URL_MAIN + 'tvshows'
+URL_MOVIES = URL_MAIN + 'stream-filme'
+URL_SHOWS = URL_MAIN + 'stream-tvserie'
 URL_MOSTSEEN = URL_MAIN + 'meistgesehen?get=%s'
 URL_SEARCH = URL_MAIN + 'search/%s/'
 
