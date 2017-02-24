@@ -380,11 +380,12 @@ def _getHostFromUrl(sUrl, sServername):
     # Alle Einträge durchlaufen und Hostereintrag erstellen
     for entry in json.loads(sJson):
         if 'file' not in entry or 'label' not in entry: continue
-        sLabel = sServername + ' - ' + entry['label'].encode('utf-8')
+        quali = str(entry['label']).encode('utf-8')
+        sLabel = sServername + ' - ' + quali
         hoster = dict()
         hoster['link'] = entry['file']
-        if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
-            hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
+        if quali in QUALITY_ENUM:
+            hoster['quality'] = QUALITY_ENUM[quali]
         hoster['name'] = sLabel
         hosters.append(hoster)
 
