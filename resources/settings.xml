@@ -44,10 +44,6 @@
     <setting default="true" enable="!eq(-1,false)" id="global_search_ddl_me" label="30052" type="bool" />
     <setting default="de.ddl.me" enable="!eq(-2,false)" id="ddl_me-domain" label="30051" type="labelenum" values="de.ddl.me|en.ddl.me" />
     <setting type="sep" />
-    <setting label="Dokustreamer" type="lsep" />
-    <setting default="true" id="plugin_dokustreamer_de" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_dokustreamer_de" label="30052" type="bool" />
-    <setting type="sep" />
     <setting label="FilmeStreamz" type="lsep" />
     <setting default="true" id="plugin_filme-streamz_com" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_filme-streamz_com" label="30052" type="bool" />
