@@ -7,7 +7,7 @@ from resources.lib import logger
 from resources.lib.handler.ParameterHandler import ParameterHandler
 
 from resources.lib.cCFScrape import cCFScrape
-import re, json
+import re, json, base64
 
 # Plugin-Eigenschaften
 SITE_IDENTIFIER = 'hdfilme_tv'
@@ -19,6 +19,8 @@ URL_MAIN = 'http://hdfilme.tv/'
 URL_MOVIES = URL_MAIN + 'movie-movies?'
 URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie-search?key=%s'
+URL_GETLINK = URL_MAIN + 'movie/getlink/'
+
 
 # Parameter für die Sortierung
 URL_PARMS_ORDER_UPDATE = 'order_f=last_update'
@@ -340,20 +342,16 @@ def getHosters(sUrl = False):
         # Server-Block durchlaufen
         for sServername, sInnerHtml in aResult:
             # Alle Links für diesen Server ermitteln
-            isMatch, aResult = cParser.parse(sInnerHtml, "href=['\"]([^'\"]*)['\"][^>]*>")
+            isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(\d+))?")
 
             # Keine Links gefunden? => weiter machen
             if not isMatch:
                 continue
 
             # Alle Links durchlaufen
-            for singleUrl in aResult:
+            for sID, sEpisode in aResult:
                 # Link auf korrekte Episode prüfen
-                aMatches = re.compile("episode=(%s)&" % sEpisode).findall(singleUrl)
-
-                # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
-                if aMatches:
-                    hosters.extend(_getHostFromUrl(singleUrl, sServername))
+                hosters.extend(_getHostFromUrl(sID, sEpisode, sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
@@ -361,13 +359,14 @@ def getHosters(sUrl = False):
 
     return hosters
 
-def _getHostFromUrl(sUrl, sServername):
+    
+def _getHostFromUrl(sID, sEpisode, sServername):
     # Seite abrufen
-    sHtmlContent = cRequestHandler(sUrl).request()
+    sHtmlContent = cRequestHandler(URL_GETLINK + sID + '/' + sEpisode).request()
+    sHtmlContent = base64.b64decode(str(sHtmlContent))
+    pattern = 'label":([^",]+).*?file"?\s*:\s*"(.+?)"'
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
-    # JSon mit den Links ermitteln
-    pattern = '(\[{".*?}\])'
-    isMatch, sJson = cParser.parseSingleResult(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
     if not isMatch: 
@@ -378,12 +377,11 @@ def _getHostFromUrl(sUrl, sServername):
     hosters = []
 
     # Alle Einträge durchlaufen und Hostereintrag erstellen
-    for entry in json.loads(sJson):
-        if 'file' not in entry or 'label' not in entry: continue
-        quali = str(entry['label']).encode('utf-8')
+    for quali, sUrl in aResult:
+        sUrl = sUrl.replace('\/', '/')
         sLabel = sServername + ' - ' + quali
         hoster = dict()
-        hoster['link'] = entry['file']
+        hoster['link'] = sUrl
         if quali in QUALITY_ENUM:
             hoster['quality'] = QUALITY_ENUM[quali]
         hoster['name'] = sLabel
