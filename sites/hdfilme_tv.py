@@ -298,12 +298,14 @@ def showEpisodes(aResult, params):
     # Alle Folgen durchlaufen und Einträge erzeugen
     for iEpisode, sUrl, sEpisodeTitle in aResult:
         sName = 'Folge ' + sEpisodeTitle.strip()
+        sEpisodeTitle = sEpisodeTitle.strip()
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosters')
         oGuiElement.setMediaType('episode')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(iEpisode)
         oGuiElement.setThumbnail(sThumbnail)
+        params.setParam('sEpisodeTitle', sEpisodeTitle)        
         params.setParam('sUrl', sUrl)
         params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, False, total)
@@ -320,7 +322,8 @@ def getHosters(sUrl = False):
 
     # URL und Name ermitteln falls nicht übergeben
     sUrl = sUrl if sUrl else params.getValue('sUrl')
-
+    isTvshowEntry = params.getValue('isTvshow')
+    sEpisodeTitle = params.getValue('sEpisodeTitle')
     # Seite abrufen
     sHtmlContent = cRequestHandler(sUrl).request()
 
@@ -331,27 +334,21 @@ def getHosters(sUrl = False):
     # Hosterliste initialisieren
     hosters = []
 
-    # Prüfen ob Server ermittelt werden konnte
-    if isMatch:
-        # Prüfen ob eine direkte-Episode gewünscht ist
-        aMatches = re.compile("episode=(\d+)&").findall(sUrl)
-
-        # gewünsche Episode ermitteln wenn möglich
-        sEpisode = "1" if not aMatches else aMatches[0]
-
         # Server-Block durchlaufen
-        for sServername, sInnerHtml in aResult:
+    for sServername, sInnerHtml in aResult:
             # Alle Links für diesen Server ermitteln
-            isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(\d+))?")
-
+        if isTvshowEntry == 'True':
+           isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(%s&))?"  % sEpisodeTitle)       
+        else:
+           isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(\d+))?")
             # Keine Links gefunden? => weiter machen
-            if not isMatch:
-                continue
+        if not isMatch:
+            continue
 
             # Alle Links durchlaufen
-            for sID, sEpisode in aResult:
+        for sID, sEpisode in aResult:
                 # Link auf korrekte Episode prüfen
-                hosters.extend(_getHostFromUrl(sID, sEpisode, sServername))
+            hosters.extend(_getHostFromUrl(sID, sEpisode, sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
@@ -366,7 +363,6 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     sHtmlContent = base64.b64decode(str(sHtmlContent))
     pattern = 'label":([^",]+).*?file"?\s*:\s*"(.+?)"'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
-
 
     # Nichts gefunden? => Raus hier
     if not isMatch: 
