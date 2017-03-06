@@ -21,22 +21,22 @@ URL_SHOWS = URL_MAIN + 'movie-series?'
 URL_SEARCH = URL_MAIN + 'movie-search?key=%s'
 URL_GETLINK = URL_MAIN + 'movie/getlink/'
 
-
 # Parameter für die Sortierung
 URL_PARMS_ORDER_UPDATE = 'order_f=last_update'
-URL_PARMS_ORDER_UPDATE_ASC = URL_PARMS_ORDER_UPDATE +'&order_d=asc'
+URL_PARMS_ORDER_UPDATE_ASC = URL_PARMS_ORDER_UPDATE + '&order_d=asc'
 URL_PARMS_ORDER_YEAR = 'order_f=year'
-URL_PARMS_ORDER_YEAR_ASC = URL_PARMS_ORDER_YEAR +'&order_d=asc'
+URL_PARMS_ORDER_YEAR_ASC = URL_PARMS_ORDER_YEAR + '&order_d=asc'
 URL_PARMS_ORDER_NAME = 'order_f=name'
-URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME +'&order_d=asc'
+URL_PARMS_ORDER_NAME_ASC = URL_PARMS_ORDER_NAME + '&order_d=asc'
 URL_PARMS_ORDER_VIEWS = 'order_f=view'
-URL_PARMS_ORDER_VIEWS_ASC = URL_PARMS_ORDER_VIEWS +'&order_d=asc'
+URL_PARMS_ORDER_VIEWS_ASC = URL_PARMS_ORDER_VIEWS + '&order_d=asc'
 URL_PARMS_ORDER_IMDB = 'order_f=imdb'
-URL_PARMS_ORDER_IMDB_ASC = URL_PARMS_ORDER_IMDB +'&order_d=asc'
+URL_PARMS_ORDER_IMDB_ASC = URL_PARMS_ORDER_IMDB + '&order_d=asc'
 URL_PARMS_ORDER_HDRATE = 'order_f=rate'
-URL_PARMS_ORDER_HDRATE_ASC = URL_PARMS_ORDER_HDRATE +'&order_d=asc'
+URL_PARMS_ORDER_HDRATE_ASC = URL_PARMS_ORDER_HDRATE + '&order_d=asc'
 
-QUALITY_ENUM = {'240':0, '360':1, '480':2, '720':3, '1080':4}
+QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
+
 
 def load():
     # Logger-Eintrag
@@ -57,6 +57,7 @@ def load():
 
     # Liste abschließen
     oGui.setEndOfDirectory()
+
 
 def showContentMenu():
     # GUI-Element erzeugen
@@ -82,10 +83,11 @@ def showContentMenu():
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_HDRATE)
     oGui.addFolder(cGuiElement('Bewertung HDFilme.tv', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_NAME_ASC)
-    oGui.addFolder(cGuiElement('Genre',SITE_IDENTIFIER,'showGenreList'), params)  
+    oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenreList'), params)
 
     # Liste abschließen
-    oGui.setEndOfDirectory() 
+    oGui.setEndOfDirectory()
+
 
 def showGenreList():
     # GUI-Element erzeugen
@@ -112,7 +114,7 @@ def showGenreList():
 
     # Filter für Genres
     pattern = '<option[^>]*value="(\d[^ ]*)"[^>]*>(.*?)</option[>].*?'
-    
+
     # Regex parsen
     isMatch, aResult = cParser.parse(sContainer, pattern)
 
@@ -121,14 +123,15 @@ def showGenreList():
         return
 
     # Alle Genres durchlaufen und Liste erzeugen
-    for sID,sGenre in sorted(aResult, key=lambda k: k[1]):
-        params.setParam('sUrl',entryUrl + '&cat=' + sID)
+    for sID, sGenre in sorted(aResult, key=lambda k: k[1]):
+        params.setParam('sUrl', entryUrl + '&cat=' + sID)
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
-    
+
     # Liste abschließen
     oGui.setEndOfDirectory()
 
-def showEntries(entryUrl = False, sGui = False):
+
+def showEntries(entryUrl=False, sGui=False):
     # GUI-Element erzeugen wenn nötig
     oGui = sGui if sGui else cGui()
 
@@ -142,16 +145,17 @@ def showEntries(entryUrl = False, sGui = False):
     iPage = int(params.getValue('page'))
 
     # Daten ermitteln
-    oRequest = cRequestHandler(entryUrl + '&page=' + str(iPage) if iPage > 0 else entryUrl, ignoreErrors=(sGui is not False))
+    oRequest = cRequestHandler(entryUrl + '&page=' + str(iPage) if iPage > 0 else entryUrl,
+                               ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
-    
+
     # Filter out the main section
     pattern = '<ul class="products row">(.*?)</ul>'
     isMatch, aMainContents = cParser.parse(sHtmlContent, pattern)
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
-    if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+    if not isMatch:
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     # Gefundenen Bereiche zusammenführen (tritt z.b bei der Suche auf)
@@ -185,8 +189,8 @@ def showEntries(entryUrl = False, sGui = False):
     isMatch, aResult = cParser.parse(sMainContent, pattern)
 
     # Kein Einträge gefunden? => Raus hier
-    if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+    if not isMatch:
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     # Listengröße ermitteln
@@ -209,14 +213,14 @@ def showEntries(entryUrl = False, sGui = False):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
 
         # Bei Serien Title anpassen
-        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName,re.I)
+        res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
         if res:
             oGuiElement.setTVShowTitle(res.group(1))
-            oGuiElement.setTitle('%s - Staffel %s' % (res.group(1),int(res.group(2))))
+            oGuiElement.setTitle('%s - Staffel %s' % (res.group(1), int(res.group(2))))
             params.setParam('sSeason', int(res.group(2)))
         elif not res and isTvshow:
             oGuiElement.setTVShowTitle(sName)
-            oGuiElement.setTitle('%s - Staffel %s' % (sName,"1"))
+            oGuiElement.setTitle('%s - Staffel %s' % (sName, "1"))
             params.setParam('sSeason', "1")
 
         # Thumbnail und Beschreibung für Anzeige anpassen
@@ -255,12 +259,13 @@ def showEntries(entryUrl = False, sGui = False):
         oGui.setView('tvshows' if URL_SHOWS in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
+
 def showHosters():
     # ParameterHandler erzeugen
     params = ParameterHandler()
-    
+
     # URL Anpassen um die Stream und nicht die Infos zu bekommen
-    entryUrl = params.getValue('entryUrl').replace("-info","-stream")
+    entryUrl = params.getValue('entryUrl').replace("-info", "-stream")
 
     # Seite abrufen
     sHtmlContent = cRequestHandler(entryUrl).request()
@@ -282,6 +287,7 @@ def showHosters():
     else:
         return getHosters(entryUrl)
 
+
 def showEpisodes(aResult, params):
     # GUI-Element erzeugen wenn nötig
     oGui = cGui()
@@ -293,7 +299,7 @@ def showEpisodes(aResult, params):
     sSeason = params.getValue('sSeason')
 
     # Listengröße ermitteln
-    total = len (aResult)
+    total = len(aResult)
 
     # Alle Folgen durchlaufen und Einträge erzeugen
     for iEpisode, sUrl, sEpisodeTitle in aResult:
@@ -305,7 +311,7 @@ def showEpisodes(aResult, params):
         oGuiElement.setSeason(sSeason)
         oGuiElement.setEpisode(iEpisode)
         oGuiElement.setThumbnail(sThumbnail)
-        params.setParam('sEpisodeTitle', sEpisodeTitle)        
+        params.setParam('sEpisodeTitle', sEpisodeTitle)
         params.setParam('sUrl', sUrl)
         params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, False, total)
@@ -316,14 +322,14 @@ def showEpisodes(aResult, params):
     # Liste abschließen
     oGui.setEndOfDirectory()
 
-def getHosters(sUrl = False):
-    #ParameterHandler erzeugen
+
+def getHosters(sUrl=False):
+    # ParameterHandler erzeugen 
     params = ParameterHandler()
 
     # URL und Name ermitteln falls nicht übergeben
     sUrl = sUrl if sUrl else params.getValue('sUrl')
-    isTvshowEntry = params.getValue('isTvshow')
-    sEpisodeTitle = params.getValue('sEpisodeTitle')
+
     # Seite abrufen
     sHtmlContent = cRequestHandler(sUrl).request()
 
@@ -334,29 +340,41 @@ def getHosters(sUrl = False):
     # Hosterliste initialisieren
     hosters = []
 
+    # Prüfen ob Server ermittelt werden konnte 
+    if isMatch:
+        # Prüfen ob eine direkte-Episode gewünscht ist
+        aMatches = re.compile("episode=(\d+)&").findall(sUrl)
+
+        # gewünsche Episode ermitteln wenn möglich
+        sEpisode = "1" if not aMatches else aMatches[0]
+
         # Server-Block durchlaufen
-    for sServername, sInnerHtml in aResult:
-            # Alle Links für diesen Server ermitteln
-        if isTvshowEntry == 'True':
-           isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(%s&))?"  % sEpisodeTitle)       
-        else:
-           isMatch, aResult = cParser.parse(sInnerHtml, "(\d+)-stream(?:\?episode=(\d+))?")
-            # Keine Links gefunden? => weiter machen
-        if not isMatch:
-            continue
+        for sServername, sInnerHtml in aResult:
+            # Alle Links für diesen Server ermitteln 
+            isMatch, aResult = cParser.parse(sInnerHtml, "href=['\"]([^'\"]*)['\"][^>]*>")
+
+            # Keine Links gefunden? => weiter machen 
+            if not isMatch:
+                continue
 
             # Alle Links durchlaufen
-        for sID, sEpisode in aResult:
+            for singleUrl in aResult:
+
                 # Link auf korrekte Episode prüfen
-            hosters.extend(_getHostFromUrl(sID, sEpisode, sServername))
+                aMatches = re.compile("episode=(%s)&" % sEpisode).findall(singleUrl)
+
+                # Wurde ein Link gefunden? => Einträge zur Gesamtliste hinzufügen
+                if aMatches:
+                    res = re.search("(\d+)-stream(?:\?episode=(\d+))?", singleUrl, re.I)
+                    if res:
+                        hosters.extend(_getHostFromUrl(res.group(1), res.group(2), sServername))
 
     # Sind Hoster vorhanden? => Nachfolgefunktion ergänzen
     if hosters:
         hosters.append('play')
-
     return hosters
 
-    
+
 def _getHostFromUrl(sID, sEpisode, sServername):
     # Seite abrufen
     sHtmlContent = cRequestHandler(URL_GETLINK + sID + '/' + sEpisode).request()
@@ -365,7 +383,7 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
-    if not isMatch: 
+    if not isMatch:
         logger.info("hoster pattern did not match")
         return []
 
@@ -386,8 +404,9 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     # Hoster zurückgeben
     return hosters
 
-def play(sUrl = False):
-    #ParameterHandler erzeugen
+
+def play(sUrl=False):
+    # ParameterHandler erzeugen
     oParams = ParameterHandler()
 
     # URL ermitteln falls nicht übergeben
@@ -395,13 +414,12 @@ def play(sUrl = False):
 
     # Array mit einem Eintrag für Hosterliste erzeugen (sprich direkt abspielen)
     results = []
-    result = {}
-    result['streamUrl'] = sUrl
-    result['resolved'] = True
+    result = {'streamUrl': sUrl, 'resolved': True}
     results.append(result)
 
     # Ergebniss zurückliefern
     return results
+
 
 # Sucher über UI
 def showSearch():
@@ -417,9 +435,10 @@ def showSearch():
     # Suche durchführen
     _search(False, sSearchText)
 
-    #Liste abschließen und View setzen
+    # Liste abschließen und View setzen
     oGui.setView()
     oGui.setEndOfDirectory()
+
 
 # Such-Funktion (z.b auch für Globale-Suche)
 def _search(oGui, sSearchText):
