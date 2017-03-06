@@ -38,7 +38,7 @@ def showContentMenu():
     valueType = params.getValue('valueType')
 
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    pattern = 'href="(?:\.\.\/)*([neu|beliebt]+%s[^"]*)"[^>]*>([^<]+)<\/a><\/li>' % valueType
+    pattern = 'href="([neu|beliebt]+%s[^"]*)"[^>]*>([^<]+)</a></li>' % valueType
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     for sID, sName in aResult:
