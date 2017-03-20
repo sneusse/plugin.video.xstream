@@ -82,7 +82,7 @@ def showContentMenu():
     oGui.addFolder(cGuiElement('IMDB Punkt', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_HDRATE)
     oGui.addFolder(cGuiElement('Bewertung HDFilme.tv', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', baseURL + URL_PARMS_ORDER_NAME_ASC)
+    params.setParam('sUrl', baseURL) #+ URL_PARMS_ORDER_NAME_ASC)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenreList'), params)
 
     # Liste abschließen
@@ -103,7 +103,7 @@ def showGenreList():
     sHtmlContent = cRequestHandler(entryUrl).request()
 
     # Select für Generes-Container
-    pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>].*?'
+    pattern = '<select[^>]*name="cat"[^>]*>(.*?)</select[>]'
 
     # Regex parsen
     isMatch, sContainer = cParser.parseSingleResult(sHtmlContent, pattern)
@@ -113,7 +113,7 @@ def showGenreList():
         return
 
     # Filter für Genres
-    pattern = '<option[^>]*value="(\d[^ ]*)"[^>]*>(.*?)</option[>].*?'
+    pattern = '<option[^>]*value="(\d[^ ]*)"[^>]*>(.*?)</option[>]'
 
     # Regex parsen
     isMatch, aResult = cParser.parse(sContainer, pattern)
@@ -124,7 +124,7 @@ def showGenreList():
 
     # Alle Genres durchlaufen und Liste erzeugen
     for sID, sGenre in sorted(aResult, key=lambda k: k[1]):
-        params.setParam('sUrl', entryUrl + '?cat=' + sID)
+        params.setParam('sUrl', entryUrl + 'cat=' + sID + '&country=&order_f=last_update')
         oGui.addFolder(cGuiElement(sGenre.strip(), SITE_IDENTIFIER, 'showEntries'), params)
 
     # Liste abschließen
