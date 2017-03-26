@@ -13,7 +13,6 @@ from resources.lib.util import cUtil
 SITE_IDENTIFIER = 'moviesever_com'
 SITE_NAME = 'MoviesEver'
 SITE_ICON = 'moviesever.png'
-SITE_GLOBAL_SEARCH = False
 
 URL_MAIN = 'http://moviesever.com/'
 URL_FILME = URL_MAIN + 'filme/'
