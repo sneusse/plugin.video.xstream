@@ -24,6 +24,7 @@ QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 
 def load():
+    logger.info("Load %s" % SITE_NAME)
     params = ParameterHandler()
     oGui = cGui()
     params.setParam('sUrl', URL_FILME)
@@ -216,7 +217,7 @@ def getHosterUrl(sUrl=False):
 
 
 def showSearchEntries(entryUrl=False, sGui=False):
-    oGui = cGui()
+    oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
@@ -243,6 +244,14 @@ def showSearchEntries(entryUrl=False, sGui=False):
         oGuiElement.setThumbnail(sThumbnail)
         params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
+    if not sGui:
+        sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
+        if isMatchNextPage:
+            params.setParam('sUrl', sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+        oGui.setView('tvshows' if 'serien' in sUrl else 'movies')
+        oGui.setEndOfDirectory()
 
 
 def showSearch():
