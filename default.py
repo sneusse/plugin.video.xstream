@@ -25,7 +25,8 @@ logger.info('Python-Version: %s' % platform.python_version())
 try:
     import urlparse, sys, xbmc 
     netloc = [urlparse.urlparse(sys.argv[0]).netloc, ''] 
-    if xbmc.getInfoLabel('Container.PluginName') not in netloc: sys.exit()
+    if xbmc.getInfoLabel('Container.PluginName') not in netloc:
+        sys.exit()
     run()
 except Exception, err:
     if str(err) == 'UserAborted':
