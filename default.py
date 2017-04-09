@@ -23,10 +23,10 @@ logger.info('*---- Running xStream, version %s ----*' % __settings__.getAddonInf
 logger.info('Python-Version: %s' % platform.python_version())
 
 try:
-    import urlparse, sys, xbmc 
-    netloc = [urlparse.urlparse(sys.argv[0]).netloc, ''] 
+    import urlparse, sys as sys1, xbmc
+    netloc = [urlparse.urlparse(sys1.argv[0]).netloc, '']
     if xbmc.getInfoLabel('Container.PluginName') not in netloc:
-        sys.exit()
+        sys1.exit()
     run()
 except Exception, err:
     if str(err) == 'UserAborted':
