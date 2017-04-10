@@ -305,8 +305,9 @@ def showSearchEntries(entryUrl=False, sGui=False):
 def showSearch():
     oGui = cGui()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
-
+    try: nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
+    except: nonce = '5d12d0fa54'
+    
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
     _search(False, sSearchText, nonce)
