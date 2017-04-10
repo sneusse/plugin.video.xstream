@@ -19,7 +19,8 @@ SITE_ICON = 'foxx.png'
 URL_MAIN = 'https://foxx.to/'
 URL_FILME = URL_MAIN + 'film'
 URL_SERIE = URL_MAIN + 'serie'
-URL_SEARCH = URL_MAIN + 'wp-admin/admin-ajax.php?s="%s"&action=search_in_place'
+URL_SEARCH = URL_MAIN + 'wp-json/dooplay/search/?keyword=%s&nonce='
+
 
 QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
@@ -264,7 +265,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
     oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
 
-    sPattern = 'link":"([^"]+).*?thumbnail":"([^"]+).*?title":"([^"]+)'
+    sPattern = '"title":"([^"]+)","url":"([^"]+)","img":"([^"]+).*?date":"([^"]+)'
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
@@ -272,7 +273,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
         return
 
     total = len(aResult)
-    for sUrl, sThumbnail, sName in aResult:
+    for sName, sUrl, sThumbnail, sYear in aResult:
         sThumbnail = sThumbnail.replace('\\/', '/').replace('\/', '/')
         sUrl = sUrl.replace('\\/', '/').replace('\/', '/')
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
@@ -284,6 +285,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setYear(sYear)
         sUrl = cUtil.quotePlus(sUrl)
         params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
@@ -302,12 +304,15 @@ def showSearchEntries(entryUrl=False, sGui=False):
 
 def showSearch():
     oGui = cGui()
+    sHtmlContent = cRequestHandler(URL_MAIN).request()
+    nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
+
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(False, sSearchText)
+    _search(False, sSearchText, nonce)
     oGui.setEndOfDirectory()
 
 
-def _search(oGui, sSearchText):
+def _search(oGui, sSearchText, nonce):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH % sSearchText.strip(), oGui)
+    showSearchEntries(URL_SEARCH % sSearchText.strip() + nonce, oGui)
