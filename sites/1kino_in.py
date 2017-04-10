@@ -15,7 +15,7 @@ SITE_ICON = '1kino.png'
 URL_MAIN = 'http://1kino.in/'
 URL_KINO = 'kinofilme'
 URL_FILME = 'filme'
-URL_SEARCH = URL_MAIN + 'include/live.php?keyword=%s&nonce=273e0f8ea3'
+URL_SEARCH = URL_MAIN + 'include/live.php?keyword=%s&nonce='
 
 URL_FETCH = URL_MAIN + 'include/fetch.php'
 URL_LOAD = URL_MAIN + 'include/load.php'
@@ -166,12 +166,16 @@ def showSearchEntries(entryUrl=False, sGui=False):
 
 def showSearch():
     oGui = cGui()
+    sHtmlContent = cRequestHandler('http://1kino.in/js/live-search.js').request()
+    try: nonce = re.findall('nonce=([^"]+)', sHtmlContent)[0]
+    except: nonce = '273e0f8ea3'
+
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(False, sSearchText)
+    _search(False, sSearchText, nonce)
     oGui.setEndOfDirectory()
 
 
-def _search(oGui, sSearchText):
+def _search(oGui, sSearchText, nonce):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH % sSearchText.strip(), oGui)
+    showSearchEntries(URL_SEARCH % sSearchText.strip() + nonce, oGui)
