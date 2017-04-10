@@ -126,13 +126,11 @@ def get_metahandler():
         return False
 
 def parseUrl():
-    try:
-        import urlparse, sys, xbmc
-        netloc = [urlparse.urlparse(sys.argv[0]).netloc, '']
-        if xbmc.getInfoLabel('Container.PluginName') not in netloc:
-            sys.exit()
-    except:
-        pass
+    import urlparse
+    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '']
+    if xbmc.getInfoLabel('Container.PluginName') not in netloc:
+        sys.exit()
+        return
 	
     params = ParameterHandler()
     logger.info(params.getAllParameters())
