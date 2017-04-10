@@ -23,11 +23,7 @@ logger.info('*---- Running xStream, version %s ----*' % __settings__.getAddonInf
 logger.info('Python-Version: %s' % platform.python_version())
 
 try:
-    exec ("import re;import base64");
-    exec ((lambda p, y: (lambda o, b, f: re.sub(o, b, f))(r"([0-9a-f]+)", lambda m: p(m, y), base64.b64decode(
-        "NyAxMCwgYSBlIDIsIDYKMSA9IFsxMC4xMCgyLjhbMF0pLjEsICcnXQpkIDYuMygnNS40JykgYiBmIDE6CgkyLjkoKQpjKCk=")))(lambda a, b: b[int("0x" + a.group(1), 16)],
-                                                                                                              "0|netloc|sys1|getInfoLabel|PluginName|Container|xbmc|import|argv|exit|sys|not|run|if|as|in|urlparse".split(
-                                                                                                                  "|")))
+    run()
 except Exception, err:
     if str(err) == 'UserAborted':
         logger.error("User aborted list creation")
