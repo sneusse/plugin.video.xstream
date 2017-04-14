@@ -62,7 +62,7 @@ def showSeriesMenu():
 
 def showXXXMenu():
     oGui = cGui()
-    __createMainMenuItem(oGui, 'Aktuelles', URL_XXX, 'showFeaturedMovies')
+    __createMainMenuItem(oGui, 'Aktuelles', URL_XXX, 'parseMovieSimpleList')
     __createMainMenuItem(oGui, 'Alle XXXFilme', URL_XXX_ALL, 'showCharacters')
     __createMainMenuItem(oGui, 'Genre', URL_XXX_GENRE, 'showGenre')
     oGui.setEndOfDirectory()
@@ -153,19 +153,15 @@ def __createCharacters(oGui, sCharacter, sBaseUrl):
         sUrl = sBaseUrl + '-1-1.html'
     else:
         sUrl = sBaseUrl + '-' + str(sCharacter) + '-1.html'
-    oOutputParameterHandler = ParameterHandler()
-    oOutputParameterHandler.setParam('sUrl', sUrl)
-    oGui.addFolder(oGuiElement, oOutputParameterHandler)
+    params = ParameterHandler()
+    params.setParam('sUrl', sUrl)
+    oGui.addFolder(oGuiElement, params)
 
 
 def showAllSeasons():
     params = ParameterHandler()
-    sUrl = ''
-    if params.exist('sUrl'):
-        sUrl = params.getValue('sUrl')
-        __getAllSeasons(sUrl)
-    else:
-        return
+    sUrl = params.getValue('sUrl')
+    __getAllSeasons(sUrl)
 
 
 def __getAllSeasons(sUrl):
@@ -194,11 +190,11 @@ def __getAllSeasons(sUrl):
             oGuiElement.setSeason(season)
             oGuiElement.setMediaType('season')
 
-            oOutputParameterHandler = ParameterHandler()
-            oOutputParameterHandler.setParam('sUrl', sUrl)
-            oOutputParameterHandler.setParam('season', season)
+            params = ParameterHandler()
+            params.setParam('sUrl', sUrl)
+            params.setParam('season', season)
 
-            oGui.addFolder(oGuiElement, oOutputParameterHandler, iTotal=total)
+            oGui.addFolder(oGuiElement, params, iTotal=total)
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
@@ -206,12 +202,7 @@ def __getAllSeasons(sUrl):
 def showAllEpisodes():
     oGui = cGui()
     params = ParameterHandler()
-    sUrl = ''
-    if not params.exist('sUrl'):
-        return
     sUrl = params.getValue('sUrl')
-    if not params.exist('season'):
-        return
     sSeason = params.getValue('season')
     oRequest = cRequestHandler(sUrl)
     sHtmlContent = oRequest.request()
@@ -260,14 +251,8 @@ def showSearch():
 
 
 def _search(oGui, sSearchText):
-    # add wildcard to find results where seatchText is part of a word
-    sSearchText = '%' + sSearchText + '%'
-    # perform search
-    oRequest = cRequestHandler(URL_SEARCH % sSearchText, ignoreErrors=(oGui is not False))
-    # oRequest.addParameters('securekey', key)
-    response = oRequest.request()
-    sUrl = URL_SEARCH
-    __parseMovieSimpleList(sUrl, 1, oGui, response)
+    if not sSearchText: return
+    __parseMovieSimpleList(URL_SEARCH % sSearchText.strip(), 1, oGui)
 
 
 def __checkForNextPage(sHtmlContent, iCurrentPage):
@@ -307,9 +292,9 @@ def showGenre():
             oGuiElement.setFunction('parseMovieSimpleList')
             oGuiElement.setTitle(sTitle)
 
-            oOutputParameterHandler = ParameterHandler()
-            oOutputParameterHandler.setParam('sUrl', sUrl)
-            oGui.addFolder(oGuiElement, oOutputParameterHandler)
+            params = ParameterHandler()
+            params.setParam('sUrl', sUrl)
+            oGui.addFolder(oGuiElement, params)
 
         oGui.setEndOfDirectory()
 
@@ -403,14 +388,14 @@ def __parseMovieSimpleList(sUrl, iPage, sGui, sHtmlContent=False):
             oGuiElement.setTitle(sMovieTitle)
             oGuiElement.setLanguage(__getLanguage(sLanguageToken.replace('.png', '')))
 
-            oOutputParameterHandler = ParameterHandler()
-            oOutputParameterHandler.setParam('sMovieTitle', sMovieTitle)
-            oOutputParameterHandler.setParam('sUrl', newUrl)
+            params = ParameterHandler()
+            params.setParam('sMovieTitle', sMovieTitle)
+            params.setParam('sUrl', newUrl)
 
             type, id = getTypeAndID(newUrl)
             if type == 'tvshow':
                 if sUrl.find('tvshows-') != -1:
-                    oOutputParameterHandler.setParam('sLanguageToken', sLanguageToken)
+                    params.setParam('sLanguageToken', sLanguageToken)
                     oGuiElement.setMediaType('tvshow')
                     oGuiElement.setFunction('parseMovieSimpleList')
                 else:
@@ -419,14 +404,14 @@ def __parseMovieSimpleList(sUrl, iPage, sGui, sHtmlContent=False):
                 oGuiElement.setMediaType('movie')
                 oGuiElement.setFunction('showHosters')
             else:
-                oOutputParameterHandler.setParam('sLanguageToken', sLanguageToken)
+                params.setParam('sLanguageToken', sLanguageToken)
                 oGuiElement.setFunction('parseMovieSimpleList')
             if id in thumbs:
-                oGuiElement.setThumbnail(URL_MAIN + thumbs[id].replace('4k.to', '4k.tv'))
+                oGuiElement.setThumbnail(URL_MAIN.replace('4k.to', '4k.tv') + thumbs[id])
             if type == 'movie':
-                oGui.addFolder(oGuiElement, oOutputParameterHandler, bIsFolder=False, iTotal=total)
+                oGui.addFolder(oGuiElement, params, bIsFolder=False, iTotal=total)
             else:
-                oGui.addFolder(oGuiElement, oOutputParameterHandler, iTotal=total)
+                oGui.addFolder(oGuiElement, params, iTotal=total)
 
     if not sGui:
         sNextUrl = __checkForNextPage(sHtmlContent, iPage)
@@ -494,11 +479,11 @@ def showFeaturedMovies():
                 oGuiElement.setTitle(sMovieTitle)
                 oGuiElement.setLanguage(__getLanguage(aEntry[3]))
                 oGuiElement._sQuality = aEntry[5]
-                oOutputParameterHandler = ParameterHandler()
-                oOutputParameterHandler.setParam('sUrl', newUrl)
-                oOutputParameterHandler.setParam('sMovieTitle', sMovieTitle)
+                params = ParameterHandler()
+                params.setParam('sUrl', newUrl)
+                params.setParam('sMovieTitle', sMovieTitle)
 
-                oGui.addFolder(oGuiElement, oOutputParameterHandler, bIsFolder=False, iTotal=total)
+                oGui.addFolder(oGuiElement, params, bIsFolder=False, iTotal=total)
             oGui.setView('movies')
             oGui.setEndOfDirectory()
 
@@ -532,10 +517,9 @@ def showFeaturedSeries():
                     oGuiElement.setThumbnail(sThumbnail.replace('https', 'http'))
                     oGuiElement.setLanguage(__getLanguage(aEntry[3]))
                     oGuiElement.setMediaType('tvshow')
-                    oOutputParameterHandler = ParameterHandler()
-                    oOutputParameterHandler.setParam('sUrl', newUrl)
-
-                    oGui.addFolder(oGuiElement, oOutputParameterHandler)
+                    params = ParameterHandler()
+                    params.setParam('sUrl', newUrl)
+                    oGui.addFolder(oGuiElement, params)
                 oGui.setView('tvshows')
                 oGui.setEndOfDirectory()
 
@@ -544,8 +528,6 @@ def showHostersSeries():
     params = ParameterHandler()
     if params.exist('sUrl') and params.exist('sMovieTitle'):
         sUrl = params.getValue('sUrl')
-        sMovieTitle = params.getValue('sMovieTitle')
-
         sHtmlContent = cRequestHandler(sUrl).request()
         sPattern = '<tr id="tablemoviesindex2".*?<a href="([^"]+)".*? width="16">([^<]+)<'
         aResult = cParser().parse(sHtmlContent.replace('\\', ''), sPattern)
@@ -571,9 +553,8 @@ def showHosters():
     params = ParameterHandler()
     if params.exist('sUrl') and params.exist('sMovieTitle'):
         sUrl = params.getValue('sUrl')
-        sMovieTitle = params.getValue('sMovieTitle')
-
         sHtmlContent = cRequestHandler(sUrl).request()
+
         sPattern = '<tr id="tablemoviesindex2">.*?<a href="([^"]+)">([^<]+)<.*?alt="(.*?) .*?width="16">.*?</a>.*?smileys/([1-9]).gif"'
         aResult = cParser().parse(sHtmlContent.replace('\\', ''), sPattern)
         hosters = []
@@ -609,7 +590,18 @@ def showHosters():
 
     if len(hosters) > 0:
         hosters.append('showHoster')
+        return hosters
 
+    if aResult[0] == False:
+        pattern = '<a target="_blank" href="([^"]+)'
+        isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+        if isMatch:
+            hosters = []
+            for sUrl in aResult:
+                hosters.append({'link': sUrl, 'name': sUrl})
+            if hosters:
+                return [{'streamUrl': sUrl, 'resolved': False}]
     return hosters
 
 
@@ -656,7 +648,7 @@ def __getMovieTitle(sHtmlContent):
     return False
 
 
-def parseHosterDirect(sHtmlContent, sHoster='', sMovieTitle=''):
+def parseHosterDirect(sHtmlContent):
     oParser = cParser()
     # Link oder Iframe suchen der den Hosternamen enthält
     sPattern = 'id="maincontent5".*?(?:target="_blank" href|iframe[^<]+src|value)="([^"]+)".*?id="underplayer">'
@@ -707,7 +699,7 @@ def __createMainMenuItem(oGui, sTitle, sUrl, sFunction):
     oGuiElement.setSiteName(SITE_IDENTIFIER)
     oGuiElement.setFunction(sFunction)
     oGuiElement.setTitle(sTitle)
-    oOutputParameterHandler = ParameterHandler()
+    params = ParameterHandler()
     if sUrl != '':
-        oOutputParameterHandler.setParam('sUrl', sUrl)
-    oGui.addFolder(oGuiElement, oOutputParameterHandler)
+        params.setParam('sUrl', sUrl)
+    oGui.addFolder(oGuiElement, params)
