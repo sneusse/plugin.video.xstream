@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+import re
 import urllib
+from json import loads
+
+from resources.lib import jsunprotect
+from resources.lib import logger
+from resources.lib.config import cConfig
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib.config import cConfig
-from resources.lib import logger
-from json import loads
-import re
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib import jsunprotect
 
 SITE_IDENTIFIER = 'kinox_to'
 SITE_NAME = 'KinoX'
@@ -42,14 +43,12 @@ URL_LANGUAGE = URL_MAIN + '/aSET/PageLang/1'
 
 def load():
     logger.info("Load %s" % SITE_NAME)
-
     sSecurityValue = __getSecurityCookieValue()
     oParams = ParameterHandler()
     if sSecurityValue:
         oParams.setParam('securityCookie', sSecurityValue)
     # Create all main menu entries
     oGui = cGui()
-
     oParams.setParam('sUrl', URL_NEWS)
     oParams.setParam('page', 1)
     oParams.setParam('mediaType', 'news')
@@ -72,14 +71,12 @@ def load():
 ######## Allgemeines
 def __createMenuEntry(oGui, sFunction, sLabel, dOutputParameter):
     oParams = ParameterHandler()
-
     # Create all paramters out of lOuputParameter
     try:
         for param, value in dOutputParameter.items():
             oParams.setParam(param, value)
     except Exception, e:
         logger.error("Can't add parameter to menu entry with label: %s: %s" % (sLabel, e))
-
     # Create the gui element
     oGuiElement = cGuiElement()
     oGuiElement.setSiteName(SITE_IDENTIFIER)
@@ -92,7 +89,6 @@ def __createMenuEntry(oGui, sFunction, sLabel, dOutputParameter):
 def showMovieMenu():
     oGui = cGui()
     oParams = ParameterHandler()
-
     oGui.addFolder(cGuiElement('Kinofilme', SITE_IDENTIFIER, 'showCinemaMovies'), oParams)
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'), oParams)
     oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), oParams)
@@ -104,7 +100,6 @@ def showMovieMenu():
 def showSeriesMenu():
     oGui = cGui()
     oParams = ParameterHandler()
-
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'), oParams)
     # oGui.addFolder(cGuiElement('Genres',SITE_IDENTIFIER,'showGenres'),oParams)
     oParams.setParam('sUrl', URL_FAVOURITE_SERIE_PAGE)
@@ -117,7 +112,6 @@ def showSeriesMenu():
 def showDocuMenu():
     oGui = cGui()
     oParams = ParameterHandler()
-
     oGui.addFolder(cGuiElement('A-Z', SITE_IDENTIFIER, 'showCharacters'), oParams)
     # oGui.addFolder(cGuiElement('Genres',SITE_IDENTIFIER,'showGenres'),oParams)
     oParams.setParam('sUrl', URL_FAVOURITE_DOCU_PAGE)
@@ -152,7 +146,7 @@ def __checkSubLanguage(sTitle):
     return [title, 'de'] if subLang == 'german' else [title, subLang]
 
 
-def __getHtmlContent(sUrl=None, sSecurityValue=None, ignoreErrors = False):
+def __getHtmlContent(sUrl=None, sSecurityValue=None, ignoreErrors=False):
     oParams = ParameterHandler()
     # Test if a url is available and set it
     if sUrl is None and not oParams.exist('sUrl'):
@@ -169,12 +163,12 @@ def __getHtmlContent(sUrl=None, sSecurityValue=None, ignoreErrors = False):
     # preferred language
     sPrefLang = __getPreferredLanguage()
     # Make the request
-    oRequest = cRequestHandler(sUrl, ignoreErrors = ignoreErrors)
-    oRequest.addHeaderEntry('Cookie', sPrefLang + str(sSecurityValue) + 'ListDisplayYears=Always;')
+    oRequest = cRequestHandler(sUrl, ignoreErrors=ignoreErrors)
+    if "kinox.ag" not in domain:
+        oRequest.addHeaderEntry('Cookie', sPrefLang + str(sSecurityValue) + 'ListDisplayYears=Always;')
     oRequest.addHeaderEntry('Referer', URL_MAIN)
     oRequest.addHeaderEntry('Accept', '*/*')
     oRequest.addHeaderEntry('Host', domain)
-
     return oRequest.request()
 
 
@@ -221,16 +215,12 @@ def __getSecurityCookieValue():
         return False
 
     sHash = aResult[1][0]
-
     sHash = sHashSnippet + sHash
     sSecurityCookieValue = "sitechrx=" + str(sHash) + ";Path=/"
-
     oRequestHandler = cRequestHandler(URL_MAIN)
     oRequestHandler.addHeaderEntry("Cookie", sSecurityCookieValue)
     oRequestHandler.request()
-
     logger.info("Token: %s" % sSecurityCookieValue)
-
     return sSecurityCookieValue
 
 
@@ -247,21 +237,18 @@ def _search(oGui, sSearchText):
     # Create the request with the search value
     sFullSearchUrl = URL_SEARCH + ("?q=%s" % sSearchText)
     logger.info("Search URL: %s" % sFullSearchUrl)
-    sHtmlContent = __getHtmlContent(sFullSearchUrl, ignoreErrors = (oGui is not False))
+    sHtmlContent = __getHtmlContent(sFullSearchUrl, ignoreErrors=(oGui is not False))
     # Display all items returned...
     __displayItems(oGui, sHtmlContent)
 
 
 def __displayItems(sGui, sHtmlContent):
     oGui = sGui if sGui else cGui()
-
     # Test if a cookie was set, else define the default empty one
     oParams = ParameterHandler()
-
     # The pattern to filter every item of the list
     sPattern = '<td class="Icon"><img width="16" height="11" src="/gr/sys/lng/(\d+).png" alt="language"></td>' + \
                '.*?title="([^\"]+)".*?<td class="Title">.*?<a href="([^\"]+)" onclick="return false;">([^<]+)</a> <span class="Year">([0-9]+)</span>'
-
     # Parse to get all items of the list
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
@@ -277,7 +264,6 @@ def __displayItems(sGui, sHtmlContent):
         # get audio language
         sLang = __createLanguage(aEntry[0])
         sUrl = URL_MAIN + aEntry[2]
-        mediaType = ''
         if aEntry[1] == 'movie' or aEntry[1] == 'cinema':
             mediaType = 'movie'
         elif aEntry[1] == 'series':
@@ -331,7 +317,6 @@ def showNews():
 
 def parseNews():
     oGui = cGui()
-
     oParams = ParameterHandler()
     sSecurityValue = oParams.getValue('securityCookie')
     sUrl = oParams.getValue('sUrl')
@@ -378,7 +363,6 @@ def parseNews():
             oGuiElement.setLanguage(sLang)
             oGuiElement.setSubLanguage(subLang)
             oGuiElement.setThumbnail(URL_MAIN + str(aEntry[1]))
-
             oParams.setParam('sUrl', URL_MAIN + sUrl)
             oParams.setParam('mediaType', mediaType)
             if mediaType == 'series':
@@ -395,7 +379,6 @@ def parseNews():
 def showCharacters():
     logger.info('load showCharacters')
     oGui = cGui()
-
     oParams = ParameterHandler()
     sSecurityValue = oParams.getValue('securityCookie')
     if oParams.exist('sUrl') and oParams.exist('page') and oParams.exist('mediaType'):
@@ -408,36 +391,31 @@ def showCharacters():
         sPattern = 'class="LetterMode.*?>([^>]+)</a>'
         oParser = cParser()
         aResult = oParser.parse(sHtmlContent, sPattern)
-
     if aResult[0]:
         for aEntry in aResult[1]:
             oGuiElement = cGuiElement(aEntry, SITE_IDENTIFIER, 'ajaxCall')
-            # oOutputParameterHandler = ParameterHandler()
+            # params = ParameterHandler()
             oParams.setParam('character', aEntry[0])
-            # oOutputParameterHandler.addParameter('page', iPage)
-            # oOutputParameterHandler.addParameter('mediaType', sMediaType)
-            # oOutputParameterHandler.addParameter('securityCookie', sSecurityValue)
+            # params.addParameter('page', iPage)
+            # params.addParameter('mediaType', sMediaType)
+            # params.addParameter('securityCookie', sSecurityValue)
             if oParams.exist('mediaTypePageId'):
                 sMediaTypePageId = oParams.getValue('mediaTypePageId')
                 oParams.setParam('mediaTypePageId', sMediaTypePageId)
             oGui.addFolder(oGuiElement, oParams)
-
     oGui.setEndOfDirectory()
 
 
 def showGenres():
     logger.info('load displayGenreSite')
     sPattern = '<td class="Title"><a.*?href="/Genre/([^"]+)">([^<]+)</a>.*?Tipp-([0-9]+).html">'
-
     oParams = ParameterHandler()
     sSecurityValue = oParams.getValue('securityCookie')
-
     # request
     sHtmlContent = __getHtmlContent(URL_GENRE_PAGE, sSecurityValue)
     # parse content
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
-
     oGui = cGui()
     if aResult[0]:
         for aEntry in aResult[1]:
@@ -495,7 +473,6 @@ def parseMovieEntrySite():
         # get thumbnail
         result = cParser().parse(sHtmlContent, '<div class="Grahpics">.*?<img src="([^"]+)"')
         thumbnail = URL_MAIN + str(result[1][0]) if result[0] else False
-
         bIsSerie = __isSerie(sHtmlContent)
         if bIsSerie:
             oGui = cGui()
@@ -508,7 +485,6 @@ def parseMovieEntrySite():
                 guiElement.setMediaType('season')
                 guiElement.setSeason(seasonNum)
                 guiElement.setTVShowTitle(sMovieTitle)
-
                 oParams.setParam('Season', seasonNum)
                 if thumbnail:
                     guiElement.setThumbnail(thumbnail)
@@ -531,7 +507,6 @@ def showEpisodes():
     sMovieTitle = __createMovieTitle(sHtmlContent)
     result = cParser().parse(sHtmlContent, '<div class="Grahpics">.*?<img src="([^"]+)"')
     thumbnail = URL_MAIN + str(result[1][0]) if result[0] else False
-
     aSeriesItems = parseSerieEpisodes(sHtmlContent, seasonNum)
     if not aSeriesItems[0]: return
     for item in aSeriesItems:
@@ -542,7 +517,6 @@ def showEpisodes():
         oGuiElement.setSeason(item['season'])
         oGuiElement.setEpisode(item['episode'])
         oGuiElement.setTVShowTitle(sShowTitle)
-
         oParams.addParams({'sUrl': item['url'], 'episode': item['episode'], 'season': item['season']})
         oGui.addFolder(oGuiElement, oParams, bIsFolder=False, iTotal=len(aSeriesItems))
     oGui.setView('episodes')
@@ -553,7 +527,6 @@ def __createMovieTitle(sHtmlContent):
     sPattern = '<h1><span style="display: inline-block">(.*?)</h1>'
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
-
     if aResult[0]:
         return str(aResult[1][0])
     return False
@@ -562,19 +535,16 @@ def __createMovieTitle(sHtmlContent):
 def __createInfoItem(oGui, sHtmlContent):
     sThumbnail = __getThumbnail(sHtmlContent)
     sDescription = __getDescription(sHtmlContent)
-
     oGuiElement = cGuiElement()
     oGuiElement.setSiteName(SITE_IDENTIFIER)
     oGuiElement.setTitle('info (press Info Button)')
     oGuiElement.setThumbnail(sThumbnail)
     oGuiElement.setFunction('dummyFolder')
     oGuiElement.setDescription(sDescription)
-
-    oOutputParameterHandler = ParameterHandler()
-    oOutputParameterHandler.setParam('sThumbnail', sThumbnail)
-    oOutputParameterHandler.setParam('sDescription', sDescription)
-
-    oGui.addFolder(oGuiElement, oOutputParameterHandler)
+    params = ParameterHandler()
+    params.setParam('sThumbnail', sThumbnail)
+    params.setParam('sDescription', sDescription)
+    oGui.addFolder(oGuiElement, params)
 
 
 def dummyFolder():
@@ -590,7 +560,6 @@ def parseSerieSite(sHtmlContent):
 
 def parseSerieEpisodes(sHtmlContent, seasonNum):
     aSeriesItems = []
-
     sPattern = 'id="SeasonSelection" rel="([^"]+)"'
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
@@ -621,7 +590,6 @@ def __isSerie(sHtmlContent):
     sPattern = 'id="SeasonSelection" rel="([^"]+)"'
     oParser = cParser()
     aResult = oParser.parse(sHtmlContent, sPattern)
-
     return aResult[0] == True
 
 
@@ -630,7 +598,6 @@ def ajaxCall():
     metaOn = oGui.isMetaOn
     oParams = ParameterHandler()
     sSecurityValue = oParams.getValue('securityCookie')
-
     if oParams.exist('page') and oParams.exist('mediaType'):
         iPage = oParams.getValue('page')
         sMediaType = oParams.getValue('mediaType')
@@ -640,10 +607,8 @@ def ajaxCall():
     sCharacter = 'A'
     if oParams.exist('character'):
         sCharacter = oParams.getValue('character')
-
     logger.info('MediaType: ' + sMediaType + ' , Page: ' + str(iPage) + ' , iMediaTypePageId: ' + str(
         iMediaTypePageId) + ' , sCharacter: ' + str(sCharacter))
-
     sHtmlContent = __getAjaxContent(sMediaType, iPage, iMediaTypePageId, metaOn, sCharacter)
     if not sHtmlContent:
         return
@@ -663,7 +628,6 @@ def ajaxCall():
                 oGuiElement = cGuiElement(sTitle, SITE_IDENTIFIER, 'parseMovieEntrySite')
                 oGuiElement.setYear(sYear)
                 oGuiElement.setLanguage(sLang)
-
                 oParams.setParam('sUrl', sUrl)
                 if sMediaType == 'series':
                     oGuiElement.setMediaType('tvshow')
@@ -721,7 +685,6 @@ def ajaxCall():
                 if iMediaTypePageId:
                     oParams.setParam('mediaTypePageId', iMediaTypePageId)
                 oGui.addNextPage(SITE_IDENTIFIER, 'ajaxCall', oParams)
-
     if sMediaType == 'series':
         oGui.setView('tvshows')
     else:
@@ -776,7 +739,8 @@ def __getAjaxContent(sMediaType, iPage, iMediaTypePageId, metaOn, sCharacter='')
         oRequest.addParameters('Page', str(iPage))
         oRequest.addParameters('Per_Page', '30')
         oRequest.addParameters('dir', 'desc')
-    oRequest.addHeaderEntry('Cookie', sPrefLang + str(sSecurityValue) + 'ListDisplayYears=Always;')
+    if "kinox.ag" not in domain:
+        oRequest.addHeaderEntry('Cookie', sPrefLang + str(sSecurityValue) + 'ListDisplayYears=Always;')
     oRequest.addHeaderEntry('Referer', URL_MAIN)
     oRequest.addHeaderEntry('Accept', '*/*')
     oRequest.addHeaderEntry('Host', domain)
@@ -790,7 +754,6 @@ def showHosters(sHtmlContent='', sTitle=False):
         sTitle = oParams.getValue('title')
     if oParams.exist('sUrl'):
         sUrl = oParams.getValue('sUrl')
-
     sHtmlContent = __getHtmlContent(sUrl, sSecurityValue)
     sPattern = 'class="MirBtn.*?rel="([^"]+)".*?class="Named">([^<]+)</div>(.*?)</div>'
     oParser = cParser()
@@ -812,10 +775,7 @@ def showHosters(sHtmlContent='', sTitle=False):
                 if mirrors > 1:
                     mirrorName = "  Mirror " + str(i)
                     sUrl = re.sub(r'Mirror=[0-9]+', 'Mirror=' + str(i), sUrl)
-                hoster = {}
-                hoster['name'] = sHoster
-                hoster['link'] = sUrl
-                hoster['displayedName'] = sHoster + mirrorName
+                hoster = {'name': sHoster, 'link': sUrl, 'displayedName': sHoster + mirrorName}
                 hosters.append(hoster)
         hosters.append('getHosterUrlandPlay')
     return hosters
@@ -829,10 +789,10 @@ def getHosterUrlandPlay(sUrl=False):
     if not sUrl: sUrl = oParams.getValue('url')
     sUrl = sUrl.replace('&amp;', '&')
     oRequest = cRequestHandler(sUrl)
-    oRequest.addHeaderEntry('Cookie', sSecurityValue)
+    if "kinox.ag" not in domain:
+        oRequest.addHeaderEntry('Cookie', sSecurityValue)
     oRequest.addHeaderEntry('Referer', URL_MAIN)
     sHtmlContent = oRequest.request()
-
     # pattern for multipart stream
     sPattern = '<a rel=\\\\"(.*?)\\\\"'
     oParser = cParser()
@@ -843,7 +803,8 @@ def getHosterUrlandPlay(sUrl=False):
         for sPartUrl in aMovieParts:
             sPartUrl = sPartUrl.replace('\\/', '/')
             oRequest = cRequestHandler(sUrl + '&Part=' + str(ii))
-            oRequest.addHeaderEntry('Cookie', sSecurityValue)
+            if "kinox.ag" not in domain:
+                oRequest.addHeaderEntry('Cookie', sSecurityValue)
             oRequest.addHeaderEntry('Referer', URL_MAIN)
             sHtmlContent = oRequest.request()
             # pattern for stream url (single part)
@@ -853,10 +814,7 @@ def getHosterUrlandPlay(sUrl=False):
             if aResult[0]:
                 aParts = aResult[1]
                 sPartUrl = aParts[0].replace('\\/', '/')
-                result = {}
-                result['streamUrl'] = sPartUrl
-                result['resolved'] = False
-                result['title'] = sTitle + ' Part ' + str(ii)
+                result = {'streamUrl': sPartUrl, 'resolved': False, 'title': sTitle + ' Part ' + str(ii)}
                 results.append(result)
                 ii += 1
     else:
@@ -864,7 +822,6 @@ def getHosterUrlandPlay(sUrl=False):
         isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(https?:.*?)\\\\"')
         if not isMatch:
             isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(https?:.*?)\\\\"')
-
         if isMatch:
             results.append({'streamUrl': sStreamUrl.replace('\\/', '/'), 'resolved': False})
     return results
