@@ -31,11 +31,11 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_SERIEN)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_MAIN)
-    params.setParam('sGenreId', 'Genres')
-    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), params)
-    params.setParam('sGenreId', 'Alle Jahre')
-    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showGenres'), params)
+#    params.setParam('sUrl', URL_MAIN)
+#    params.setParam('sGenreId', 'Genres')
+#    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), params)
+#    params.setParam('sGenreId', 'Alle Jahre')
+#    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showGenres'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -59,9 +59,11 @@ def showGenres():
         return
 
     for sUrl, sName in aResult:
-        params.setParam('sUrl', URL_MAIN + sUrl)
+        if sUrl and not sUrl.startswith('http'):
+           sUrl = URL_MAIN + sUrl
+        params.setParam('sUrl', sUrl)
         oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.setEndOfDirectory()
+        oGui.setEndOfDirectory()
 
 
 def showEntries(entryUrl=False, sGui=False):
@@ -91,7 +93,9 @@ def showEntries(entryUrl=False, sGui=False):
             oGuiElement.setYear(sYear)
         oGuiElement.setDescription(sDesc)
         sUrl = cUtil.quotePlus(sUrl)
-        params.setParam('entryUrl', URL_MAIN + sUrl)
+        if sUrl and not sUrl.startswith('http'):
+           sUrl = URL_MAIN + sUrl
+        params.setParam('entryUrl', sUrl)
         params.setParam('sName', sName)
         params.setParam('sThumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
@@ -100,7 +104,9 @@ def showEntries(entryUrl=False, sGui=False):
         sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
-            params.setParam('sUrl', URL_MAIN + sNextUrl)
+            if sNextUrl and not sNextUrl.startswith('http'):
+                sNextUrl = URL_MAIN + sNextUrl
+            params.setParam('sUrl', sNextUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
         oGui.setView('tvshows' if 'serien' in sUrl else 'movies')
         oGui.setEndOfDirectory()
@@ -165,7 +171,9 @@ def showEpisodes():
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('episode')
-        params.setParam('entryUrl', URL_MAIN + sUrl.strip())
+        if sUrl and not sUrl.startswith('http'):
+           sUrl = URL_MAIN + sUrl
+        params.setParam('entryUrl', sUrl.strip())
         oGui.addFolder(oGuiElement, params, False, total)
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
@@ -242,13 +250,17 @@ def showSearchEntries(entryUrl=False, sGui=False):
             sThumbnail = URL_MAIN + sThumbnail
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
-        params.setParam('entryUrl', URL_MAIN + sUrl)
+        if sUrl and not sUrl.startswith('http'):
+           sUrl = URL_MAIN + sUrl
+        params.setParam('entryUrl', sUrl)
         oGui.addFolder(oGuiElement, params, False, total)
     if not sGui:
         sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
-            params.setParam('sUrl', URL_MAIN + sNextUrl)
+            if sNextUrl and not sNextUrl.startswith('http'):
+                sNextUrl = URL_MAIN + sNextUrl
+            params.setParam('sUrl', sNextUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
         oGui.setView('tvshows' if 'serien' in sUrl else 'movies')
         oGui.setEndOfDirectory()
