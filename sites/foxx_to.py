@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import base64
 import json
 import re
-
 from resources.lib import jsunpacker
 from resources.lib import logger
 from resources.lib.cCFScrape import cCFScrape
@@ -16,11 +16,10 @@ SITE_IDENTIFIER = 'foxx_to'
 SITE_NAME = 'Foxx'
 SITE_ICON = 'foxx.png'
 
-URL_MAIN = 'https://foxx.to/'
+URL_MAIN = 'http://foxx.to/'
 URL_FILME = URL_MAIN + 'film'
 URL_SERIE = URL_MAIN + 'serie'
 URL_SEARCH = URL_MAIN + 'wp-json/dooplay/search/?keyword=%s&nonce='
-
 
 QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
@@ -33,26 +32,26 @@ def load():
     params.setParam('sUrl', URL_SERIE)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
-    params.setParam('sGenreId', 'Kategorie')
-    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), params)
-    params.setParam('sGenreId', 'Erscheinungsjahr')
-    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showGenres'), params)
+    params.setParam('sValue', 'Kategorie')
+    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showValue'), params)
+    params.setParam('sValue', 'Erscheinungsjahr')
+    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showValue'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
-def showGenres():
+def showValue():
     oGui = cGui()
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    sPattern = '<h2>%s</h2>.*?<div[^>]*class' % params.getValue('sGenreId')
+    sPattern = '<h2>%s</h2>.*?</nav></div>' % params.getValue('sValue')
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
         oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
-    sPattern = '<a[^>]*href="([^"]+)">([^<]+)'
+    sPattern = '<a[^>]*href="([^"]+).*?>([^<]+)'
     isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
 
     if not isMatch:
@@ -203,11 +202,13 @@ def showHosters():
     oRequest = cRequestHandler(streamUrl)
     oRequest.addHeaderEntry('Referer', sUrl)
     sHtmlContent = oRequest.request()
-    isMatch, aResult = cParser.parse(sHtmlContent, '(eval\(function.*?)</script>')
+    isMatch, aResult = cParser.parse(sHtmlContent, '\(["]?(.*)["]?\)')
+
     if isMatch:
         for packed in aResult:
             try:
-                sHtmlContent += jsunpacker.unpack(packed)  # tnx Viper2k4
+                packed = packed.replace('"', '').replace('+', '')
+                sHtmlContent += jsunpacker.unpack(base64.decodestring(packed))
             except:
                 pass
 
@@ -305,9 +306,11 @@ def showSearchEntries(entryUrl=False, sGui=False):
 def showSearch():
     oGui = cGui()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    try: nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
-    except: nonce = '5d12d0fa54'
-    
+    try:
+        nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
+    except:
+        nonce = '5d12d0fa54'
+
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
     _search(False, sSearchText, nonce)
