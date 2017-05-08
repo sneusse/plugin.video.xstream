@@ -1,12 +1,12 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+import base64, json, re
+from resources.lib import logger
+from resources.lib.cCFScrape import cCFScrape
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.cCFScrape import cCFScrape
-import re, json
 
 SITE_IDENTIFIER = 'tata_to'
 SITE_NAME = 'Tata'
@@ -29,10 +29,8 @@ QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 def load():
     logger.info("Load %s" % SITE_NAME)
-
     oGui = cGui()
     params = ParameterHandler()
-
     params.setParam('sUrl', URL_MOVIES)
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('sUrl', URL_SHOWS)
@@ -45,7 +43,6 @@ def showContentMenu():
     oGui = cGui()
     params = ParameterHandler()
     baseURL = params.getValue('sUrl')
-
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_ID)
     oGui.addFolder(cGuiElement('Neuste', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', baseURL + URL_PARMS_ORDER_MOSTVIEWED)
@@ -65,7 +62,6 @@ def showContentMenu():
     params.setParam('sUrl', baseURL)
     params.setParam('valueType', 'veröffentlichung')
     oGui.addFolder(cGuiElement('Veröffentlichung', SITE_IDENTIFIER, 'showValueList'), params)
-
     oGui.setEndOfDirectory()
 
 
@@ -74,7 +70,6 @@ def showValueList():
     params = ParameterHandler()
     entryUrl = params.getValue('sUrl')
     valueType = params.getValue('valueType')
-
     sHtmlContent = _getRequestHandler(entryUrl).request()
     pattern = '<input[^>]*name="%s[[]]"[^>]*value="(.*?)"[^>]*>(.*?)</' % valueType
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
@@ -91,9 +86,7 @@ def showValueList():
 def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
-
     if not entryUrl: entryUrl = params.getValue('sUrl')
-
     oRequest = _getRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequest.request()
     pattern = '<div[^>]*class="ml-item-content"[^>]*>.*?'  # start element
@@ -118,7 +111,6 @@ def showEntries(entryUrl=False, sGui=False):
         isTvshow = True if sSeason else False
         sName = sName.strip()
         sThumbnail = cCFScrape.createUrl(sThumbnail, oRequest)
-
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         res = re.search('(.*?)\s(?:staf+el|s)\s*(\d+)', sName, re.I)
         if res:
@@ -129,7 +121,6 @@ def showEntries(entryUrl=False, sGui=False):
             oGuiElement.setFunction('showEpisodes')
             oGuiElement.setTitle('%s - Staffel %s' % (sName, sSeason))
             params.setParam('sSeason', sSeason)
-
         oGuiElement.setYear(sYear)
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
@@ -148,7 +139,6 @@ def showEntries(entryUrl=False, sGui=False):
         if isMatch:
             params.setParam('sUrl', sPageUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-
         oGui.setView('tvshows' if '/tv' in entryUrl else 'movies')
         oGui.setEndOfDirectory()
 
@@ -160,7 +150,6 @@ def showEpisodes():
     sTVShowTitle = params.getValue('TVShowTitle')
     sThumbnail = params.getValue('sThumbnail')
     sSeason = params.getValue('sSeason')
-
     sHtmlContent = _getRequestHandler(entryUrl).request()
     isMatch, aResult = cParser.parse(sHtmlContent, '<li[^>].*?<a[^>]*href="([^"]*)"[^>]*>(\d+)</a>')
 
@@ -180,7 +169,6 @@ def showEpisodes():
         params.setParam('sUrl', sUrl)
         params.setParam('sName', sName)
         oGui.addFolder(oGuiElement, params, False, total)
-
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
@@ -189,10 +177,8 @@ def showHosters(sUrl=False):
     params = ParameterHandler()
     sUrl = sUrl if sUrl else params.getValue('sUrl')
     sHtmlContent = _getRequestHandler(sUrl).request()
-
     pattern = "<div[^>]*data-url='([^']*)'[^>]*>"
     isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, pattern)
-
     hosters = []
     if isMatch:
         oRequestHandler = _getRequestHandler(sStreamUrl)
@@ -200,10 +186,10 @@ def showHosters(sUrl=False):
         sJson = oRequestHandler.request()
         if not sJson:
             return []
-        data = json.loads(sJson)
-        if "url" in data:
-            if isinstance(data["url"], list):
-                for urlData in data["url"]:
+        data = json.loads(base64.decodestring(sJson))
+        if "playinfo" in data:
+            if isinstance(data["playinfo"], list):
+                for urlData in data["playinfo"]:
                     hoster = dict()
                     hoster['link'] = urlData["link_mp4"]
                     hoster['name'] = urlData["quality"]
@@ -217,7 +203,6 @@ def showHosters(sUrl=False):
                 hoster['name'] = SITE_NAME
                 hoster['resolveable'] = True
                 hosters.append(hoster)
-
     if hosters:
         hosters.append('play')
     return hosters
