@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import base64, json, re
+import base64, json, re, common
 from resources.lib import logger
 from resources.lib.cCFScrape import cCFScrape
 from resources.lib.gui.gui import cGui
@@ -172,7 +172,6 @@ def showEpisodes():
     oGui.setView('episodes')
     oGui.setEndOfDirectory()
 
-
 def showHosters(sUrl=False):
     params = ParameterHandler()
     sUrl = sUrl if sUrl else params.getValue('sUrl')
@@ -184,6 +183,7 @@ def showHosters(sUrl=False):
         oRequestHandler = _getRequestHandler(sStreamUrl)
         oRequestHandler.addHeaderEntry('Referer', sUrl)
         sJson = oRequestHandler.request()
+
         if not sJson:
             return []
         data = json.loads(base64.decodestring(sJson))
@@ -199,7 +199,7 @@ def showHosters(sUrl=False):
                     hosters.append(hoster)
             else:
                 hoster = dict()
-                hoster['link'] = data["url"]
+                hoster['link'] = data["playinfo"]
                 hoster['name'] = SITE_NAME
                 hoster['resolveable'] = True
                 hosters.append(hoster)
@@ -211,11 +211,11 @@ def showHosters(sUrl=False):
 def play(sUrl=False):
     oParams = ParameterHandler()
     if not sUrl: sUrl = oParams.getValue('url')
-    return [{'streamUrl': sUrl, 'resolved': True}]
+    return [{'streamUrl': sUrl.replace('embed.html', 'index.m3u8') + '|User-Agent=' + common.FF_USER_AGENT, 'resolved': True}]
 
 
 def _getRequestHandler(sUrl, ignoreErrors=False):
-    sUrl = sUrl.replace('https:', 'http:')
+    sUrl = sUrl.replace('https:', 'http:').replace('\/', '/')
     oRequest = cRequestHandler(sUrl, ignoreErrors=ignoreErrors)
     return oRequest
 
