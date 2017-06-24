@@ -379,7 +379,7 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     # Seite abrufen
     sHtmlContent = cRequestHandler(URL_GETLINK + sID + '/' + sEpisode).request()
     sHtmlContent = base64.b64decode(str(sHtmlContent))
-    pattern = 'label":([^",]+).*?file"?\s*:\s*"(.+?)"'
+    pattern = 'label":"([^",]+).*?file"?\s*:\s*"(.+?)"'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
@@ -399,6 +399,7 @@ def _getHostFromUrl(sID, sEpisode, sServername):
         if quali in QUALITY_ENUM:
             hoster['quality'] = QUALITY_ENUM[quali]
         hoster['name'] = sLabel
+        hoster['resolveable'] = True
         hosters.append(hoster)
 
     # Hoster zurückgeben
