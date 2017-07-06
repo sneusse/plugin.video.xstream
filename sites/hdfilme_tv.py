@@ -379,7 +379,7 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     # Seite abrufen
     sHtmlContent = cRequestHandler(URL_GETLINK + sID + '/' + sEpisode).request()
     sHtmlContent = base64.b64decode(str(sHtmlContent))
-    pattern = 'file"?\s*:\s*"(.+?)".*?label":([^",]+)}'
+    pattern = 'label":"([^",]+).*?file"?\s*:\s*"(.+?)"'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     # Nichts gefunden? => Raus hier
@@ -391,7 +391,7 @@ def _getHostFromUrl(sID, sEpisode, sServername):
     hosters = []
 
     # Alle Einträge durchlaufen und Hostereintrag erstellen
-    for sUrl, quali in aResult:
+    for quali, sUrl in aResult:
         sUrl = sUrl.replace('\/', '/')
         sLabel = sServername + ' - ' + quali
         hoster = dict()
