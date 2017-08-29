@@ -204,7 +204,7 @@ def getHosterUrl(sUrl=False):
     if 'animes-stream24.net' in sUrl:
         sUrl = _as24_resolver(sUrl)
         res = True
-    elif 'ani-stream.net' in sUrl: #DOT|net=off
+    elif 'ani-stream.com' in sUrl: #DOT|net=off
         sUrl = _anistream_resolver(sUrl)
         res = True
     elif 'uploadkadeh.com' in sUrl:
