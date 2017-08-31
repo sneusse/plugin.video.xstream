@@ -28,6 +28,8 @@ def load():
         oGui.addFolder(cGuiElement('Neuste Animes', SITE_IDENTIFIER, 'showMovies'), params)
         params.setParam('entryMode', "a_z")
         oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'), params)
+    else: 
+        oGui.addFolder(cGuiElement('Um Inhalte sehen zu können, muss der Adult Content aktiviert werden. \n(Klicke hier, um diese zu öffnen)', SITE_IDENTIFIER, 'getConf'), params)
     oGui.setEndOfDirectory()
 
     
@@ -335,3 +337,8 @@ def showAdult():
     if oConfig.getSetting('showAdult')=='true':
         return True
     return False
+
+def getConf():
+    oGui = cGui()
+    oGui.openSettings()
+    
