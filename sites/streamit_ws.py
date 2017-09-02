@@ -78,7 +78,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     oRequestHandler = cRequestHandler(entryUrl, ignoreErrors = (sGui is not False))
     sHtmlContent = oRequestHandler.request()
-    pattern = '<div class="cover"><a[^>]*href="([^"]+)" title="([^"]+).*?data-src="([^"]+)'
+    pattern = '<a[^>]*href="([^"]+)" title="([^"]+)"><img src="([^"]+)" alt="'
     parser = cParser()
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
@@ -221,7 +221,7 @@ def showHosters():
             hoster['name'] = sName.strip()
             hoster['displayedName'] = '[%s] %s' % (sQulityTitle, sName.strip())
             hoster['quality'] = sQulityNr if sQulityNr else '0'
-            hoster['link'] = sUrl
+            hoster['link'] = URL_MAIN + sUrl
             hosters.append(hoster)
 
     if hosters:
