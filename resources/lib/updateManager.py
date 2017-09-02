@@ -15,8 +15,8 @@ XSTREAM_DIRNAME = os.path.basename(ROOT_DIR)
 
 
 ## URLRESOLVER
-REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/tknorris/script.module.urlresolver/commits/master"
-REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/tknorris/script.module.urlresolver/archive/master.zip"
+REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/jsergio123/script.module.urlresolver/commits/master"
+REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/jsergio123/script.module.urlresolver/archive/master.zip"
 
 ## XSTREAM
 REMOTE_XSTREAM_COMMITS = "https://api.github.com/repos/xStream-Kodi/plugin.video.xstream/commits/nightly"
