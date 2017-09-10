@@ -42,10 +42,7 @@ def load():
     params.setParam('sUrl', URL_SERIE)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
-    params.setParam('sValue', 'Kategorie')
     oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenresList'), params)
-    params.setParam('sValue', 'Erscheinungsjahr')
-    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showValue'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
