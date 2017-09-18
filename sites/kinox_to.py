@@ -821,7 +821,7 @@ def getHosterUrlandPlay(sUrl=False):
         # pattern for stream url (single part)
         isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(https?:.*?)\\\\"')
         if not isMatch:
-            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(https?:.*?)\\\\"')
+            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe src=[^"]*"([^"]+)')
         if isMatch:
             results.append({'streamUrl': sStreamUrl.replace('\\/', '/'), 'resolved': False})
     return results
