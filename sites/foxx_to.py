@@ -90,7 +90,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
-        sPattern = '<link rel="next" href="([^"]+)'
+        sPattern = '"next"[^>]*href="([^"]+)'
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
             params.setParam('sUrl', sNextUrl)
@@ -102,10 +102,10 @@ def showEntries(entryUrl=False, sGui=False):
 def showSeasons():
     oGui = cGui()
     params = ParameterHandler()
-    entryUrl = params.getValue('entryUrl')
+    sUrl = params.getValue('entryUrl')
     sThumbnail = params.getValue('sThumbnail')
     sTVShowTitle = params.getValue('sName')
-    sHtmlContent = __getContent(entryUrl)
+    sHtmlContent = __getContent(sUrl)
     pattern = '<span[^>]*class="se-t[^"]*"[^>]*>(\d+)</span>'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
@@ -165,8 +165,8 @@ def showEpisodes():
 def showHosters():
     oParams = ParameterHandler()
     sUrl = oParams.getValue('entryUrl')
-    sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = 'src="([^"]+)" frameborder'  # url
+    sHtmlContent = __getContent(sUrl)
+    sPattern = 'src="([^"]+)"[^>]*frameborder'  # url
     aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
     if aResult[1]:
@@ -218,6 +218,10 @@ def showHosters():
                         hoster = {'link': sUrl, 'name': sQuality, 'quality': QUALITY_ENUM[sQuality]}
                         hosters.append(hoster)
 
+            if 'youtube' in hUrl:
+                hoster = {'link': hUrl, 'name': 'Youtube [Trailer]'}
+                hosters.append(hoster)
+
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
@@ -228,6 +232,8 @@ def getHosterUrl(sUrl=False):
     results = []
     result = {'streamUrl': sUrl}
     if 'rapidvideo' in sUrl:
+        result['resolved'] = False
+    elif'youtube' in sUrl:
         result['resolved'] = False
     else:
         result['resolved'] = True
@@ -316,9 +322,8 @@ def _search(oGui, sSearchText, nonce):
 ''' BLAZINGFAST bypass '''
 
 
-def __getContent(sUrl, sGui=False):
-    oGui = sGui if sGui else cGui
-    request = cRequestHandler(sUrl, caching=True, ignoreErrors=(sGui is not False))
+def __getContent(sUrl):
+    request = cRequestHandler(sUrl, caching=False, ignoreErrors=True)
     return __unprotect(request)
 
 
