@@ -19,8 +19,8 @@ REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/jsergio123/script.mod
 REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/jsergio123/script.module.urlresolver/archive/master.zip"
 
 ## XSTREAM
-REMOTE_XSTREAM_COMMITS = "https://api.github.com/repos/xStream-Kodi/plugin.video.xstream/commits/nightly"
-REMOTE_XSTREAM_NIGHTLY = "https://github.com/xStream-Kodi/plugin.video.xstream/archive/nightly.zip"
+REMOTE_XSTREAM_COMMITS = "https://api.github.com/repos/lastship/plugin.video.xstream/commits/nightly"
+REMOTE_XSTREAM_NIGHTLY = "https://github.com/lastship/plugin.video.xstream/archive/nightly.zip"
 
 ## Filename of the update File.
 LOCAL_NIGHTLY_VERSION = os.path.join(profilePath, "nightly_commit_sha")
@@ -123,5 +123,4 @@ def _getXmlString(xml_url):
         else:
             logger.info("Update-URL incorrect")
     except Exception as e:
-        logger.info(e)
-
+logger.info(e)
