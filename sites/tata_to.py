@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import base64, json, re, common
+import base64, json, re, common, xbmc
 from resources.lib import logger
 from resources.lib.cCFScrape import cCFScrape
 from resources.lib.gui.gui import cGui
@@ -15,6 +15,7 @@ SITE_ICON = 'tata.png'
 URL_MAIN = 'http://www.tata.to/'
 URL_MOVIES = URL_MAIN + 'filme'
 URL_SHOWS = URL_MAIN + 'tv'
+URL_CHANNELS = URL_MAIN + 'channels'
 URL_SEARCH = URL_MAIN + 'filme?&suche=%s&type=alle'
 
 URL_PARMS_ORDER_ALL = '?&order=alle'
@@ -35,9 +36,68 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showContentMenu'), params)
     params.setParam('sUrl', URL_SHOWS)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showContentMenu'), params)
+    params.setParam('sUrl', URL_CHANNELS)
+    oGui.addFolder(cGuiElement('LiveTv', SITE_IDENTIFIER, 'showChannels'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
+def tuneChannel():
+    gui = cGui()
+    params = ParameterHandler()
+    baseURL = params.getValue('sUrl')
+
+    oRequest = cRequestHandler(baseURL, ignoreErrors=True)
+    sHtmlContent = oRequest.request()
+
+    pattern = '<div[^>]*class="tv-play".*?'  # start element
+    pattern += 'data-src="([^"]*)".*?'  # url
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+
+    eurl = aResult[0]
+    oRequest = cRequestHandler(eurl, ignoreErrors=True)
+    sHtmlContent = oRequest.request()
+
+    eurl1 = eurl.replace('embed.html', 'status.json')
+    oRequest = cRequestHandler(eurl1, ignoreErrors=True)
+    oRequest.request()
+
+    eurl2 = eurl.replace('embed.html', 'bootstrap')
+    oRequest = cRequestHandler(eurl2, ignoreErrors=True)
+    oRequest.request()
+
+    eurl3 = eurl.replace('embed.html', 'manifest.f4m')
+    oRequest = cRequestHandler(eurl3, ignoreErrors=True)
+    sHtmlContent = oRequest.request()
+
+    furl = "plugin://plugin.video.f4mTester/?url=" + eurl3
+    f = open("debug.dbg", "w")
+    f.write(sHtmlContent)
+    f.close()
+    # furl = "plugin://plugin.video.f4mTester/?url=" + "https://s1.skyfall.to/SkyCinema/manifest.f4m?token=13797b74-15097981897992"
+    gui.showInfo('xStream', furl)
+    xbmc.Player().play(furl)
+
+def showChannels():
+    base_channels = "https://www.tata.to/channels/"
+    base_channel = "https://www.tata.to/channel/"
+    gui = cGui()
+    params = ParameterHandler()
+
+    oRequest = cRequestHandler(base_channels, ignoreErrors=True)
+    sHtmlContent = oRequest.request()
+
+    pattern = '<div[^>]*class="ml-item chanel-tem"[^>]*>.*?'  # start element
+    pattern += '<a[^>]*href="([^"]*)"[^>]*>.*?'  # url
+    pattern += '<img[^>]*src="([^"]*)"[^>]*>.*?'  # thumbnail
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+    
+    for sUrl, sThumbnail in aResult:
+        params.setParam('sUrl', sUrl)
+        item = cGuiElement(sUrl.replace(base_channel, ""), SITE_IDENTIFIER, 'tuneChannel')
+        item.setThumbnail(sThumbnail)
+        gui.addFolder(item, params, isHoster=False)
+
+    gui.setEndOfDirectory()
 
 def showContentMenu():
     oGui = cGui()
