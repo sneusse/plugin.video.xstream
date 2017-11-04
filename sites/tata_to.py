@@ -70,11 +70,6 @@ def tuneChannel():
     sHtmlContent = oRequest.request()
 
     furl = "plugin://plugin.video.f4mTester/?url=" + eurl3
-    f = open("debug.dbg", "w")
-    f.write(sHtmlContent)
-    f.close()
-    # furl = "plugin://plugin.video.f4mTester/?url=" + "https://s1.skyfall.to/SkyCinema/manifest.f4m?token=13797b74-15097981897992"
-    gui.showInfo('xStream', furl)
     xbmc.Player().play(furl)
 
 def showChannels():
